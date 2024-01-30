@@ -7,13 +7,13 @@
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
-        <a-button
+        <Button
           type="primary"
           @click="handleCreate"
           v-if="hasPermission(PermissionsEnum.PermissionAdd, false)"
         >
           新增权限
-        </a-button>
+        </Button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -58,7 +58,7 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { PermissionListItem } from '/@/api/admin/model/systemModel';
-  import { Tag } from 'ant-design-vue';
+  import { Tag, Button } from 'ant-design-vue';
   import { notify } from '/@/api/api';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -191,7 +191,7 @@
       labelWidth: 0,
       component: 'RadioButtonGroup',
       defaultValue: 1,
-      componentProps: ({}) => {
+      componentProps: () => {
         return {
           options: [
             { label: '缓存', value: 1 },

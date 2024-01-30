@@ -1,5 +1,5 @@
 // 下拉框
-export interface SelectLists {
+export interface SelectItem {
   label: string;
   key: number | string;
   value: number | string;

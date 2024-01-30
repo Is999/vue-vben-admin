@@ -6,6 +6,7 @@ import { useMessage } from '/@/hooks/web/useMessage';
 
 // const globSetting = useGlobSetting();
 
+// 验证码
 export function captchaApi() {
   return defHttp.get<captchaApiResultModel>(
     {

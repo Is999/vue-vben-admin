@@ -4,7 +4,7 @@
       <BasicForm @register="register" autocomplete="off">
         <template #pwd="{ model, field }">
           <div class="flex justify-center">
-            <a-input-password
+            <InputPassword
               autocomplete="new-password"
               placeholder="请输入密码"
               :maxlength="20"
@@ -12,13 +12,13 @@
               :allowClear="true"
             />
             <Tooltip title="生成密码并复制" placement="bottom">
-              <a-button type="primary" @click="handleCopy(model, field)"> 复制 </a-button>
+              <Button type="primary" @click="handleCopy(model, field)"> 复制 </Button>
             </Tooltip>
           </div>
         </template>
       </BasicForm>
     </div>
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. 密码</h4>
@@ -37,20 +37,10 @@
   </div>
 </template>
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Divider } from 'ant-design-vue';
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-    },
-  });
-</script>
-
 <script setup lang="ts">
   import { unref } from 'vue';
   import { BasicForm, useForm, FormSchema } from '/@/components/Form';
-  import { Tooltip } from 'ant-design-vue';
+  import { Tooltip, Divider, Button, InputPassword } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
   import { accountAdd } from '/@/api/admin/system';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -325,7 +315,7 @@
   }
 
   // 强制生成密码并复制
-  function handleClick(path: string) {
+  function handleClick() {
     let pwd = buildUUID().slice(4, 16);
     setFieldsValue({
       password: pwd,

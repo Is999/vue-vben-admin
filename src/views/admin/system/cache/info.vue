@@ -10,36 +10,36 @@
   >
     <PageWrapper :class="prefixCls" title="">
       <div class="p-4">
-        <div style="float: right; margin-right: 18px">
-          <a-tooltip title="开启后每20秒刷新一次">
+        <div style="margin-right: 18px; float: right">
+          <Tooltip title="开启后每20秒刷新一次">
             <Icon class="icon" icon="ant-design:sync-outlined" color="#1890ff" />
             开启刷新
-            <a-switch v-model:checked="isStart" />
-          </a-tooltip>
+            <Switch v-model:checked="isStart" />
+          </Tooltip>
         </div>
-        <a-divider />
-        <a-list>
-          <a-row ref="cardBox">
+        <Divider />
+        <List>
+          <Row ref="cardBox">
             <template v-for="item in list" :key="item.title">
-              <a-col :span="spanCls">
-                <a-list-item>
-                  <a-card :hoverable="true" :class="`${prefixCls}__card`">
+              <Col :span="spanCls">
+                <ListItem>
+                  <Card :hoverable="true" :class="`${prefixCls}__card`">
                     <div :class="`${prefixCls}__card-title`">
                       <Icon class="icon" v-if="item.icon" :icon="item.icon" :color="item.color" />
                       {{ item.title }}
                     </div>
-                    <a-divider />
+                    <Divider />
                     <template v-for="item2 in item.data" :key="item2.key">
                       <div :class="`${prefixCls}__card-detail`">
                         {{ item2.key }}: <span style="color: #12e312">{{ item2.value }}</span>
                       </div>
                     </template>
-                  </a-card>
-                </a-list-item>
-              </a-col>
+                  </Card>
+                </ListItem>
+              </Col>
             </template>
-          </a-row>
-        </a-list>
+          </Row>
+        </List>
       </div>
 
       <div class="p-4 div-border">
@@ -47,13 +47,13 @@
           <Icon class="icon" icon="ant-design:bar-chart-outlined" color="#1890ff" />
           键值统计
         </div>
-        <a-divider />
-        <a-table
+        <Divider />
+        <Table
           class="ant-table-striped"
           size="middle"
           :columns="columns"
           :data-source="dbs"
-          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : undefined)"
           :pagination="false"
         />
       </div>
@@ -62,52 +62,46 @@
         <div>
           <Icon class="icon" icon="ic:round-info" color="#1890ff" />
           Redis信息全集
-          <a-input-search
+          <InputSearch
             placeholder="input search text"
-            style="width: 280px; float: right; margin-right: 18px"
+            style="width: 280px; margin-right: 18px; float: right"
             v-model:value="searchValue"
             @search="onSearch"
           />
         </div>
-        <a-divider />
-        <a-table
+        <Divider />
+        <Table
           class="ant-table-striped"
           size="middle"
           :columns="columns1"
           :data-source="info"
-          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : null)"
+          :rowClassName="(record, index) => (index % 2 === 1 ? 'table-striped' : undefined)"
           :pagination="false"
         />
       </div>
     </PageWrapper>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Card, Row, Col, List, Divider, Table, Switch, Tooltip } from 'ant-design-vue';
-
-  export default defineComponent({
-    components: {
-      [Switch.name]: Switch,
-      [Table.name]: Table,
-      [Card.name]: Card,
-      [List.name]: List,
-      [List.Item.name]: List.Item,
-      [Row.name]: Row,
-      [Col.name]: Col,
-      [Divider.name]: Divider,
-      [Tooltip.name]: Tooltip,
-    },
-  });
-</script>
 <script setup lang="ts">
   import { nextTick, onMounted, onUnmounted, reactive, ref, unref } from 'vue';
+  import {
+    Card,
+    Row,
+    Col,
+    List,
+    Divider,
+    Table,
+    Switch,
+    Tooltip,
+    ListItem,
+    InputSearch,
+  } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';
   import Icon from '/@/components/Icon//Icon.vue';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { BasicColumn } from '/@/components/Table';
   import { cacheInfo } from '/@/api/admin/system';
   import { RedisInfoModel } from '/@/api/admin/model/systemModel';
+  import { ColumnType } from 'ant-design-vue/lib/table';
 
   const prefixCls = 'list-card';
   const spanCls = ref<number>(8);
@@ -256,6 +250,7 @@
   };
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
+    console.log(data);
     setDrawerProps({ loading: true }); // loading
     getInfo();
     start(); // 开启定时器
@@ -264,7 +259,7 @@
   });
 
   // 数据列
-  const columns: BasicColumn[] = [
+  const columns: ColumnType[] = [
     {
       title: 'DB',
       dataIndex: 'db',
@@ -292,7 +287,7 @@
   ];
 
   // 数据列
-  const columns1: BasicColumn[] = [
+  const columns1: ColumnType[] = [
     {
       title: 'Key',
       dataIndex: 'key',
@@ -365,14 +360,14 @@
 </script>
 <style lang="less" scoped>
   .p-4 {
-    padding: 0px;
-    margin: 0px 0px 01rem 0px;
+    margin: 0 0 01rem;
+    padding: 0;
   }
 
   .list-card {
     &__content {
-      padding-left: 16px;
       padding-right: 16px;
+      padding-left: 16px;
     }
 
     &__link {
@@ -399,9 +394,9 @@
 
       &-title {
         margin-bottom: 5px;
+        color: @text-color;
         font-size: 16px;
         font-weight: 500;
-        color: @text-color;
 
         .icon {
           margin-top: -5px;
@@ -411,13 +406,13 @@
       }
 
       &-detail {
-        padding: 5px 0px 5px 18px;
-        font-size: 14px;
         margin-bottom: 3px;
-        color: @text-color-secondary;
-        background: rgb(255, 255, 255);
+        padding: 5px 0 5px 18px;
         border: 1px solid #ffe58f;
         border-radius: 5px;
+        background: rgb(255 255 255);
+        color: @text-color-secondary;
+        font-size: 14px;
       }
     }
   }

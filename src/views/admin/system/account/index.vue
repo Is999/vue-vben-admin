@@ -2,12 +2,12 @@
   <div>
     <BasicTable @register="registerTable" @resizeColumn="handleResizeColumn">
       <template #toolbar>
-        <a-button
+        <Button
           type="primary"
           @click="handleCreate"
           v-if="hasPermission(PermissionsEnum.AccountAdd, false)"
           >新增账号
-        </a-button>
+        </Button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -43,7 +43,7 @@
   import AccountDrawer from './AccountDrawer.vue';
   import EditAccountDrawer from './EditAccountDrawer.vue';
   import AccountRolesDrawer from './AccountRolesDrawer.vue';
-  import { Switch } from 'ant-design-vue';
+  import { Switch, Button } from 'ant-design-vue';
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { useDrawer } from '/@/components/Drawer';

@@ -18,7 +18,7 @@
       </template>
     </BasicForm>
 
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. 权限标识</h4>
@@ -42,16 +42,6 @@
     </div>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Divider } from 'ant-design-vue';
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-    },
-  });
-</script>
-
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
@@ -68,8 +58,7 @@
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { cloneDeep } from 'lodash-es';
   import { useGo } from '/@/hooks/web/usePage';
-  import { Tooltip } from 'ant-design-vue';
-  import { InputNumber } from 'ant-design-vue';
+  import { Tooltip, Divider, InputNumber } from 'ant-design-vue';
   import { FormSchema } from '/@/components/Table';
   import { notify } from '/@/api/api';
 

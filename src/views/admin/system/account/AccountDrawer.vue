@@ -10,11 +10,11 @@
   >
     <PageWrapper title="" contentBackground contentClass="p-4">
       <div class="step-form-form">
-        <a-steps :current="current">
-          <a-step title="新增账号" />
-          <a-step title="编辑权限" />
-          <a-step title="完成" />
-        </a-steps>
+        <Steps :current="current">
+          <Step title="新增账号" />
+          <Step title="编辑权限" />
+          <Step title="完成" />
+        </Steps>
       </div>
       <div class="mt-5">
         <Step1 @next="handleStep1Next" v-show="current === 0" v-if="current === 0" />
@@ -23,24 +23,13 @@
     </PageWrapper>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Steps } from 'ant-design-vue';
-
-  export default defineComponent({
-    components: {
-      [Steps.name]: Steps,
-      [Steps.Step.name]: Steps.Step,
-    },
-  });
-</script>
 
 <script setup lang="ts">
-  import { defineComponent, ref, computed } from 'vue';
+  import { ref, computed } from 'vue';
   import Step1 from './Step1.vue';
   import Step2 from './Step2.vue';
   import { PageWrapper } from '/@/components/Page';
-  import { Steps } from 'ant-design-vue';
+  import { Steps, Step } from 'ant-design-vue';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
 
   const emit = defineEmits(['success', 'register']);

@@ -207,7 +207,7 @@
       labelWidth: 0,
       component: 'RadioButtonGroup',
       defaultValue: 1,
-      componentProps: ({}) => {
+      componentProps: () => {
         return {
           options: [
             { label: '缓存', value: 1 },

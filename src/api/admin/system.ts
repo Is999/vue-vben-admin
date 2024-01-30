@@ -22,7 +22,8 @@ import {
   updatePasswordParams,
 } from './model/systemModel';
 import { AdminApi } from '/@/api/api';
-import { SelectItem, TreeItem } from '/@/components/Tree';
+import { SelectItem } from './model/public';
+import { TreeItem } from '/@/components/Tree';
 import { BasicFetchResult } from '/@/api/model/baseModel';
 
 enum Api {
@@ -41,7 +42,7 @@ enum Api {
   // 个人信息
   UpdaetePassword = '/user/updatePassword', // 修改密码
   UpdateSecureKey = '/user/updateSecureKey', // 修改Google安全码
-  UpdateMine = '/user/update', // 编辑账号
+  //UpdateMine = '/user/update', // 编辑账号
 
   // 菜单管理
   MenuList = '/menu/index', // 菜单列表
@@ -393,7 +394,7 @@ export const configGetCache = (uuid: string) =>
     },
   );
 
-// 参数配置 查看配置缓存
+// 参数配置 刷新配置缓存
 export const configRenew = (uuid: string) =>
   AdminApi.post(
     { url: Api.ConfigRenew + '/' + uuid },
@@ -421,7 +422,7 @@ export const cacheRenew = (params: CacheParams) =>
     },
   );
 
-// 缓存管理 刷新缓存
+// 缓存管理 刷新所有缓存
 export const cacheRenewAll = () =>
   AdminApi.post(
     { url: Api.CacheRenewAll },
@@ -430,6 +431,7 @@ export const cacheRenewAll = () =>
     },
   );
 
+// 缓存服务信息
 export const cacheInfo = () => {
   return AdminApi.get<RedisInfoModel>(
     { url: Api.CacheInfo },

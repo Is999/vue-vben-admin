@@ -19,18 +19,15 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount } from 'vue';
+  import { onBeforeMount, ref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form';
   import { BasicTree, TreeItem } from '/@/components/Tree';
-  import { ref } from 'vue';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { notify } from '/@/api/api';
 
   const { hasPermission } = usePermission();
-  const { createMessage } = useMessage();
 
   const emit = defineEmits(['redo']);
   const props = defineProps({

@@ -1,7 +1,7 @@
 <template>
   <CollapseContainer title="基本设置" :canExpan="false">
-    <a-row :gutter="24">
-      <a-col :span="14">
+    <Row :gutter="24">
+      <Col :span="14">
         <BasicForm @register="register">
           <template #buildSecretKeyUrl="{ model, field }">
             <div style="float: right">
@@ -9,15 +9,15 @@
                 >点击此处，去绑定Google安全码</a
               >
               <Tooltip title="复制地址" placement="bottom">
-                <a-button type="primary" @click="handleCopyBuildSecretKeyUrl(model[field])">
+                <Button type="primary" @click="handleCopyBuildSecretKeyUrl(model[field])">
                   复制地址
-                </a-button>
+                </Button>
               </Tooltip>
             </div>
           </template>
         </BasicForm>
-      </a-col>
-      <a-col :span="10">
+      </Col>
+      <Col :span="10">
         <div class="change-avatar">
           <div class="mb-2">头像</div>
           <CropperAvatar
@@ -29,31 +29,16 @@
             width="150"
           />
         </div>
-      </a-col>
-    </a-row>
+      </Col>
+    </Row>
     <Button type="primary" style="margin-top: 20px; margin-left: 150px" @click="handleSubmit">
       更新基本信息
     </Button>
   </CollapseContainer>
 </template>
-<script lang="ts">
-  import { Col, Row } from 'ant-design-vue';
-  import { defineComponent } from 'vue';
-  import { CollapseContainer } from '/@/components/Container';
-  import { CropperAvatar } from '/@/components/Cropper';
-
-  export default defineComponent({
-    components: {
-      CollapseContainer,
-      ARow: Row,
-      ACol: Col,
-      CropperAvatar,
-    },
-  });
-</script>
 
 <script setup lang="ts">
-  import { Button, Tooltip } from 'ant-design-vue';
+  import { Button, Tooltip, Col, Row } from 'ant-design-vue';
   import { computed, onMounted, ref, unref } from 'vue';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
   import { CollapseContainer } from '/@/components/Container';
@@ -69,6 +54,7 @@
   import { accountEdit } from '/@/api/admin/system';
   import { notify } from '/@/api/api';
   import { UserInfo } from '/#/store';
+
   const { clipboardRef, copiedRef } = useCopyToClipboard();
 
   // 基础设置 form
@@ -122,11 +108,11 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-                return Promise.reject('请输入真实姓名');
+              return Promise.reject('请输入真实姓名');
             }
             if (value.length < 2 || value.length > 20) {
               /* eslint-disable-next-line */
-                return Promise.reject('真实姓名为2-20个字母');
+              return Promise.reject('真实姓名为2-20个字母');
             }
             return Promise.resolve();
           },
@@ -151,7 +137,7 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-                return Promise.reject('请输入账号');
+              return Promise.reject('请输入账号');
             }
             if (
               !/^[a-z0-9A-Z]+([-_.][a-z0-9A-Z]+)*@[a-z0-9A-Z]+([-_][a-z0-9A-Z]+)*(\.[a-zA-Z]{2,4}){1,2}$/.test(
@@ -159,7 +145,7 @@
               )
             ) {
               /* eslint-disable-next-line */
-                return Promise.reject('请输入正确的邮箱格式');
+              return Promise.reject('请输入正确的邮箱格式');
             }
             return Promise.resolve();
           },
@@ -185,11 +171,11 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-                return Promise.reject('请输入手机号');
+              return Promise.reject('请输入手机号');
             }
             if (!/^1[3-9]\d{9}$/.test(value)) {
               /* eslint-disable-next-line */
-                return Promise.reject('请输入正确的手机号格式');
+              return Promise.reject('请输入正确的手机号格式');
             }
             return Promise.resolve();
           },

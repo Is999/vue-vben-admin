@@ -1,4 +1,4 @@
-export interface ListItem {
+export interface Item {
   key: string;
   title: string;
   description: string;
@@ -9,7 +9,7 @@ export interface ListItem {
 }
 
 // 账号绑定 list
-export const accountBindList: ListItem[] = [
+export const accountBindList: Item[] = [
   {
     key: '1',
     title: '绑定淘宝',
@@ -37,7 +37,7 @@ export const accountBindList: ListItem[] = [
 ];
 
 // 新消息通知 list
-export const msgNotifyList: ListItem[] = [
+export const msgNotifyList: Item[] = [
   {
     key: '1',
     title: '账户密码',

@@ -1,62 +1,62 @@
 <template>
   <!-- 登录title -->
   <LoginFormTitle v-show="true" class="enter-x" />
-  <BasicForm @register="register" class="p-4 enter-x" style="max-width: 400px">
+  <BasicForm @register="register" class="p-4 enter-x">
+    <template #captcha="{ model, field }">
+      <InputGroup>
+        <div class="flex justify-center">
+          <Input
+            type="text"
+            name="captcha"
+            :maxlength="4"
+            v-model:value="model[field]"
+            :placeholder="t('sys.login.code')"
+          >
+            <template #addonBefore>
+              <SafetyOutlined class="site-form-item-icon" />
+            </template>
+          </Input>
+          <div style="min-width: 100px">
+            <img
+              :src="formData.img"
+              style="float: right; cursor: pointer; object-fit: cover"
+              @click="handleCaptchaApi()"
+              alt=""
+            />
+          </div>
+        </div>
+      </InputGroup>
+    </template>
+    <template #secureCode="{ model, field }">
+      <InputGroup>
+        <div class="flex justify-center">
+          <Input
+            type="text"
+            name="secureCode"
+            :maxlength="6"
+            v-model:value="model[field]"
+            :placeholder="t('sys.login.secureCode')"
+          >
+            <template #addonBefore>
+              <InsuranceTwoTone class="site-form-item-icon" />
+            </template>
+          </Input>
+          <div style="min-width: 100px">
+            <a @click="handleBuildSecret()" style="line-height: 41px">没有？去绑定！</a>
+          </div>
+        </div>
+      </InputGroup>
+    </template>
     <template #submit="{}">
       <Button type="primary" block @click="handleLogin" :loading="loading">
         {{ t('sys.login.loginButton') }}
       </Button>
     </template>
-    <template #captcha="{ model, field }">
-      <AInputGroup size="large">
-        <div style="width: 30%; min-width: 100px; float: right; display: inline-block">
-          <img
-            :src="formData.img"
-            style="cursor: pointer; float: right; object-fit: cover"
-            @click="handleCaptchaApi()"
-            alt=""
-          />
-        </div>
-        <AInput
-          style="width: 65%; float: left; display: inline-block"
-          class="disabled-width"
-          type="text"
-          name="captcha"
-          :maxlength="4"
-          v-model:value="model[field]"
-          :placeholder="t('sys.login.code')"
-        >
-          <template #addonBefore>
-            <SafetyOutlined class="site-form-item-icon" />
-          </template>
-        </AInput>
-      </AInputGroup>
-    </template>
-    <template #secureCode="{ model, field }">
-      <AInputGroup size="large">
-        <div style="width: 30%; min-width: 100px; float: right">
-          <a @click="handleBuildSecret()" style="float: right; line-height: 41px">没有？去绑定！</a>
-        </div>
-        <AInput
-          style="width: 65%; float: left"
-          class="disabled-width"
-          type="text"
-          name="secureCode"
-          :maxlength="6"
-          v-model:value="model[field]"
-          :placeholder="t('sys.login.secureCode')"
-        >
-          <template #addonBefore>
-            <InsuranceTwoTone class="site-form-item-icon" />
-          </template>
-        </AInput>
-      </AInputGroup>
-    </template>
   </BasicForm>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, onMounted, h } from 'vue';
-  import { Button } from 'ant-design-vue';
+  import { Button, Input, InputGroup } from 'ant-design-vue';
   import {
     UserOutlined,
     LockOutlined,
@@ -112,11 +112,11 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.namePlaceholder'));
+              return Promise.reject(t('sys.login.namePlaceholder'));
             }
             if (!/^[A-Za-z0-9]{6,20}$/.test(value)) {
               /* eslint-disable-next-line */
-            return Promise.reject('账号为6-20个字母加数字组成');
+              return Promise.reject('账号为6-20个字母加数字组成');
             }
             return Promise.resolve();
           },
@@ -145,11 +145,11 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.passwordPlaceholder'));
+              return Promise.reject(t('sys.login.passwordPlaceholder'));
             }
             if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
               /* eslint-disable-next-line */
-            return Promise.reject('密码为6-20个字母加数字组成');
+              return Promise.reject('密码为6-20个字母加数字组成');
             }
             return Promise.resolve();
           },
@@ -179,11 +179,11 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.codePlaceholder'));
+              return Promise.reject(t('sys.login.codePlaceholder'));
             }
             if (!/[A-Za-z0-9]{4}/.test(value)) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.codePlaceholder'));
+              return Promise.reject(t('sys.login.codePlaceholder'));
             }
             return Promise.resolve();
           },
@@ -208,7 +208,6 @@
         addonAfter: h(
           'a',
           {
-            style: { width: '126px', float: 'right' },
             onClick: () => handleBuildSecret(),
           },
           '还没有？去绑定吧！',
@@ -225,11 +224,11 @@
             }
             if (!value) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.secureCode'));
+              return Promise.reject(t('sys.login.secureCode'));
             }
             if (!/\d{6}/.test(value)) {
               /* eslint-disable-next-line */
-            return Promise.reject(t('sys.login.secureCodePlaceholder'));
+              return Promise.reject(t('sys.login.secureCodePlaceholder'));
             }
             return Promise.resolve();
           },

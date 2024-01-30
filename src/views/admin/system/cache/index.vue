@@ -3,17 +3,18 @@
     <BasicTable @register="registerTable" @resizeColumn="handleResizeColumn">
       <template #toolbar>
         <a-button
-          type="success"
+          color="success"
           @click="handleInfo"
           v-if="hasPermission(PermissionsEnum.CacheGetInfo, false)"
           >服务器信息
         </a-button>
-        <a-button
-          type="danger"
+        <Button
+          type="primary"
+          danger
           @click="handleRenewAll"
           v-if="hasPermission(PermissionsEnum.CacheRenewAll, false)"
           >刷新全部
-        </a-button>
+        </Button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -47,6 +48,7 @@
   import InfoDrawer from './info.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { notify } from '/@/api/api';
+  import { Button } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();
   const { createConfirm } = useMessage();

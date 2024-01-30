@@ -11,19 +11,19 @@
     <BasicForm @register="register" autocomplete="off">
       <template #pwd="{ model, field }">
         <div class="flex justify-center">
-          <a-input-password
+          <InputPassword
             autocomplete="new-password"
             placeholder="请输入密码"
             v-model:value="model[field]"
             :allowClear="true"
           />
           <Tooltip title="生成新密码并复制" placement="bottom">
-            <a-button type="primary" @click="handleCopy(model, field)"> 复制 </a-button>
+            <Button type="primary" @click="handleCopy(model, field)"> 复制 </Button>
           </Tooltip>
         </div>
       </template>
     </BasicForm>
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. 新密码</h4>
@@ -62,16 +62,6 @@
   </BasicDrawer>
 </template>
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Divider } from 'ant-design-vue';
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-    },
-  });
-</script>
-
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
@@ -81,7 +71,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/roleEnum';
-  import { Tooltip } from 'ant-design-vue';
+  import { Tooltip, Divider, InputPassword, Button } from 'ant-design-vue';
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { buildUUID } from '/@/utils/uuid';
   import { notify } from '/@/api/api';

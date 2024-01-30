@@ -97,3 +97,19 @@ export function checkPassword(password: string) {
     },
   );
 }
+
+export function testRetry() {
+  return AdminApi.get<UserInfoModel>(
+    {
+      url: Api.Mine,
+    },
+    {
+      retryRequest: {
+        isOpenRetry: true,
+        count: 5,
+        waitTime: 30000,
+      },
+      errorMessageMode: 'message', // 错误直接提示后台返回信息
+    },
+  );
+}

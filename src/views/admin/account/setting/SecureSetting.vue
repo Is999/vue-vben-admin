@@ -21,27 +21,20 @@
     <SecureKey @register="registerDrawer1" />
   </CollapseContainer>
 </template>
-<script lang="ts">
-  import { List } from 'ant-design-vue';
-  import { defineComponent } from 'vue';
-
-  export default defineComponent({
-    components: { List, ListItem: List.Item, ListItemMeta: List.Item.Meta },
-  });
-</script>
 
 <script setup lang="ts">
-  import type { ListItem } from './data';
-  import { CollapseContainer } from '/@/components/Container/index';
+  import { List, ListItem, ListItemMeta } from 'ant-design-vue';
+  import { CollapseContainer } from '@/components/Container';
   import Password from './Password.vue';
   import SecureKey from './SecureKey.vue';
+  import { Item } from './data';
   import { useDrawer } from '/@/components/Drawer';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [registerDrawer1, { openDrawer: openDrawer1 }] = useDrawer();
 
   // 安全设置 list
-  const list: ListItem[] = [
+  const list: Item[] = [
     {
       key: '1',
       title: '账户密码',
@@ -94,11 +87,11 @@
 </script>
 <style lang="less" scoped>
   .extra {
-    float: right;
     margin-top: 10px;
     margin-right: 30px;
-    font-weight: normal;
+    float: right;
     color: #1890ff;
+    font-weight: normal;
     cursor: pointer;
   }
 </style>

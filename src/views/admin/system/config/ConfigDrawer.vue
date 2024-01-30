@@ -28,7 +28,7 @@
       </template>
     </BasicForm>
 
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. 唯一标识</h4>
@@ -38,16 +38,6 @@
     </div>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Divider } from 'ant-design-vue';
-
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-    },
-  });
-</script>
 
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
@@ -60,6 +50,8 @@
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { CodeEditor, MODE } from '/@/components/CodeEditor';
   import { notify } from '/@/api/api';
+  import { Divider } from 'ant-design-vue';
+
   const { hasPermission } = usePermission();
 
   const emit = defineEmits(['success', 'register']);
@@ -341,7 +333,7 @@
     }
   }
 
-  function handleValueChange(v) {
+  function handleValueChange() {
     // console.log('@@@@@@ v', v);
   }
 </script>
