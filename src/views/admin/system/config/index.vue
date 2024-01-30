@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" @resizeColumn="handleResizeColumn">
+    <BasicTable @register="registerTable">
       <template #toolbar>
         <Button
           type="primary"
@@ -167,8 +167,6 @@
     registerTable,
     {
       reload,
-      setColumns,
-      getColumns,
       setLoading,
       // expandRows,
       // expandAll, collapseAll
@@ -265,17 +263,17 @@
   }
 
   // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
-  }
+  // function handleResizeColumn(w, col) {
+  //   const cols = getColumns();
+  //   const index = cols.findIndex((value, index) => {
+  //     if (value.dataIndex === col.dataIndex) {
+  //       return index;
+  //     }
+  //   });
+  //
+  //   if (index >= 0) {
+  //     cols[index].width = w;
+  //     setColumns(cols);
+  //   }
+  // }
 </script>

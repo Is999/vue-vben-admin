@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BasicTable @register="registerTable" @resizeColumn="handleResizeColumn">
+    <BasicTable @register="registerTable">
       <template #toolbar>
         <Button
           type="primary"
@@ -80,6 +80,8 @@
           key: 'id',
           value: 'id',
         },
+        labelField: 'title',
+        valueField: 'id',
         showSearch: true,
         treeNodeFilterProp: 'title',
         treeDefaultExpandAll: true,
@@ -226,7 +228,7 @@
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [registerDrawer1, { openDrawer: openDrawer1 }] = useDrawer();
   const [registerDrawer2, { openDrawer: openDrawer2 }] = useDrawer();
-  const [registerTable, { reload, setColumns, getColumns }] = useTable({
+  const [registerTable, { reload }] = useTable({
     title: '账号列表',
     api: getAccountList,
     rowKey: 'id',
@@ -273,19 +275,5 @@
   // 编辑|新增成功后重新reload
   function handleSuccess() {
     reload();
-  }
-
-  // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
   }
 </script>

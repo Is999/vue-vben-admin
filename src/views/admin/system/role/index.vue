@@ -3,7 +3,6 @@
     <BasicTable
       @register="registerTable"
       @row-dbClick="onDbClickRowExpand"
-      @resizeColumn="handleResizeColumn"
       @fetch-success="onFetchSuccess"
     >
       <template #bodyCell="{ column, record }">
@@ -250,8 +249,6 @@
       expandAll,
       expandRows,
       setLoading,
-      setColumns,
-      getColumns,
       collapseAll,
       deleteTableDataRecord,
       findTableDataRecord,
@@ -370,20 +367,6 @@
         // 关闭loading 动画
         setLoading(false);
       });
-  }
-
-  // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
   }
 
   // 是否包含角色

@@ -3,7 +3,6 @@
     <BasicTable
       @register="registerTable"
       @row-dbClick="onDbClickRowExpand"
-      @resizeColumn="handleResizeColumn"
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
@@ -255,8 +254,6 @@
       reload,
       expandRows,
       setLoading,
-      setColumns,
-      getColumns,
       expandAll,
       collapseAll,
       deleteTableDataRecord,
@@ -377,19 +374,5 @@
         // 关闭loading 动画
         setLoading(false);
       });
-  }
-
-  // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
   }
 </script>

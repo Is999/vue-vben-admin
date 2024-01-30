@@ -208,12 +208,14 @@ export const useUserStore = defineStore({
           console.log('注销Token失败');
         }
       }
-
+      console.log('注销Token: 清空缓存');
       // 清空缓存
       this.setToken(undefined);
       this.setSessionTimeout(false);
       this.setUserInfo(null);
       this.setUserRole(null);
+
+      console.log('清空缓存完毕 ', goLogin);
       goLogin && router.push(PageEnum.BASE_LOGIN);
     },
 

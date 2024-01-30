@@ -3,7 +3,6 @@
     <BasicTable
       @register="registerTable"
       @row-dbClick="onDbClickRowExpand"
-      @resizeColumn="handleResizeColumn"
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
@@ -243,10 +242,7 @@
     },
   ];
 
-  const [
-    registerTable,
-    { reload, expandAll, expandRows, setLoading, setColumns, getColumns, collapseAll },
-  ] = useTable({
+  const [registerTable, { reload, expandAll, expandRows, setLoading, collapseAll }] = useTable({
     title: '菜单列表',
     defaultExpandAllRows: cache.value == 1,
     api: getMenuList,
@@ -348,16 +344,16 @@
   }
 
   // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
-  }
+  // function handleResizeColumn(w, col) {
+  //   const cols = getColumns();
+  //   const index = cols.findIndex((value, index) => {
+  //     if (value.dataIndex === col.dataIndex) {
+  //       return index;
+  //     }
+  //   });
+  //   if (index >= 0) {
+  //     cols[index].width = w;
+  //     setColumns(cols);
+  //   }
+  // }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <BasicTable @register="registerTable" @resizeColumn="handleResizeColumn">
+    <BasicTable @register="registerTable">
       <template #toolbar>
         <a-button
           color="success"
@@ -135,7 +135,7 @@
   ];
 
   const [registerDrawer, { openDrawer }] = useDrawer();
-  const [registerTable, { setColumns, getColumns, setLoading }] = useTable({
+  const [registerTable, { setLoading }] = useTable({
     title: '缓存列表',
     api: getCacheList,
     rowKey: 'index',
@@ -224,16 +224,16 @@
   }*/
 
   // 拖拽列重新渲染
-  function handleResizeColumn(w, col) {
-    const cols = getColumns();
-    const index = cols.findIndex((value, index) => {
-      if (value.dataIndex === col.dataIndex) {
-        return index;
-      }
-    });
-    if (index >= 0) {
-      cols[index].width = w;
-      setColumns(cols);
-    }
-  }
+  // function handleResizeColumn(w, col) {
+  //   const cols = getColumns();
+  //   const index = cols.findIndex((value, index) => {
+  //     if (value.dataIndex === col.dataIndex) {
+  //       return index;
+  //     }
+  //   });
+  //   if (index >= 0) {
+  //     cols[index].width = w;
+  //     setColumns(cols);
+  //   }
+  // }
 </script>
