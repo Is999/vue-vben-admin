@@ -136,7 +136,7 @@
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */
-              return Promise.reject('请输入账号');
+              return Promise.reject('请输入邮箱');
             }
             if (
               !/^[a-z0-9A-Z]+([-_.][a-z0-9A-Z]+)*@[a-z0-9A-Z]+([-_][a-z0-9A-Z]+)*(\.[a-zA-Z]{2,4}){1,2}$/.test(
