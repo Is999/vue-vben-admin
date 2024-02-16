@@ -14,7 +14,13 @@ import { usePermissionStore } from '/@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { h } from 'vue';
-import { checkPassword, login, logout, mine, userPermissions } from '/@/api/sys/user';
+import {
+  checkPassword as checkPasswordApi,
+  login as loginApi,
+  logout as doLogout,
+  mine,
+  userPermissions,
+} from '/@/api/sys/user';
 import { encryptByMd5 } from '/@/utils/cipher';
 
 interface UserState {
@@ -111,7 +117,7 @@ export const useUserStore = defineStore({
     ): Promise<UserInfoModel | null> {
       try {
         const { goHome = true, mode, ...loginParams } = params;
-        const data = await login(loginParams, mode);
+        const data = await loginApi(loginParams, mode);
         const { token, user } = data;
 
         // save token
@@ -203,7 +209,7 @@ export const useUserStore = defineStore({
     async logout(goLogin = true) {
       if (this.getToken) {
         try {
-          await logout();
+          await doLogout();
         } catch {
           console.log('注销Token失败');
         }
@@ -241,7 +247,7 @@ export const useUserStore = defineStore({
     async checkPassword(password = ''): Promise<boolean> {
       if (this.getToken || password) {
         try {
-          const { isOk } = await checkPassword(encryptByMd5(password));
+          const { isOk } = await checkPasswordApi(encryptByMd5(password));
           return isOk as boolean;
         } catch {
           return false;
