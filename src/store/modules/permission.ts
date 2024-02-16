@@ -104,7 +104,8 @@ export const usePermissionStore = defineStore({
     },
     async changePermissionCode() {
       const userStore = useUserStore();
-      this.setPermCodeList(userStore.getUserRole || {});
+      const { permissions } = userStore.getUserRole || {};
+      this.setPermCodeList(permissions || []);
     },
 
     // 构建路由
