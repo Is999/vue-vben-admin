@@ -239,8 +239,8 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
-      resetFields(); // 重置
       setDrawerProps({ loading: true }); // loading
+      resetFields(); // 重置
       isUpdate.value = !!data?.isUpdate; // 编辑
 
       // 上级菜单下拉框

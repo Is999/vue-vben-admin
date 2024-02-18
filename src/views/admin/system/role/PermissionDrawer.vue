@@ -74,8 +74,8 @@
 
   const [registerDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
     try {
-      resetFields();
       setDrawerProps({ loading: true });
+      resetFields();
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
       treeData.value = (await getRolePermissionTreeList(
         data?.record?.id || 0,

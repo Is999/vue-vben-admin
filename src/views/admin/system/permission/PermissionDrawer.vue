@@ -155,8 +155,8 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
-      resetFields();
       setDrawerProps({ loading: true });
+      resetFields();
       isUpdate.value = !!data?.isUpdate;
 
       // pid 上级菜单下拉框

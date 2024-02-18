@@ -14,7 +14,7 @@
         <a-button class="!ml-4" type="primary" @click="handleSubmit"> 确认 </a-button>
       </div>-->
     </div>
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4></h4>
@@ -22,19 +22,10 @@
     </div>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
+
+<script setup lang="ts">
   import { Divider } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-      SoundTwoTone,
-    },
-  });
-</script>
-<script setup lang="ts">
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form';
   import { updaetePassword } from '/@/api/admin/system';
@@ -120,8 +111,8 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async () => {
     try {
-      resetFields(); // 重置
       setDrawerProps({ loading: true }); // loading
+      resetFields(); // 重置
     } finally {
       setDrawerProps({ loading: false }); // loading
     }

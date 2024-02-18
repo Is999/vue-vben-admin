@@ -263,10 +263,11 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
-      resetFields(); // 重置
       setDrawerProps({ loading: true }); // loading
+      resetFields(); // 重置值
+
       isUpdate.value = data?.isUpdate; // 编辑
-      console.log('@@@@ update', isUpdate.value, data?.isUpdate, data.record);
+      // console.log('@@@@ update', isUpdate.value, data?.isUpdate, data.record);
       // value.value = data.record?.value || '';
       // example.value = data.record?.example || '';
 
@@ -277,10 +278,12 @@
 
       // 编辑设置值
       if (isUpdate.value) {
+        // console.log('@@@@ update 开始 重新设置值');
         rowId.value = data.record.id;
         setFieldsValue({
           ...data.record,
         });
+        // console.log('@@@@ update 结束 重新设置值');
       }
     } finally {
       setDrawerProps({ loading: false }); // loading

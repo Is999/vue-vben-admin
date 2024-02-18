@@ -14,7 +14,7 @@
               <a-button class="!ml-4" type="primary" @click="handleSubmit"> 确认 </a-button>
             </div>-->
     </div>
-    <a-divider />
+    <Divider />
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4></h4>
@@ -32,29 +32,20 @@
     </div>
   </BasicDrawer>
 </template>
-<script lang="ts">
-  import { defineComponent, ref } from 'vue';
-  import { Divider } from 'ant-design-vue';
-  import { SoundTwoTone } from '@ant-design/icons-vue';
 
-  export default defineComponent({
-    components: {
-      [Divider.name]: Divider,
-      SoundTwoTone,
-    },
-  });
-</script>
 <script setup lang="ts">
+  import { Tooltip, Divider } from 'ant-design-vue';
+  import { SoundTwoTone } from '@ant-design/icons-vue';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form';
   import { updateSecureKey } from '/@/api/admin/system';
   import { useUserStore } from '/@/store/modules/user';
   import { notify } from '/@/api/api';
-  import { Tooltip } from 'ant-design-vue';
   import { useGlobSetting } from '/@/hooks/setting';
-  import { unref } from 'vue';
+  import { ref, unref } from 'vue';
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { useMessage } from '/@/hooks/web/useMessage';
+
   const userStore = useUserStore();
   const { clipboardRef, copiedRef } = useCopyToClipboard();
   const { createMessage } = useMessage();
@@ -89,16 +80,16 @@
 
   const [register, { validate, resetFields }] = useForm({
     size: 'large',
-    labelWidth: 100,
+    labelWidth: 0,
     showActionButtonGroup: false,
     schemas: formSchema,
-    baseColProps: { lg: 12, md: 24 },
+    baseColProps: { lg: 24, md: 24 },
   });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async () => {
     try {
-      resetFields(); // 重置
       setDrawerProps({ loading: true }); // loading
+      resetFields(); // 重置
       await userStore
         .getMineAction()
         .then((userinfo) => {

@@ -59,8 +59,8 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
-      resetFields();
       setDrawerProps({ loading: true });
+      resetFields();
       isUpdate.value = data?.isUpdate; // 编辑
 
       const roles = await accountRoles(data?.record?.id || 0);

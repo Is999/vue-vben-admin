@@ -311,8 +311,8 @@
   });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
-    resetFields(); // 重置
     setDrawerProps({ confirmLoading: false }); // loading
+    resetFields(); // 重置
     rowId.value = data.record.id;
     buildSecretKeyUrl.value = '';
     // console.log('@@@data', data.record);

@@ -10,6 +10,7 @@
   import { formSchema } from './dept.data';
 
   import { getDeptList } from '/@/api/admin/system';
+
   export default defineComponent({
     name: 'DeptModal',
     components: { BasicModal, BasicForm },
@@ -24,8 +25,8 @@
       });
 
       const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-        resetFields();
         setModalProps({ confirmLoading: false });
+        resetFields();
         isUpdate.value = !!data?.isUpdate;
 
         if (unref(isUpdate)) {

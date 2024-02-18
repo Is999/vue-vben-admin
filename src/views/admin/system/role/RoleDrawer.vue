@@ -129,8 +129,8 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
-      resetFields();
       setDrawerProps({ loading: true });
+      resetFields();
       isUpdate.value = !!data?.isUpdate;
 
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告

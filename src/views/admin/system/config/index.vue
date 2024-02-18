@@ -54,6 +54,7 @@
   import { Modal, Tag, Button } from 'ant-design-vue';
   import { JsonPreview } from '/@/components/CodeEditor';
   import { notify } from '/@/api/api';
+  import { isArray } from '@/utils/is';
 
   const { hasPermission } = usePermission();
 
@@ -219,23 +220,59 @@
     // 请求数据
     configGetCache(record.uuid)
       .then((res) => {
-        try {
-          let obj = JSON.parse(res.value);
-          if (typeof obj == 'object' && obj) {
+        if (record.type === 4) {
+          if (isArray(res.value)) {
             Modal.info({
               title: record.title + '[' + record.uuid + ']',
-              content: h(JsonPreview, { data: JSON.parse(res.value) }),
+              content: h(JsonPreview, { data: { Array: res.value } }),
             });
             return;
           }
-        } catch (e) {
-          console.log('@@@ Cache 不是有效的json', e, res);
-        }
 
-        Modal.info({
-          title: record.title + '[' + record.uuid + ']',
-          content: h(JsonPreview, { data: res.value }),
-        });
+          try {
+            let obj = JSON.parse(res.value);
+            if (typeof obj == 'object' && obj) {
+              Modal.info({
+                title: record.title + '[' + record.uuid + ']',
+                content: h(JsonPreview, { data: { Json: JSON.parse(res.value) } }),
+              });
+              return;
+            }
+          } catch (e) {
+            console.log('@@@ Cache 不是有效的json', e, res);
+          }
+        } else {
+          const getValType = () => {
+            let value;
+            switch (record.type) {
+              case 0:
+                value = { String: res.value };
+                break;
+              case 1:
+                value = { Integer: res.value };
+                break;
+              case 2:
+                value = { Float: res.value };
+                break;
+              case 3:
+                value = { Boolean: res.value };
+                break;
+              default:
+                value = res.value;
+            }
+            return value;
+          };
+          Modal.info({
+            title: record.title + '[' + record.uuid + ']',
+            content: h(
+              JsonPreview,
+              {
+                data: getValType(),
+              },
+              {},
+            ),
+          });
+        }
       })
       .finally(() => {
         setLoading(false);
