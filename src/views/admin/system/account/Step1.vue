@@ -47,7 +47,7 @@
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
-  import { buildUUID } from '/@/utils/uuid';
+  import { checkChars, containSpecialChars, generate } from '/@/utils/passport';
   import { notify } from '/@/api/api';
   import { encryptByMd5 } from '/@/utils/cipher';
 
@@ -199,13 +199,32 @@
           // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入密码');
             }
-            if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
-              /* eslint-disable-next-line */
-              return Promise.reject('密码为6-20个字母加数字组成');
+            // if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
+            //   /* eslint-disable-next-line */
+            //   return Promise.reject('密码为6-20个字母加数字组成');
+            // }
+
+            if (value.length < 8 || value.length > 20) {
+              return Promise.reject('密码为8-20个字母、数字、特殊字符组成');
             }
+            if (!value.match(/[A-Z]/)) {
+              return Promise.reject('密码必须包含大写字母');
+            }
+            if (!value.match(/[a-z]/)) {
+              return Promise.reject('密码必须包含小写字母');
+            }
+            if (!value.match(/[0-9]/)) {
+              return Promise.reject('密码必须包含数字');
+            }
+            if (!containSpecialChars(value)) {
+              return Promise.reject('密码必须包含特殊字符');
+            }
+            if (!checkChars(value)) {
+              return Promise.reject('密码由大写字母、小写字母、数字、特殊字符组成');
+            }
+
             return Promise.resolve();
           },
           trigger: 'change',
@@ -306,7 +325,7 @@
     if (!model[field]) {
       // createMessage.warning('请输入要拷贝的内容！');
       // return;
-      model[field] = buildUUID().slice(4, 16);
+      model[field] = generate(12);
     }
     clipboardRef.value = model[field];
     if (unref(copiedRef)) {
@@ -316,7 +335,7 @@
 
   // 强制生成密码并复制
   function handleClick() {
-    let pwd = buildUUID().slice(4, 16);
+    let pwd = generate(12);
     setFieldsValue({
       password: pwd,
     });

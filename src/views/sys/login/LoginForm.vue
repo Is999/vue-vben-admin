@@ -74,6 +74,7 @@
   import { encryptByMd5 } from '/@/utils/cipher';
   import { buildSecretVerifyAccount } from '/@/api/sys/user';
   import { useGlobSetting } from '/@/hooks/setting/index';
+  import { checkChars, containSpecialChars } from '@/utils/passport';
 
   const { t } = useI18n();
   const { notification, createErrorModal, createMessage, createConfirm } = useMessage();
@@ -147,9 +148,27 @@
               /* eslint-disable-next-line */
               return Promise.reject(t('sys.login.passwordPlaceholder'));
             }
-            if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
-              /* eslint-disable-next-line */
-              return Promise.reject('密码为6-20个字母加数字组成');
+            // if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
+            //   /* eslint-disable-next-line */
+            //   return Promise.reject('密码为6-20个字母加数字组成');
+            // }
+            if (value.length < 8 || value.length > 20) {
+              return Promise.reject('密码为8-20个字母、数字、特殊字符组成');
+            }
+            if (!value.match(/[A-Z]/)) {
+              return Promise.reject('密码必须包含大写字母');
+            }
+            if (!value.match(/[a-z]/)) {
+              return Promise.reject('密码必须包含小写字母');
+            }
+            if (!value.match(/[0-9]/)) {
+              return Promise.reject('密码必须包含数字');
+            }
+            if (!containSpecialChars(value)) {
+              return Promise.reject('密码必须包含特殊字符');
+            }
+            if (!checkChars(value)) {
+              return Promise.reject('密码由大写字母、小写字母、数字、特殊字符组成');
             }
             return Promise.resolve();
           },
