@@ -23,19 +23,19 @@ export default defineApplicationConfig({
           rewrite: (path) => path.replace(new RegExp(`^/upload/`), ''),
         },
         '/admin/': {
-          target: 'http://127.0.0.1:9100/',
+          target: 'http://www.admin.cc/',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/admin/`), ''),
         },
         '/admin-api/': {
-          target: 'http://127.0.0.1:9100/admin/api/',
+          target: 'http://www.admin.cc/admin/api/',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/admin-api/`), ''),
         },
         '/images/': {
-          target: 'http://127.0.0.1:9100/images/',
+          target: 'http://www.admin.cc/images/',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/images/`), ''),

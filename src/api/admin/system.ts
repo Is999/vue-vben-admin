@@ -40,7 +40,7 @@ enum Api {
   DeptList = '/system/getDeptList', // 账号部门
 
   // 个人信息
-  UpdaetePassword = '/user/updatePassword', // 修改密码
+  UpdatePassword = '/user/updatePassword', // 修改密码
   UpdateSecureKey = '/user/updateSecureKey', // 修改Google安全码
   //UpdateMine = '/user/update', // 编辑账号
 
@@ -69,18 +69,21 @@ enum Api {
   RolePermissionTreeList = '/role/permission', // 角色权限下拉框
   RoleTreeList = '/role/treeList', // 父级角色下拉框
 
-  // 参数配置
-  ConfigList = '/config/index', // 参数配置列表
-  ConfigAdd = '/config/add', // 新增参数配置
-  ConfigEdit = '/config/edit', // 编辑参数配置
-  ConfigGetCache = '/config/getCache', // 查看参数配置缓存
-  ConfigRenew = '/config/renew', // 刷新参数配置缓存
+  // 字典管理
+  ConfigList = '/config/index', // 字典管理列表
+  ConfigAdd = '/config/add', // 新增字典
+  ConfigEdit = '/config/edit', // 编辑字典
+  ConfigGetCache = '/config/getCache', // 查看字典缓存
+  ConfigRenew = '/config/renew', // 刷新字典缓存
 
   // 缓存管理
   CacheList = '/cache/index', // 缓存列表
   CacheRenew = '/cache/renew', // 刷新缓存
   CacheRenewAll = '/cache/renewAll', // 刷新全部缓存
-  CacheInfo = '/cache/info', // Redis服务器信息
+  CacheServerInfo = '/cache/serverInfo', // 服务器信息
+  // CacheKeyInfo = '/cache/keyInfo', // 缓存key信息
+  // CacheSearchKey = '/cache/searchKey', // 搜索key
+  // CacheSearchKeyInfo = '/cache/searchKeyInfo', // 缓存key信息
 
   // 操作日志
   UserLogList = '/userlog/index', // 日志列表
@@ -148,7 +151,7 @@ export const accountRoles = (id: number) =>
 // 账号管理 修改密码
 export const updaetePassword = (params: updatePasswordParams) =>
   AdminApi.post(
-    { url: Api.UpdaetePassword, params },
+    { url: Api.UpdatePassword, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
@@ -434,7 +437,7 @@ export const cacheRenewAll = () =>
 // 缓存服务信息
 export const cacheInfo = () => {
   return AdminApi.get<RedisInfoModel>(
-    { url: Api.CacheInfo },
+    { url: Api.CacheServerInfo },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
     },

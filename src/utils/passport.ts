@@ -76,7 +76,6 @@ function Random(min, max) {
 export function checkChars(value: string): boolean {
   for (let i = 0; i < value.length; ++i) {
     const char = value.charCodeAt(i);
-    console.log(i, '字符', value[i], char);
     if (char < 33 || char > 126) {
       return false;
     }
@@ -95,7 +94,6 @@ export function containSpecialChars(value: string): boolean {
 
   for (let i = 0; i < value.length; ++i) {
     const char = value.charCodeAt(i);
-    console.log(i, '字符', value[i], char);
     for (const specChar of specialChar) {
       if (specChar.max >= char && char >= specChar.min) {
         return true;

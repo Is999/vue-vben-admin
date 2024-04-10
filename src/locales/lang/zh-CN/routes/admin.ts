@@ -8,7 +8,7 @@ export default {
     menu: '菜单管理',
     role: '角色管理',
     permission: '权限管理',
-    config: '参数配置',
+    config: '字典管理',
     cache: '缓存管理',
     userlog: '操作日志',
   },
