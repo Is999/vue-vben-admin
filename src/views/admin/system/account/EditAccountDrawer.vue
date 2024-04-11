@@ -230,7 +230,7 @@
           // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              return Promise.reject('请输入密码');
+              return Promise.resolve();
             }
             // if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
             //   /* eslint-disable-next-line */
