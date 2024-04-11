@@ -64,7 +64,7 @@ export enum PermissionsEnum {
   // CacheSearchKey = '100049', // 搜索	搜索(按钮, 查看)	cache.searchKey
   // CacheSearchKeyValue = '100050', // 服务器信息	服务器信息(按钮, 查看)	cache.searchKeyInfo
 
-  // UserlogNav = '100052', //	操作日志 操作日志(菜单，页面) userlog.index
+  // UserlogNav = '100052', //	后台日志 后台日志(菜单，页面) userlog.index
   // End 系统管理
 
   // PersonalDir = '100053', // 个人管理 个人信息管理(目录)

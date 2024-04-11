@@ -10,7 +10,7 @@ export default {
     permission: '权限管理',
     config: '字典管理',
     cache: '缓存管理',
-    userlog: '操作日志',
+    userlog: '后台日志',
   },
   personal: {
     moduleName: '个人管理',
