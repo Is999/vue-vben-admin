@@ -44,6 +44,7 @@
   import { PermissionsEnum } from '/@/enums/roleEnum';
   import { notify } from '/@/api/api';
   import { Divider } from 'ant-design-vue';
+  import { useMessage } from '@/hooks/web/useMessage';
 
   const { hasPermission } = usePermission();
 
@@ -225,8 +226,37 @@
         });
       } else {
         // 新增
-        await permissionAdd(values).then((res) => {
-          notify(res, true);
+        await permissionAdd(values).then(async (res) => {
+          // uuid 特殊的处理
+          if (res.success === false && res.code === 100034) {
+            // notify(res, false);
+            const { createMessage } = useMessage();
+
+            createMessage.loading(
+              '【' + res.code + '】' + res.message + ', 正在重新为你加载权限标识......',
+            );
+
+            // uuid 处理
+            maxUuid.value = await getPermissionMaxUuid()
+              .then((result) => {
+                // console.log('@@@ result: ', result);
+                return result.uuid.toString();
+              })
+              .catch(() => Math.floor(Math.random() * 100000).toString());
+
+            // updateSchema
+            updateSchema([
+              {
+                field: 'uuid',
+                defaultValue: maxUuid,
+                dynamicDisabled: isUpdate.value,
+              },
+            ]);
+            //throw new Error(res.message);
+            return Promise.reject(res.message);
+          } else {
+            notify(res, true);
+          }
         });
       }
 
