@@ -75,7 +75,7 @@
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { notify } from '/@/api/api';
   import { encryptByMd5 } from '/@/utils/cipher';
-  import { useGlobSetting } from '/@/hooks/setting/index';
+  import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars, generate } from '@/utils/passport';
 
   const emit = defineEmits(['success', 'register']);
@@ -329,11 +329,11 @@
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     setDrawerProps({ confirmLoading: false }); // loading
-    resetFields(); // 重置
+    await resetFields(); // 重置
     rowId.value = data.record.id;
     buildSecretKeyUrl.value = '';
     // console.log('@@@data', data.record);
-    setFieldsValue({
+    await setFieldsValue({
       ...data.record,
       password: '', // 密码置空处理
       secure_key: '', // 密码置空处理

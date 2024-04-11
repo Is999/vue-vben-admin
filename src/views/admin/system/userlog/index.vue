@@ -1,7 +1,7 @@
 <template>
   <VxeBasicTable v-bind="gridOptions">
     <template #action="{ row }">
-      <TableAction outside :actions="createActions(row)" />
+      <TableAction :actions="createActions(row)" />
     </template>
   </VxeBasicTable>
 </template>

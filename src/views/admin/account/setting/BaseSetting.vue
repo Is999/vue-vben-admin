@@ -275,8 +275,8 @@
 
   onMounted(async () => {
     userinfo.value = (await userStore.getMineAction()) as UserInfo;
-    if (userinfo.value != null) {
-      setFieldsValue(userinfo.value);
+    if (userinfo.value) {
+      await setFieldsValue(userinfo.value);
     }
   });
 

@@ -75,7 +75,7 @@
       const values = await validate();
       values.roles = values.roles.checked ?? values.roles;
       values.id = props.id;
-      setProps({
+      await setProps({
         submitButtonOptions: {
           loading: true,
         },

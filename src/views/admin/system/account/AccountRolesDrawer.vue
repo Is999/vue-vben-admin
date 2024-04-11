@@ -60,7 +60,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true });
-      resetFields();
+      await resetFields();
       isUpdate.value = data?.isUpdate; // 编辑
 
       const roles = await accountRoles(data?.record?.id || 0);
@@ -74,7 +74,7 @@
       title.value = isUpdate.value
         ? `编辑账号 ` + data?.record?.name + ` 角色信息`
         : `账号 ` + data?.record?.name + ` 角色信息`;
-      setFieldsValue({
+      await setFieldsValue({
         roles: roles,
       });
     } finally {

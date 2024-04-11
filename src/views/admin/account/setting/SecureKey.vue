@@ -74,7 +74,7 @@
           trigger: 'change',
         },
       ],
-      colProps: { lg: 24, md: 24 },
+      colProps: { style: { width: '290px' } },
     },
   ];
 
@@ -83,13 +83,12 @@
     labelWidth: 0,
     showActionButtonGroup: false,
     schemas: formSchema,
-    baseColProps: { lg: 24, md: 24 },
   });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async () => {
     try {
       setDrawerProps({ loading: true }); // loading
-      resetFields(); // 重置
+      await resetFields(); // 重置
       await userStore
         .getMineAction()
         .then((userinfo) => {

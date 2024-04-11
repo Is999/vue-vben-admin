@@ -264,7 +264,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true }); // loading
-      resetFields(); // 重置值
+      await resetFields(); // 重置值
 
       isUpdate.value = data?.isUpdate; // 编辑
       // console.log('@@@@ update', isUpdate.value, data?.isUpdate, data.record);
@@ -280,7 +280,7 @@
       if (isUpdate.value) {
         // console.log('@@@@ update 开始 重新设置值');
         rowId.value = data.record.id;
-        setFieldsValue({
+        await setFieldsValue({
           ...data.record,
         });
         // console.log('@@@@ update 结束 重新设置值');
@@ -306,7 +306,8 @@
             values.value = JSON.stringify(obj); // json
             values.example = JSON.stringify(obj2); // json
           } else {
-            throw new Error('数据类型错误');
+            //throw new Error('数据类型错误');
+            return Promise.reject('数据类型错误');
           }
         }
       } catch (e) {

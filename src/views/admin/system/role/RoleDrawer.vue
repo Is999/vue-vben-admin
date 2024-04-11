@@ -130,7 +130,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true });
-      resetFields();
+      await resetFields();
       isUpdate.value = !!data?.isUpdate;
 
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
@@ -147,7 +147,7 @@
       }
 
       // updateSchema
-      updateSchema([
+      await updateSchema([
         {
           field: 'pid',
           dynamicDisabled: true,

@@ -151,7 +151,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async () => {
     try {
       setDrawerProps({ loading: true }); // loading
-      resetFields(); // 重置
+      await resetFields(); // 重置
     } finally {
       setDrawerProps({ loading: false }); // loading
     }

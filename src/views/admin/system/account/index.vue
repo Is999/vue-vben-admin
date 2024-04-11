@@ -37,7 +37,6 @@
 </template>
 <script setup lang="ts">
   import { h } from 'vue';
-
   import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '/@/components/Table';
   import { getAccountList, getRoleTreeList, setAccountStatus } from '/@/api/admin/system';
   import AccountDrawer from './AccountDrawer.vue';

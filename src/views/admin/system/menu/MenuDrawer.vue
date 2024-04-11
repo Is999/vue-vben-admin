@@ -240,7 +240,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true }); // loading
-      resetFields(); // 重置
+      await resetFields(); // 重置
       isUpdate.value = !!data?.isUpdate; // 编辑
 
       // 上级菜单下拉框
@@ -267,7 +267,7 @@
       });
 
       // updateSchema
-      updateSchema([
+      await updateSchema([
         {
           field: 'pid',
           componentProps: { treeData: parentTreeData },
@@ -281,12 +281,12 @@
       // 编辑设置值
       if (unref(isUpdate)) {
         rowId.value = data.record.id;
-        setFieldsValue({
+        await setFieldsValue({
           ...data.record,
         });
       } else {
         if (data?.record?.id) {
-          setFieldsValue({
+          await setFieldsValue({
             pid: data?.record?.id,
           });
         }

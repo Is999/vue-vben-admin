@@ -157,7 +157,7 @@
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true });
-      resetFields();
+      await resetFields();
       isUpdate.value = !!data?.isUpdate;
 
       // pid 上级菜单下拉框
@@ -178,7 +178,7 @@
             .catch(() => Math.floor(Math.random() * 100000).toString());
 
       // updateSchema
-      updateSchema([
+      await updateSchema([
         {
           field: 'pid',
           dynamicDisabled: isUpdate.value,
@@ -194,12 +194,12 @@
       // 编辑设置值
       if (unref(isUpdate)) {
         rowId.value = data.record.id;
-        setFieldsValue({
+        await setFieldsValue({
           ...data.record,
         });
       } else {
         if (data?.record?.id) {
-          setFieldsValue({
+          await setFieldsValue({
             pid: data?.record?.id,
           });
         }
@@ -245,7 +245,7 @@
               .catch(() => Math.floor(Math.random() * 100000).toString());
 
             // updateSchema
-            updateSchema([
+            await updateSchema([
               {
                 field: 'uuid',
                 defaultValue: maxUuid,

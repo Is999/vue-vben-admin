@@ -101,8 +101,8 @@
       width: 200,
       resizable: true,
       customRender: ({ record }) => {
-        let content = '';
-        let color = 'default';
+        let content: string;
+        let color: string;
         switch (record.type) {
           case 1:
             color = 'default';

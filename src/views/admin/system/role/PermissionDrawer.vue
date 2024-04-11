@@ -75,7 +75,7 @@
   const [registerDrawer, { setDrawerProps }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true });
-      resetFields();
+      await resetFields();
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
       treeData.value = (await getRolePermissionTreeList(
         data?.record?.id || 0,
@@ -92,7 +92,7 @@
 
       rowId.value = data?.record.title; // 设置标题
 
-      setFieldsValue({
+      await setFieldsValue({
         ...data.record,
         permissions_id: permissionsId,
       });

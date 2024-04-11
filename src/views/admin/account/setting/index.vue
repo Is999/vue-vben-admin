@@ -11,49 +11,36 @@
     </div>
   </ScrollContainer>
 </template>
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { Tabs } from 'ant-design-vue';
-  import BaseSetting from './BaseSetting.vue';
-  import SecureSetting from './SecureSetting.vue';
-  import AccountBind from './AccountBind.vue';
-  import MsgNotify from './MsgNotify.vue';
 
-  export default defineComponent({
-    components: {
-      TabPane: Tabs.TabPane,
-      BaseSetting,
-      SecureSetting,
-      AccountBind,
-      MsgNotify,
-    },
-  });
-</script>
 <script setup lang="ts">
   import { ScrollContainer } from '/@/components/Container/index';
-
+  import { Tabs, TabPane } from 'ant-design-vue';
+  import BaseSetting from './BaseSetting.vue';
+  import SecureSetting from './SecureSetting.vue';
+  // import AccountBind from './AccountBind.vue';
+  import MsgNotify from './MsgNotify.vue';
   // tab的list
   const settingList = [
     {
       key: '1',
       name: '基本设置',
-      component: 'BaseSetting',
+      component: BaseSetting,
     },
     {
       key: '2',
       name: '安全设置',
-      component: 'SecureSetting',
+      component: SecureSetting,
     },
     // {
     //   key: '3',
     //   name: '账号绑定',
-    //   component: 'AccountBind',
+    //   component: AccountBind,
     // },
-    // {
-    //   key: '4',
-    //   name: '新消息通知',
-    //   component: 'MsgNotify',
-    // },
+    {
+      key: '4',
+      name: '新消息通知',
+      component: MsgNotify,
+    },
   ];
 
   const prefixCls = 'account-setting';
