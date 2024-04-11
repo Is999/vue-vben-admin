@@ -70,7 +70,7 @@
   import { accountBuildSecretKeyUrl, accountEdit } from '/@/api/admin/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { Tooltip, Divider, InputPassword, Button } from 'ant-design-vue';
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { notify } from '/@/api/api';

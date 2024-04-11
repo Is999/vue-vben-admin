@@ -24,7 +24,7 @@
   import { BasicTree, TreeItem } from '/@/components/Tree';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
 
   const { hasPermission } = usePermission();

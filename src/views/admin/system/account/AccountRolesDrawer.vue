@@ -32,7 +32,7 @@
   import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { BasicTree, TreeItem } from '/@/components/Tree';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
 
   const { hasPermission } = usePermission();

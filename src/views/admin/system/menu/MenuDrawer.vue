@@ -55,7 +55,7 @@
   } from '/@/api/admin/system';
   import { TreeSelect } from '/@/api/admin/model/systemModel';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { cloneDeep } from 'lodash-es';
   import { useGo } from '/@/hooks/web/usePage';
   import { Tooltip, Divider, InputNumber } from 'ant-design-vue';

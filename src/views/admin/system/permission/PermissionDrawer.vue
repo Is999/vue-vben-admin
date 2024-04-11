@@ -41,7 +41,7 @@
   } from '/@/api/admin/system';
   import { TreeSelect } from '/@/api/admin/model/systemModel';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
   import { Divider } from 'ant-design-vue';
   import { useMessage } from '@/hooks/web/useMessage';

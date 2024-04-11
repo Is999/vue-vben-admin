@@ -45,7 +45,7 @@
   import { accountAdd } from '/@/api/admin/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { checkChars, containSpecialChars, generate } from '/@/utils/passport';
   import { notify } from '/@/api/api';

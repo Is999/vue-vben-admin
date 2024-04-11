@@ -43,7 +43,7 @@
   import EditAccountDrawer from './EditAccountDrawer.vue';
   import AccountRolesDrawer from './AccountRolesDrawer.vue';
   import { Switch, Button } from 'ant-design-vue';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { useDrawer } from '/@/components/Drawer';
   import { notify } from '/@/api/api';

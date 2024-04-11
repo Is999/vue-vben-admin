@@ -47,7 +47,7 @@
   import { configAdd, configEdit } from '/@/api/admin/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { CodeEditor, MODE } from '/@/components/CodeEditor';
   import { notify } from '/@/api/api';
   import { Divider } from 'ant-design-vue';

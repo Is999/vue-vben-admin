@@ -40,7 +40,7 @@
   } from '/@/api/admin/system';
   import { TreeSelect } from '/@/api/admin/model/systemModel';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { BasicTree, TreeActionItem, TreeItem } from '/@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
   import { notify } from '/@/api/api';

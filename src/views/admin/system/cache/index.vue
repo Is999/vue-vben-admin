@@ -5,7 +5,7 @@
         <a-button
           color="success"
           @click="handleInfo"
-          v-if="hasPermission(PermissionsEnum.CacheGetInfo, false)"
+          v-if="hasPermission(PermissionsEnum.CacheServerInfo, false)"
           >服务器信息
         </a-button>
         <Button
@@ -42,7 +42,7 @@
   import { h } from 'vue';
   import { BasicTable, useTable, TableAction, BasicColumn } from '/@/components/Table';
   import { cacheRenew, cacheRenewAll, getCacheList } from '/@/api/admin/system';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { useDrawer } from '/@/components/Drawer';
   import InfoDrawer from './info.vue';

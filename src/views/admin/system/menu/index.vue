@@ -46,7 +46,7 @@
   import { useDrawer } from '/@/components/Drawer';
   import MenuDrawer from './MenuDrawer.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { Switch, Tag, Button } from 'ant-design-vue';
   import Icon from '/@/components/Icon/Icon.vue';
   import { notify } from '/@/api/api';

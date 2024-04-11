@@ -50,7 +50,7 @@
   import RoleDrawer from './RoleDrawer.vue';
   import PermissionDrawer from './PermissionDrawer.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { PermissionListItem } from '/@/api/admin/model/systemModel';
   import { Modal, Switch } from 'ant-design-vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';

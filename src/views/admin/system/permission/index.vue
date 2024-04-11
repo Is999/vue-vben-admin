@@ -55,7 +55,7 @@
   import { useDrawer } from '/@/components/Drawer';
   import PermissionDrawer from './PermissionDrawer.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/roleEnum';
+  import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { PermissionListItem } from '/@/api/admin/model/systemModel';
   import { Tag, Button } from 'ant-design-vue';
   import { notify } from '/@/api/api';
