@@ -19,6 +19,7 @@
           checkable
           search
           defaultExpandAll
+          :defaultExpandLevel="5"
           checkStrictly
         />
       </template>

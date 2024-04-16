@@ -343,7 +343,7 @@ export const roleDel = (id: number) =>
 // 角色管理 新增角色|编辑角色 权限标识下拉框
 export const getRolePermissionTreeList = (id: number, isPid: boolean) => {
   return AdminApi.get<TreeItem[]>(
-    { url: Api.RolePermissionTreeList + '/' + id, params: { id, isPid } },
+    { url: Api.RolePermissionTreeList + '/' + id + '/' + (isPid ? 'y' : 'n') },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
     },

@@ -10,6 +10,7 @@
           checkable
           search
           title="账号角色"
+          :defaultExpandLevel="5"
           defaultExpandAll
           checkStrictly
         />

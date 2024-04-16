@@ -104,8 +104,7 @@
         placeholder: '请选择权限标识, 不能和其它菜单重复哦',
         fieldNames: {
           label: 'title',
-          key: 'id',
-          value: 'id',
+          value: 'value',
         },
         getPopupContainer: () => document.body,
       },
@@ -134,8 +133,7 @@
         placeholder: '请选择上级菜单',
         fieldNames: {
           label: 'title',
-          key: 'id',
-          value: 'id',
+          value: 'value',
         },
         getPopupContainer: () => document.body,
       },
@@ -245,7 +243,7 @@
 
       // 上级菜单下拉框
       if (unref(parentTreeData).length === 0 || isGetParentTreeData.value) {
-        parentTreeData.value = [{ id: 0, title: '/根目录' }] as TreeSelect[];
+        parentTreeData.value = [{ value: 0, title: '/根目录' }] as TreeSelect[];
         parentTreeData.value[0].children = await getMenuTreeList();
         isGetParentTreeData.value = false; // 数据未变动, 不在请请求接口
       }

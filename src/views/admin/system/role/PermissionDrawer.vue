@@ -16,12 +16,11 @@
           :fieldNames="{ key: 'id', title: 'title' }"
           checkable
           search
-          toolbar
           title="角色权限"
           :helpMessage="['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑']"
           :actionList="actionList"
           defaultExpandAll
-          checkStrictly
+          toolbar
         />
       </template>
     </BasicForm>
@@ -56,8 +55,22 @@
 
   const actionList: TreeActionItem[] = [
     {
-      render: (record) =>
-        h(Tooltip, { title: `[${record.uuid}]${record.title}：` + record.describe }, () => '详情'),
+      render: (record) => {
+        let content = `标识：${record.uuid} <br/>名称：${record.title} <br/>`;
+        if (isNaN(record.module)) {
+          content += `API路由：${record.module} <br/>`;
+        }
+        content += `描述：${record.describe}`;
+        return h(
+          Tooltip,
+          {
+            title: h('div', {
+              innerHTML: content,
+            }),
+          },
+          () => '详情',
+        );
+      },
     },
   ];
 

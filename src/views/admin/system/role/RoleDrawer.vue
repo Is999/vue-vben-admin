@@ -186,8 +186,22 @@
 
   const actionList: TreeActionItem[] = [
     {
-      render: (record) =>
-        h(Tooltip, { title: `[${record.uuid}]${record.title}：` + record.describe }, () => '详情'),
+      render: (record) => {
+        let content = `标识：${record.uuid} <br/>名称：${record.title} <br/>`;
+        if (isNaN(record.module)) {
+          content += `API路由：${record.module} <br/>`;
+        }
+        content += `描述：${record.describe}`;
+        return h(
+          Tooltip,
+          {
+            title: h('div', {
+              innerHTML: content,
+            }),
+          },
+          () => '详情',
+        );
+      },
     },
   ];
 

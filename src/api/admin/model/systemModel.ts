@@ -70,9 +70,8 @@ export interface updatePasswordParams {
 
 // 树下拉框
 export interface TreeSelect extends TreeItem {
-  id: number;
-  title: string; // 菜单名
-  children?: TreeSelect[];
+  value?: string | number;
+  id?: number;
 }
 
 // 菜单列表请求参数

@@ -249,8 +249,8 @@
     parseInfo(searchValue.trim(), unref(result.value) as RedisInfoModel);
   };
 
-  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
-    console.log(data);
+  const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async () => {
+    // console.log(data);
     setDrawerProps({ loading: true }); // loading
     getInfo();
     start(); // 开启定时器
