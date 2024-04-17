@@ -15,11 +15,11 @@
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
           checkable
-          search
+          :search="true"
           title="角色权限"
           :helpMessage="['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑']"
           :actionList="actionList"
-          defaultExpandAll
+          :defaultExpandAll="true"
           toolbar
         />
       </template>

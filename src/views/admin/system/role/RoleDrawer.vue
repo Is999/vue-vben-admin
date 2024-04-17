@@ -18,11 +18,11 @@
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
           checkable
-          search
-          toolbar
+          :search="true"
           :defaultExpandLevel="5"
           checkStrictly
           :actionList="actionList"
+          toolbar
         />
       </template>
     </BasicForm>
@@ -164,7 +164,7 @@
           : [];
 
         rowId.value = data?.record.id;
-        setFieldsValue({
+        await setFieldsValue({
           ...data.record,
           permissions_id: permissionsId,
         });
@@ -174,7 +174,7 @@
               return parseInt(item, 10);
             })
           : [];
-        setFieldsValue({
+        await setFieldsValue({
           pid: data?.record?.id,
           permissions_id: permissionsId,
         });

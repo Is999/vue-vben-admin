@@ -18,8 +18,7 @@
           :fieldNames="{ key: 'id', title: 'title' }"
           checkable
           search
-          defaultExpandAll
-          :defaultExpandLevel="5"
+          :defaultExpandAll="true"
           checkStrictly
         />
       </template>
