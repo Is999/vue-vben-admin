@@ -8,7 +8,7 @@ enum Api {
   Logout = '/user/logout',
   Mine = '/user/mine',
   Permissions = '/user/permissions',
-  CheckPassword = '/user/checkPassword',
+  CheckSecure = '/user/checkSecure',
 }
 
 // 登录
@@ -86,11 +86,11 @@ export function userPermissions() {
 }
 
 // 验证密码(锁屏密码)
-export function checkPassword(password: string) {
+export function checkSecure(secure: string) {
   return AdminApi.post<any>(
     {
-      url: Api.CheckPassword,
-      params: { password },
+      url: Api.CheckSecure,
+      params: { secure },
     },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息

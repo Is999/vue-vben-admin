@@ -22,12 +22,16 @@
                 tooltip: '编辑角色',
                 onClick: handleEdit.bind(null, record),
                 disabled: !hasPermission(PermissionsEnum.RoleEdit, false),
+                ifShow: record.id.toString() !== RoleEnum.SUPER && hasRoles.bind(null, record),
               },
               {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 tooltip: '删除角色',
-                ifShow: hasPermission(PermissionsEnum.RoleDel, false),
+                ifShow:
+                  hasPermission(PermissionsEnum.RoleDel, false) &&
+                  record.id.toString() !== RoleEnum.SUPER &&
+                  hasRoles.bind(null, record),
                 popConfirm: {
                   title: '是否确认删除',
                   confirm: handleDelete.bind(null, record),
@@ -55,6 +59,7 @@
   import { Modal, Switch } from 'ant-design-vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
   import { notify } from '/@/api/api';
+  import { RoleEnum } from '@/enums/roleEnum';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const [register1, { openDrawer: openDrawer1 }] = useDrawer();
@@ -91,7 +96,9 @@
           checkedChildren: '已启用',
           unCheckedChildren: '已禁用',
           loading: record.pendingStatus,
-          disabled: !hasPermission(PermissionsEnum.RoleStatus, false),
+          disabled:
+            record.id.toString() === RoleEnum.SUPER ||
+            !(hasPermission(PermissionsEnum.RoleStatus, false) && hasRoles(record)),
           onChange(checked: boolean) {
             // 发送请求
             const request = () => {

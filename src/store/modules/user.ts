@@ -15,13 +15,12 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { h } from 'vue';
 import {
-  checkPassword as checkPasswordApi,
+  checkSecure,
   login as loginApi,
   logout as doLogout,
   mine,
   userPermissions,
 } from '/@/api/sys/user';
-import { encryptByMd5 } from '/@/utils/cipher';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -247,7 +246,7 @@ export const useUserStore = defineStore({
     async checkPassword(password = ''): Promise<boolean> {
       if (this.getToken || password) {
         try {
-          const { isOk } = await checkPasswordApi(encryptByMd5(password));
+          const { isOk } = await checkSecure(password);
           return isOk as boolean;
         } catch {
           return false;
