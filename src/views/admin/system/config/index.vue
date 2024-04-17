@@ -66,14 +66,14 @@
       label: '名称',
       labelWidth: 60,
       component: 'Input',
-      colProps: { span: 5 },
+      colProps: { span: 6 },
     },
     {
       field: 'uuid',
       label: '唯一标识',
       labelWidth: 100,
       component: 'Input',
-      colProps: { span: 5 },
+      colProps: { span: 6 },
     },
   ];
 

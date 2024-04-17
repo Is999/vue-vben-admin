@@ -58,6 +58,40 @@
   // 搜索框
   const searchFormSchema: FormSchema[] = [
     {
+      field: 'title',
+      label: '名称',
+      labelWidth: 0,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'permissions_uuid',
+      label: '标识',
+      labelWidth: 50,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'title_lang',
+      label: '语言',
+      labelWidth: 50,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'status',
+      label: '状态',
+      labelWidth: 50,
+      component: 'Select',
+      colProps: { span: 4 },
+      componentProps: {
+        options: [
+          { label: '显示', value: 1 },
+          { label: '隐藏', value: 0 },
+        ],
+      },
+    },
+    {
       field: 'cache',
       label: '',
       labelWidth: 0,
@@ -75,41 +109,7 @@
           },
         };
       },
-      colProps: { span: 2 },
-    },
-    {
-      field: 'title',
-      label: '名称',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'permissions_uuid',
-      label: '标识',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'title_lang',
-      label: '语言',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 5 },
-    },
-    {
-      field: 'status',
-      label: '状态',
-      labelWidth: 60,
-      component: 'Select',
-      colProps: { span: 2 },
-      componentProps: {
-        options: [
-          { label: '显示', value: 1 },
-          { label: '隐藏', value: 0 },
-        ],
-      },
+      colProps: { span: 4, push: 1 },
     },
   ];
 

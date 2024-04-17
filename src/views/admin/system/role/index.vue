@@ -208,6 +208,26 @@
   // 搜索框
   const searchFormSchema: FormSchema[] = [
     {
+      field: 'title',
+      label: '名称',
+      labelWidth: 60,
+      component: 'Input',
+      colProps: { span: 6 },
+    },
+    {
+      field: 'status',
+      label: '状态',
+      labelWidth: 60,
+      component: 'Select',
+      componentProps: {
+        options: [
+          { label: '启用', value: 1 },
+          { label: '停用', value: 0 },
+        ],
+      },
+      colProps: { span: 6 },
+    },
+    {
       field: 'cache',
       label: '',
       labelWidth: 0,
@@ -225,27 +245,7 @@
           },
         };
       },
-      colProps: { span: 2 },
-    },
-    {
-      field: 'title',
-      label: '名称',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'status',
-      label: '状态',
-      labelWidth: 60,
-      component: 'Select',
-      componentProps: {
-        options: [
-          { label: '启用', value: 1 },
-          { label: '停用', value: 0 },
-        ],
-      },
-      colProps: { span: 3 },
+      colProps: { span: 4, push: 1 },
     },
   ];
 

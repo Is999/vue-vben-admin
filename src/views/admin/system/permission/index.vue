@@ -185,6 +185,48 @@
   // 搜索框
   const searchFormSchema: FormSchema[] = [
     {
+      field: 'title',
+      label: '名称',
+      labelWidth: 60,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'uuid',
+      label: '标识',
+      labelWidth: 60,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'module',
+      label: '模型',
+      labelWidth: 60,
+      component: 'Input',
+      colProps: { span: 5 },
+    },
+    {
+      field: 'type',
+      label: '类型',
+      labelWidth: 60,
+      component: 'Select',
+      colProps: { span: 5 },
+      componentProps: {
+        mode: 'multiple',
+        options: [
+          { label: '目录', value: 4 },
+          { label: '菜单', value: 5 },
+          { label: '按钮', value: 7 },
+          { label: '新增', value: 1 },
+          { label: '修改', value: 2 },
+          { label: '删除', value: 3 },
+          { label: '查看', value: 0 },
+          { label: '页面', value: 6 },
+          { label: '其它', value: 8 },
+        ],
+      },
+    },
+    {
       field: 'cache',
       label: '',
       labelWidth: 0,
@@ -202,49 +244,7 @@
           },
         };
       },
-      colProps: { span: 2 },
-    },
-    {
-      field: 'title',
-      label: '名称',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'uuid',
-      label: '标识',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'module',
-      label: '模型',
-      labelWidth: 60,
-      component: 'Input',
-      colProps: { span: 4 },
-    },
-    {
-      field: 'type',
-      label: '类型',
-      labelWidth: 60,
-      component: 'Select',
-      colProps: { span: 4 },
-      componentProps: {
-        mode: 'multiple',
-        options: [
-          { label: '目录', value: 4 },
-          { label: '菜单', value: 5 },
-          { label: '按钮', value: 7 },
-          { label: '新增', value: 1 },
-          { label: '修改', value: 2 },
-          { label: '删除', value: 3 },
-          { label: '查看', value: 0 },
-          { label: '页面', value: 6 },
-          { label: '其它', value: 8 },
-        ],
-      },
+      colProps: { span: 4, push: 1 },
     },
   ];
 

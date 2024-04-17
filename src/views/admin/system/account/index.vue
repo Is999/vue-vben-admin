@@ -57,14 +57,14 @@
       label: '账号',
       labelWidth: 60,
       component: 'Input',
-      colProps: { span: 5 },
+      colProps: { span: 6 },
     },
     {
       field: 'email',
       label: '邮箱',
       labelWidth: 60,
       component: 'Input',
-      colProps: { span: 5 },
+      colProps: { span: 6 },
     },
     {
       field: 'role',
@@ -85,14 +85,14 @@
         treeNodeFilterProp: 'title',
         treeDefaultExpandAll: true,
       },
-      colProps: { span: 5 },
+      colProps: { span: 6 },
     },
     {
       field: 'status',
       label: '状态',
       labelWidth: 60,
       component: 'Select',
-      colProps: { span: 6 },
+      colProps: { span: 5 },
       componentProps: {
         options: [
           { label: '启用', value: 1 },
