@@ -77,8 +77,9 @@
   // Checkbox 禁用
   function recursion(arr: TreeItem[]) {
     arr.forEach((value) => {
-      value.disableCheckbox = true;
-      value.selectable = false;
+      value.disableCheckbox = !value.checked;
+      value.selectable = !value.selectable;
+      value.disabled = value.disabled || value.selectable;
       if (value.children) {
         recursion(value.children);
       }
