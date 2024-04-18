@@ -110,6 +110,8 @@
         ...data.record,
         permissions_id: permissionsId,
       });
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false });
     }

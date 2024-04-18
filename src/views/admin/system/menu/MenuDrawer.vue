@@ -289,6 +289,8 @@
           });
         }
       }
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false }); // loading
     }
@@ -297,7 +299,7 @@
   // 下拉状态
   function recursion(arr: TreeSelect[], id: string | number) {
     for (let value of arr) {
-      if (id.toString() == value.id.toString()) {
+      if (id.toString() == value.id?.toString()) {
         value.disabled = false;
         return false;
       }
@@ -328,10 +330,13 @@
           notify(res, true);
         });
       }
+
       closeDrawer();
       emit('success');
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
+    } catch (e) {
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

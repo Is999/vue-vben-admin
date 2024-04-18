@@ -175,7 +175,11 @@
               // console.log('@@@ result: ', result);
               return result.uuid.toString();
             })
-            .catch(() => Math.floor(Math.random() * 100000).toString());
+            .catch((e) => {
+              console.log('@@@ getPermissionMaxUuid', e);
+              return Math.floor(Math.random() * 100000).toString();
+            })
+            .finally(() => {});
 
       // updateSchema
       await updateSchema([
@@ -204,6 +208,8 @@
           });
         }
       }
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false });
     }
@@ -242,7 +248,11 @@
                 // console.log('@@@ result: ', result);
                 return result.uuid.toString();
               })
-              .catch(() => Math.floor(Math.random() * 100000).toString());
+              .catch((e) => {
+                console.log('@@@ getPermissionMaxUuid', e);
+                return Math.floor(Math.random() * 100000).toString();
+              })
+              .finally(() => {});
 
             // updateSchema
             await updateSchema([
@@ -264,6 +274,8 @@
       emit('success');
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
+    } catch (e) {
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

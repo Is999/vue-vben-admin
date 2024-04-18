@@ -179,6 +179,8 @@
           permissions_id: permissionsId,
         });
       }
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false });
     }
@@ -233,7 +235,7 @@
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
     } catch (e) {
-      console.log('@@@@@@eeeeeee', e);
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

@@ -236,12 +236,19 @@
 
   // 请求数据
   function getInfo() {
-    cacheInfo().then((res) => {
-      result.value = res;
-      parseInfo(searchValue.value.trim(), res);
-      parseDBs(res);
-      parseTopData(res);
-    });
+    cacheInfo()
+      .then((res) => {
+        result.value = res;
+        parseInfo(searchValue.value.trim(), res);
+        parseDBs(res);
+        parseTopData(res);
+      })
+      .catch((e) => {
+        console.log('@@@ cacheRenew', e);
+      })
+      .finally(() => {
+        //setLoading(false);
+      });
   }
 
   // 搜索

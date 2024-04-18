@@ -175,6 +175,9 @@
                 notify(res, true);
                 record.status = checked ? 1 : 0;
               })
+              .catch((e) => {
+                console.log('@@@ setAccountStatus', e);
+              })
               .finally(() => {
                 record.pendingStatus = false;
               });

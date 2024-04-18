@@ -170,6 +170,9 @@
           .then((res) => {
             notify(res, true);
           })
+          .catch((e) => {
+            console.log('@@@ cacheRenewAll', e);
+          })
           .finally(() => {
             setLoading(false);
           });
@@ -190,6 +193,9 @@
     cacheRenew({ key: record.key, type: record.type })
       .then((res) => {
         notify(res, true);
+      })
+      .catch((e) => {
+        console.log('@@@ cacheRenew', e);
       })
       .finally(() => {
         setLoading(false);

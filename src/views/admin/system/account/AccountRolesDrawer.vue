@@ -77,6 +77,8 @@
       await setFieldsValue({
         roles: roles,
       });
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false });
     }
@@ -90,12 +92,19 @@
       values.roles = values.roles.checked ?? values.roles;
       values.id = rowId.value;
       // 发起请求
-      await accountEditRoles(rowId.value, values).then((res) => {
-        notify(res, true);
-      });
+      await accountEditRoles(rowId.value, values)
+        .then((res) => {
+          notify(res, true);
+        })
+        .catch((e) => {
+          console.log('@@@ accountBuildSecretKeyUrl', e);
+        })
+        .finally(() => {});
 
       // 关闭
       closeDrawer();
+    } catch (e) {
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

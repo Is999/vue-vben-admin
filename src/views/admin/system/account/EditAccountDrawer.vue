@@ -358,14 +358,21 @@
       // console.log('@@@提交数据', values);
 
       // 发起请求
-      await accountEdit(rowId.value, values).then((res) => {
-        notify(res, true);
-      });
+      await accountEdit(rowId.value, values)
+        .then((res) => {
+          notify(res, true);
+        })
+        .catch((e) => {
+          console.log('@@@ accountEdit', e);
+        })
+        .finally(() => {});
 
       closeDrawer();
       emit('success');
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
+    } catch (e) {
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ confirmLoading: false });
     }
@@ -406,24 +413,34 @@
       }
 
       // 发起请求
-      await accountBuildSecretKeyUrl(rowId.value).then((data) => {
-        if (data.build_secure_key_url) {
-          // 获取配置
-          const globSetting = useGlobSetting();
-          let currentDomain = window.location.origin;
-          buildSecretKeyUrl.value = currentDomain + globSetting.apiUrl + data.build_secure_key_url;
-          clipboardRef.value = buildSecretKeyUrl.value;
+      await accountBuildSecretKeyUrl(rowId.value)
+        .then((data) => {
+          if (data.build_secure_key_url) {
+            // 获取配置
+            const globSetting = useGlobSetting();
+            let currentDomain = window.location.origin;
 
-          const node = document.querySelector('#buildSecretKeyUrl');
-          node?.setAttribute('style', 'display:block');
+            buildSecretKeyUrl.value =
+              currentDomain + globSetting.apiUrl + data.build_secure_key_url;
 
-          if (unref(copiedRef)) {
-            createMessage.success('copy success！');
+            clipboardRef.value = buildSecretKeyUrl.value;
+
+            const node = document.querySelector('#buildSecretKeyUrl');
+            node?.setAttribute('style', 'display:block');
+
+            if (unref(copiedRef)) {
+              createMessage.success('copy success！');
+            }
           }
-        }
-      });
+        })
+        .catch((e) => {
+          console.log('@@@ accountBuildSecretKeyUrl', e);
+        })
+        .finally(() => {});
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
+    } catch (e) {
+      console.log('@@@ handleBuildSecretKeyUrl', e);
     } finally {
       setDrawerProps({ confirmLoading: false });
     }

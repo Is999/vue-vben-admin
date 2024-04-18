@@ -97,9 +97,13 @@
             //setFieldsValue(userinfo);
           }
         })
-        .catch(() => {
+        .catch((e) => {
           createMessage.success('加载数据错误！');
+          console.log('@@@ getMineAction', e);
         });
+    } catch (e) {
+      // 错误信息
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false }); // loading
     }
@@ -116,9 +120,9 @@
         notify(res, true);
         closeDrawer();
       });
-    } catch (error) {
+    } catch (e) {
       // 错误信息
-      console.log(error);
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

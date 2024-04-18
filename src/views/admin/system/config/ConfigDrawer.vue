@@ -285,6 +285,8 @@
         });
         // console.log('@@@@ update 结束 重新设置值');
       }
+    } catch (e) {
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false }); // loading
     }
@@ -332,6 +334,8 @@
 
       closeDrawer();
       emit('success');
+    } catch (e) {
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

@@ -152,6 +152,9 @@
     try {
       setDrawerProps({ loading: true }); // loading
       await resetFields(); // 重置
+    } catch (e) {
+      // 错误信息
+      console.log('@@@ useDrawerInner', e);
     } finally {
       setDrawerProps({ loading: false }); // loading
     }
@@ -177,9 +180,9 @@
           userStore.logout(true);
         }, 1500);
       });
-    } catch (error) {
+    } catch (e) {
       // 错误信息
-      console.log(error);
+      console.log('@@@ handleSubmit', e);
     } finally {
       setDrawerProps({ loading: false });
     }

@@ -50,7 +50,7 @@
 
     id.value = step1Values.id;
 
-    console.log('step1Values', step1Values);
+    // console.log('step1Values', step1Values);
   }
 
   // 关闭

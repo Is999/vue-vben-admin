@@ -86,6 +86,9 @@
           notify(res, true);
           emit('redo');
         })
+        .catch((e) => {
+          console.log('@@@ accountEditRoles', e);
+        })
         .finally(() => {
           setProps({
             submitButtonOptions: {
@@ -101,9 +104,14 @@
   // 挂载前请求接口
   onBeforeMount(() => {
     if (treeData.value.length === 0) {
-      getAccountRoleTreeList().then((res) => {
-        treeData.value = res;
-      });
+      getAccountRoleTreeList()
+        .then((res) => {
+          treeData.value = res;
+        })
+        .catch((e) => {
+          console.log('@@@ getAccountRoleTreeList', e);
+        })
+        .finally(() => {});
     }
   });
 </script>

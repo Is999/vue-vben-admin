@@ -298,14 +298,20 @@
       }
 
       // 发起请求
-      await accountEdit(userinfo.value.id, values).then((res) => {
-        notify(res, true);
-      });
+      await accountEdit(userinfo.value.id, values)
+        .then((res) => {
+          notify(res, true);
+        })
+        .catch((e) => {
+          console.log('@@@ accountEdit', e);
+        })
+        .finally(() => {});
 
       // 更新信息
       await userStore.getMineAction();
     } catch (e) {
       createMessage.success('更新失败！');
+      console.log('@@@ handleSubmit', e);
     }
   }
 

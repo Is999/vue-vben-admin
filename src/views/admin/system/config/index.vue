@@ -274,6 +274,9 @@
           });
         }
       })
+      .catch((e) => {
+        console.log('@@@ configGetCache', e);
+      })
       .finally(() => {
         setLoading(false);
       });
@@ -288,6 +291,9 @@
     configRenew(record.uuid)
       .then((res) => {
         notify(res, true);
+      })
+      .catch((e) => {
+        console.log('@@@ configRenew', e);
       })
       .finally(() => {
         setLoading(false);

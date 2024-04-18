@@ -213,6 +213,9 @@
                 notify(res, true);
                 record.status = newStatus;
               })
+              .catch((e) => {
+                console.log('@@@ setMenuStatus', e);
+              })
               .finally(() => {
                 record.pendingStatus = false;
               });
@@ -336,6 +339,9 @@
       .then((res) => {
         //获取到的子节点
         record.children = res.items;
+      })
+      .catch((e) => {
+        console.log('@@@ getMenuList', e);
       })
       .finally(() => {
         // 关闭loading 动画

@@ -311,10 +311,15 @@
       const values = await validate();
       values.password = encryptByMd5(values.password);
       // 新增
-      await accountAdd(values).then((res) => {
-        notify(res, true);
-        emit('next', res.data);
-      });
+      await accountAdd(values)
+        .then((res) => {
+          notify(res, true);
+          emit('next', res.data);
+        })
+        .catch((e) => {
+          console.log('@@@ accountAdd', e);
+        })
+        .finally(() => {});
     } catch (error) {
       console.log('@@@ account/Step1 customSubmitFunc', error);
     }
