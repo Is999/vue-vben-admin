@@ -82,9 +82,9 @@
       const roles = await accountRoles(data?.record?.id || 0);
 
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
-      if (treeData.value.length === 0) {
-        treeData.value = (await getAccountRoleTreeList()) as any as TreeItem[];
-      }
+      // if (treeData.value.length === 0) {
+      treeData.value = (await getAccountRoleTreeList()) as any as TreeItem[];
+      // }
 
       rowId.value = data?.record?.id;
       title.value = isUpdate.value
