@@ -9,33 +9,49 @@
   >
     <BasicForm @register="registerForm">
       <template #permissions="{ model, field }">
+        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
+        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
           v-if="treeData.length"
           v-model:value="model[field]"
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
-          checkable
+          :checkable="true"
           :search="true"
           title="角色权限"
           :helpMessage="['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑']"
           :actionList="actionList"
           :defaultExpandAll="true"
-          toolbar
+          ref="treeRef"
         />
       </template>
     </BasicForm>
   </BasicDrawer>
 </template>
 <script setup lang="ts">
-  import { ref, computed, h } from 'vue';
+  import { ref, computed, h, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { getRolePermissionTreeList } from '/@/api/admin/system';
-  import { BasicTree, TreeItem, TreeActionItem } from '/@/components/Tree';
+  import { BasicTree, TreeItem, TreeActionItem, TreeActionType } from '/@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
+  import type { Nullable } from '@vben/types';
 
   const rowId = ref('角色权限'); // 编辑记录的id
   const treeData = ref<TreeItem[]>([]); // 权限树结构
+  const treeRef = ref<Nullable<TreeActionType>>(null);
+
+  function getTree() {
+    const tree = unref(treeRef);
+    if (!tree) {
+      throw new Error('tree is null!');
+    }
+    return tree;
+  }
+
+  function expandAll(checkAll: boolean) {
+    getTree().expandAll(checkAll);
+  }
 
   const [registerForm, { resetFields, setFieldsValue }] = useForm({
     labelWidth: 100,

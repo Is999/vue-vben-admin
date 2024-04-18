@@ -10,37 +10,53 @@
   >
     <BasicForm @register="registerForm">
       <template #roles="{ model, field }">
+        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
+        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
           title="账号角色"
           v-if="treeData.length"
           v-model:value="model[field]"
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
-          checkable
-          search
+          :checkable="true"
+          :search="true"
           :defaultExpandAll="true"
-          checkStrictly
+          :checkStrictly="true"
+          ref="treeRef"
         />
       </template>
     </BasicForm>
   </BasicDrawer>
 </template>
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import { BasicTree, TreeItem } from '/@/components/Tree';
+  import { BasicTree, TreeActionType, TreeItem } from '/@/components/Tree';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
+  import type { Nullable } from '@vben/types';
 
   const { hasPermission } = usePermission();
   const isUpdate = ref(false); // true 编辑
   const rowId = ref(0); // 编辑记录的id
   const title = ref('编辑账号角色'); // 标题
   const treeData = ref<TreeItem[]>([]); // 权限树结构
+  const treeRef = ref<Nullable<TreeActionType>>(null);
 
+  function getTree() {
+    const tree = unref(treeRef);
+    if (!tree) {
+      throw new Error('tree is null!');
+    }
+    return tree;
+  }
+
+  function expandAll(checkAll: boolean) {
+    getTree().expandAll(checkAll);
+  }
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,
     schemas: [

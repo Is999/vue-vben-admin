@@ -12,17 +12,21 @@
   >
     <BasicForm @register="registerForm">
       <template #permissions="{ model, field }">
+        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
+        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
+        <a-button @click="checkAll(true)" class="mr-2"> 全选 </a-button>
+        <a-button @click="checkAll(false)" class="mr-2"> 全不选 </a-button>
         <BasicTree
           v-if="treeData.length"
           v-model:value="model[field]"
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
-          checkable
+          :checkable="true"
           :search="true"
           :defaultExpandLevel="5"
-          checkStrictly
+          :checkStrictly="true"
           :actionList="actionList"
-          toolbar
+          ref="treeRef"
         />
       </template>
     </BasicForm>
@@ -41,9 +45,10 @@
   import { TreeSelect } from '/@/api/admin/model/systemModel';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { BasicTree, TreeActionItem, TreeItem } from '/@/components/Tree';
+  import { BasicTree, TreeActionItem, TreeActionType, TreeItem } from '/@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
   import { notify } from '/@/api/api';
+  import type { Nullable } from '@vben/types';
 
   const { hasPermission } = usePermission();
 
@@ -54,6 +59,24 @@
   const treeData = ref<TreeItem[]>([]); // 权限树结构
   const isGetParentTreeData = ref(true); // 是否请求下拉框数据
   const parentTreeData = ref<TreeSelect[]>([]); // 父级下拉框
+
+  const treeRef = ref<Nullable<TreeActionType>>(null);
+
+  function getTree() {
+    const tree = unref(treeRef);
+    if (!tree) {
+      throw new Error('tree is null!');
+    }
+    return tree;
+  }
+
+  function expandAll(checkAll: boolean) {
+    getTree().expandAll(checkAll);
+  }
+
+  function checkAll(checkAll: boolean) {
+    getTree().checkAll(checkAll);
+  }
 
   const formSchema: FormSchema[] = [
     {
@@ -215,6 +238,7 @@
     try {
       const values = await validate();
       setDrawerProps({ loading: true });
+
       // 层级独立取values.permissions_id.checked 层级关联 values.permissions_id
       values.permissions = values.permissions_id.checked ?? values.permissions_id;
       // 发起请求

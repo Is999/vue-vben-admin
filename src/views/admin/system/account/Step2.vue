@@ -2,16 +2,19 @@
   <div class="step2">
     <BasicForm @register="registerForm">
       <template #roles="{ model, field }">
+        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
+        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
           v-if="treeData.length"
           v-model:value="model[field]"
           :treeData="treeData"
           :fieldNames="{ key: 'id', title: 'title' }"
-          checkable
-          search
+          :checkable="true"
+          :search="true"
           title="账号角色"
           :defaultExpandAll="true"
-          checkStrictly
+          :checkStrictly="true"
+          ref="treeRef"
         />
       </template>
     </BasicForm>
@@ -19,13 +22,14 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref } from 'vue';
+  import { onBeforeMount, ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form';
-  import { BasicTree, TreeItem } from '/@/components/Tree';
+  import { BasicTree, TreeItem, TreeActionType } from '/@/components/Tree';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
+  import type { Nullable } from '@vben/types';
 
   const { hasPermission } = usePermission();
 
@@ -35,6 +39,19 @@
   });
 
   const treeData = ref<TreeItem[]>([]); // 角色树结构
+  const treeRef = ref<Nullable<TreeActionType>>(null);
+
+  function getTree() {
+    const tree = unref(treeRef);
+    if (!tree) {
+      throw new Error('tree is null!');
+    }
+    return tree;
+  }
+
+  function expandAll(checkAll: boolean) {
+    getTree().expandAll(checkAll);
+  }
 
   const [registerForm, { validate, setProps }] = useForm({
     labelWidth: 100,
