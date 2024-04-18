@@ -108,14 +108,9 @@
       values.roles = values.roles.checked ?? values.roles;
       values.id = rowId.value;
       // 发起请求
-      await accountEditRoles(rowId.value, values)
-        .then((res) => {
-          notify(res, true);
-        })
-        .catch((e) => {
-          console.log('@@@ accountBuildSecretKeyUrl', e);
-        })
-        .finally(() => {});
+      await accountEditRoles(rowId.value, values).then((res) => {
+        notify(res, true);
+      });
 
       // 关闭
       closeDrawer();

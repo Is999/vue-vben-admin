@@ -246,9 +246,7 @@
       .catch((e) => {
         console.log('@@@ cacheInfo', e);
       })
-      .finally(() => {
-        //setLoading(false);
-      });
+      .finally(() => {});
   }
 
   // 搜索

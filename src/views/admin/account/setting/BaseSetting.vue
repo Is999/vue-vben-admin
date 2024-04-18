@@ -298,14 +298,9 @@
       }
 
       // 发起请求
-      await accountEdit(userinfo.value.id, values)
-        .then((res) => {
-          notify(res, true);
-        })
-        .catch((e) => {
-          console.log('@@@ accountEdit', e);
-        })
-        .finally(() => {});
+      await accountEdit(userinfo.value.id, values).then((res) => {
+        notify(res, true);
+      });
 
       // 更新信息
       await userStore.getMineAction();

@@ -103,9 +103,6 @@
           notify(res, true);
           emit('redo');
         })
-        .catch((e) => {
-          console.log('@@@ accountEditRoles', e);
-        })
         .finally(() => {
           setProps({
             submitButtonOptions: {

@@ -178,8 +178,7 @@
             .catch((e) => {
               console.log('@@@ getPermissionMaxUuid', e);
               return Math.floor(Math.random() * 100000).toString();
-            })
-            .finally(() => {});
+            });
 
       // updateSchema
       await updateSchema([
@@ -251,8 +250,7 @@
               .catch((e) => {
                 console.log('@@@ getPermissionMaxUuid', e);
                 return Math.floor(Math.random() * 100000).toString();
-              })
-              .finally(() => {});
+              });
 
             // updateSchema
             await updateSchema([

@@ -89,18 +89,12 @@
     try {
       setDrawerProps({ loading: true }); // loading
       await resetFields(); // 重置
-      await userStore
-        .getMineAction()
-        .then((userinfo) => {
-          if (userinfo != null) {
-            buildSecretKeyUrl.value = globSetting.apiUrl + userinfo?.build_secure_key_url;
-            //setFieldsValue(userinfo);
-          }
-        })
-        .catch((e) => {
-          createMessage.success('加载数据错误！');
-          console.log('@@@ getMineAction', e);
-        });
+      await userStore.getMineAction().then((userinfo) => {
+        if (userinfo != null) {
+          buildSecretKeyUrl.value = globSetting.apiUrl + userinfo?.build_secure_key_url;
+          //setFieldsValue(userinfo);
+        }
+      });
     } catch (e) {
       // 错误信息
       console.log('@@@ useDrawerInner', e);
@@ -118,8 +112,9 @@
       // 修改安全码
       await updateSecureKey(values).then((res) => {
         notify(res, true);
-        closeDrawer();
       });
+
+      closeDrawer();
     } catch (e) {
       // 错误信息
       console.log('@@@ handleSubmit', e);

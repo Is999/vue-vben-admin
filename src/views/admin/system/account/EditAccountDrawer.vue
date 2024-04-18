@@ -358,14 +358,9 @@
       // console.log('@@@提交数据', values);
 
       // 发起请求
-      await accountEdit(rowId.value, values)
-        .then((res) => {
-          notify(res, true);
-        })
-        .catch((e) => {
-          console.log('@@@ accountEdit', e);
-        })
-        .finally(() => {});
+      await accountEdit(rowId.value, values).then((res) => {
+        notify(res, true);
+      });
 
       closeDrawer();
       emit('success');
@@ -413,30 +408,24 @@
       }
 
       // 发起请求
-      await accountBuildSecretKeyUrl(rowId.value)
-        .then((data) => {
-          if (data.build_secure_key_url) {
-            // 获取配置
-            const globSetting = useGlobSetting();
-            let currentDomain = window.location.origin;
+      await accountBuildSecretKeyUrl(rowId.value).then((data) => {
+        if (data.build_secure_key_url) {
+          // 获取配置
+          const globSetting = useGlobSetting();
+          let currentDomain = window.location.origin;
 
-            buildSecretKeyUrl.value =
-              currentDomain + globSetting.apiUrl + data.build_secure_key_url;
+          buildSecretKeyUrl.value = currentDomain + globSetting.apiUrl + data.build_secure_key_url;
 
-            clipboardRef.value = buildSecretKeyUrl.value;
+          clipboardRef.value = buildSecretKeyUrl.value;
 
-            const node = document.querySelector('#buildSecretKeyUrl');
-            node?.setAttribute('style', 'display:block');
+          const node = document.querySelector('#buildSecretKeyUrl');
+          node?.setAttribute('style', 'display:block');
 
-            if (unref(copiedRef)) {
-              createMessage.success('copy success！');
-            }
+          if (unref(copiedRef)) {
+            createMessage.success('copy success！');
           }
-        })
-        .catch((e) => {
-          console.log('@@@ accountBuildSecretKeyUrl', e);
-        })
-        .finally(() => {});
+        }
+      });
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
     } catch (e) {
