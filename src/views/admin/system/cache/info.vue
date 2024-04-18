@@ -244,7 +244,7 @@
         parseTopData(res);
       })
       .catch((e) => {
-        console.log('@@@ cacheRenew', e);
+        console.log('@@@ cacheInfo', e);
       })
       .finally(() => {
         //setLoading(false);
