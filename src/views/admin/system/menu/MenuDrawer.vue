@@ -107,6 +107,14 @@
           value: 'value',
         },
         getPopupContainer: () => document.body,
+        onChange: (value: string, title: Array<string>) => {
+          console.log('@@@onChange', value, title);
+          if (title !== undefined) {
+            setFieldsValue({
+              title: title[0].split(' (')[0],
+            });
+          }
+        },
       },
     },
     {
@@ -299,7 +307,7 @@
   // 下拉状态
   function recursion(arr: TreeSelect[], id: string | number) {
     for (let value of arr) {
-      if (id.toString() == value.id?.toString()) {
+      if (id.toString() == value.value?.toString()) {
         value.disabled = false;
         return false;
       }
