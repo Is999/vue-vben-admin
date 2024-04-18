@@ -165,7 +165,8 @@
               return;
             }
 
-            // request();
+            // 启用
+            request();
           },
         });
       },
