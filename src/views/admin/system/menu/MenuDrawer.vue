@@ -108,8 +108,8 @@
         },
         getPopupContainer: () => document.body,
         onChange: (value: string, title: Array<string>) => {
-          console.log('@@@onChange', value, title);
-          if (title !== undefined) {
+          // console.log('@@@onChange', value, title);
+          if (title) {
             setFieldsValue({
               title: title[0].split(' (')[0],
             });
