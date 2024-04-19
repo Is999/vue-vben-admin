@@ -12,6 +12,17 @@
   >
     <BasicForm @register="registerForm">
       <template #permissions="{ model, field }">
+        展开层级
+        <a-input
+          type="number"
+          v-model:value="level"
+          @input="expandOne"
+          class="mr-2 w-18"
+          step="1"
+          max="100"
+          min="0"
+          placeholder="展开层级"
+        />
         <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
         <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <a-button @click="checkAll(true)" class="mr-2"> 全选 </a-button>
@@ -23,10 +34,13 @@
           :fieldNames="{ key: 'id', title: 'title' }"
           :checkable="true"
           :search="true"
-          :defaultExpandLevel="5"
+          :showLine="true"
+          title="权限分配"
+          :defaultExpandLevel="level"
           :checkStrictly="true"
           :actionList="actionList"
           ref="treeRef"
+          @select="actionSelect"
         />
       </template>
     </BasicForm>
@@ -45,15 +59,24 @@
   import { TreeSelect } from '/@/api/admin/model/systemModel';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { BasicTree, TreeActionItem, TreeActionType, TreeItem } from '/@/components/Tree';
+  import {
+    BasicTree,
+    CheckKeys,
+    TreeActionItem,
+    TreeActionType,
+    TreeItem,
+  } from '/@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
   import { notify } from '/@/api/api';
   import type { Nullable } from '@vben/types';
+  import { isArray } from '@/utils/is';
+  import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
 
   const { hasPermission } = usePermission();
 
   const emit = defineEmits(['success', 'register']);
 
+  const level = ref(7); // 展开层级
   const isUpdate = ref(true); // true 编辑, false 新增
   const rowId = ref(0); // 编辑记录的id
   const treeData = ref<TreeItem[]>([]); // 权限树结构
@@ -70,12 +93,85 @@
     return tree;
   }
 
-  function expandAll(checkAll: boolean) {
-    getTree().expandAll(checkAll);
+  function expandAll(expandAll: boolean) {
+    getTree().expandAll(expandAll);
+  }
+
+  function expandOne(event: Event) {
+    if (level.value < 0) {
+      level.value = 0;
+    } else if (level.value > 100) {
+      level.value = 100;
+    }
+
+    getTree().filterByLevel(level.value);
+    const value = (event.target as HTMLInputElement).value;
+    console.log('expandOne', level.value, value);
   }
 
   function checkAll(checkAll: boolean) {
     getTree().checkAll(checkAll);
+  }
+
+  function actionSelect(selectedKeys, e) {
+    if (e.node.checked !== e.selected) {
+      let checkKeys: CheckKeys = getTree().getCheckedKeys();
+      let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+      if (!e.node.checked && e.selected) {
+        getChildrenKeys([e.node.dataRef], 'children', (node) => {
+          if (
+            node.disabled !== true &&
+            node.selectable !== false &&
+            node.disableCheckbox !== true
+          ) {
+            // 添加元素
+            keys.push(node['id']);
+            return true;
+          }
+          return false;
+        });
+      } else {
+        // 从 keys 中删除元素
+        // const index = keys.findIndex((item) => item === key);
+        getChildrenKeys([e.node.dataRef], 'children', (node) => {
+          if (
+            node.disabled !== true &&
+            node.selectable !== false &&
+            node.disableCheckbox !== true
+          ) {
+            const index = keys.indexOf(node['id']);
+            if (index !== -1) {
+              keys.splice(index, 1);
+            }
+            return true;
+          }
+          return false;
+        });
+      }
+      keys = Array.from(new Set(keys)); // 去重
+      if (!isArray(checkKeys)) {
+        checkKeys.checked = keys;
+      }
+
+      getTree().setCheckedKeys(checkKeys);
+    }
+  }
+
+  function getChildrenKeys(
+    treeData: TreeDataItem[],
+    childrenField: string,
+    filter: (a: TreeDataItem) => boolean,
+  ) {
+    for (let index = 0; index < treeData.length; index++) {
+      const node = treeData[index];
+      if (!filter(node)) {
+        break;
+      }
+      const children = node[childrenField];
+      if (children && children.length) {
+        getChildrenKeys(children, childrenField, filter);
+      }
+    }
   }
 
   const formSchema: FormSchema[] = [
@@ -133,7 +229,7 @@
       rules: [{ max: 255, message: '最多输入255个字符' }],
     },
     {
-      label: '权限分配',
+      label: '',
       field: 'permissions_id',
       slot: 'permissions',
       component: 'Input',
@@ -241,6 +337,7 @@
 
       // 层级独立取values.permissions_id.checked 层级关联 values.permissions_id
       values.permissions = values.permissions_id.checked ?? values.permissions_id;
+
       // 发起请求
       if (unref(isUpdate)) {
         // 编辑

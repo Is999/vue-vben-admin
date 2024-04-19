@@ -14,6 +14,8 @@
           title="账号角色"
           :defaultExpandAll="true"
           :checkStrictly="true"
+          :showLine="true"
+          @check="actionCheck"
           ref="treeRef"
         />
       </template>
@@ -24,12 +26,15 @@
 <script setup lang="ts">
   import { onBeforeMount, ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form';
-  import { BasicTree, TreeItem, TreeActionType } from '/@/components/Tree';
+  import { BasicTree, TreeItem, TreeActionType, CheckKeys } from '/@/components/Tree';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
   import type { Nullable } from '@vben/types';
+  import { isArray } from '@/utils/is';
+  import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
+  import { useMessage } from '@/hooks/web/useMessage';
 
   const { hasPermission } = usePermission();
 
@@ -40,6 +45,7 @@
 
   const treeData = ref<TreeItem[]>([]); // 角色树结构
   const treeRef = ref<Nullable<TreeActionType>>(null);
+  const { createConfirm, createMessage } = useMessage();
 
   function getTree() {
     const tree = unref(treeRef);
@@ -51,6 +57,89 @@
 
   function expandAll(checkAll: boolean) {
     getTree().expandAll(checkAll);
+  }
+
+  function actionCheck(checkKeys, e) {
+    let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+    const keyLength = keys.length;
+    // console.log('checkedKey: ', 'checkKeys: ', checkKeys, 'node: ', e);
+    if (e.checked) {
+      // 检查是否已有父级角色
+      for (const pid of e.node.pids.split(',')) {
+        if (keys.includes(parseInt(pid))) {
+          if (e.node.name) {
+            let parentNode: TreeDataItem = {};
+
+            for (const checkedNode of e.checkedNodes) {
+              if (checkedNode.id === parseInt(pid)) {
+                parentNode = checkedNode;
+              }
+            }
+
+            createConfirm({
+              okText: '取消选择',
+              cancelText: '保留选择',
+              title: '不推荐的角色分配',
+              content: `已经选择了更高权限的父级角色<span style="color: #0ed11d">【${parentNode?.name}】</span>，是否依然要选择子级角色<span style="color: #b6085f">【${e.node.name}】</span>！<br/>`,
+              onOk: () => {
+                // 这里重新获取并设置checkedKeys, createConfirm onOK 函数可能在 主函数actionCheck执行完之后才执行
+                let checkKeys: CheckKeys = getTree().getCheckedKeys();
+                let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+                const index = keys.indexOf(e.node.eventKey);
+                if (index !== -1) {
+                  keys.splice(index, 1);
+                  if (!isArray(checkKeys)) {
+                    checkKeys.checked = keys;
+                  }
+                  getTree().setCheckedKeys(checkKeys);
+                }
+              },
+            });
+          } else {
+            createMessage.error(`已经选择了更高权限的父级角色，无须选择子级角色！`);
+          }
+          break;
+        }
+      }
+
+      // 取消子级角色
+      if (e.node.children && e.node.children.length) {
+        getChildrenKeys(e.node.children, 'children', (node) => {
+          if (keys.includes(parseInt(node.id))) {
+            const index = keys.indexOf(node.id);
+            if (index !== -1) {
+              keys.splice(index, 1);
+            }
+          }
+          return true;
+        });
+      }
+
+      // console.log('@@@setCheckedKeys', keyLength, keys.length);
+      if (keyLength !== keys.length) {
+        if (!isArray(checkKeys)) {
+          checkKeys.checked = keys;
+        }
+        getTree().setCheckedKeys(checkKeys);
+      }
+    }
+  }
+
+  function getChildrenKeys(
+    treeData: TreeDataItem[],
+    childrenField: string,
+    filter: (a: TreeDataItem) => boolean,
+  ) {
+    for (let index = 0; index < treeData.length; index++) {
+      const node = treeData[index];
+      if (!filter(node)) {
+        break;
+      }
+      const children = node[childrenField];
+      if (children && children.length) {
+        getChildrenKeys(children, childrenField, filter);
+      }
+    }
   }
 
   const [registerForm, { validate, setProps }] = useForm({

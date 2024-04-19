@@ -22,6 +22,7 @@
           :helpMessage="['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑']"
           :actionList="actionList"
           :defaultExpandAll="true"
+          :showLine="true"
           ref="treeRef"
         />
       </template>

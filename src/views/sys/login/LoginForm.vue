@@ -6,6 +6,7 @@
       <InputGroup>
         <div class="flex justify-center">
           <Input
+            class="mr-2"
             type="text"
             name="captcha"
             :maxlength="4"
@@ -31,6 +32,7 @@
       <InputGroup>
         <div class="flex justify-center">
           <Input
+            class="mr-2"
             type="text"
             name="secureCode"
             :maxlength="6"
