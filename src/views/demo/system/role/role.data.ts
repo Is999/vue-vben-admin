@@ -33,7 +33,7 @@ export const columns: BasicColumn[] = [
         checkedChildren: '停用',
         unCheckedChildren: '启用',
         loading: record.pendingStatus,
-        onChange(checked: boolean) {
+        onChange(checked) {
           record.pendingStatus = true;
           const newStatus = checked ? '1' : '0';
           const { createMessage } = useMessage();

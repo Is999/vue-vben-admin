@@ -167,10 +167,10 @@
           unCheckedChildren: '已禁用',
           loading: record.pendingStatus,
           disabled: !hasPermission(PermissionsEnum.AccountStatus, false),
-          onChange(checked: boolean) {
+          onChange: (checked) => {
             record.pendingStatus = true;
             // 请求接口
-            setAccountStatus(record.id, checked)
+            setAccountStatus(record.id, checked as boolean)
               .then((res) => {
                 notify(res, true);
                 record.status = checked ? 1 : 0;

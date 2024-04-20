@@ -99,7 +99,7 @@
           disabled:
             record.id.toString() === RoleEnum.SUPER ||
             !(hasPermission(PermissionsEnum.RoleStatus, false) && hasRoles(record)),
-          onChange(checked: boolean) {
+          onChange(checked) {
             // 发送请求
             const request = () => {
               record.pendingStatus = true;

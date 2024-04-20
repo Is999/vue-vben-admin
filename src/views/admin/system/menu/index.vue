@@ -203,7 +203,7 @@
           unCheckedChildren: '隐藏',
           loading: record.pendingStatus,
           disabled: !hasPermission(PermissionsEnum.MenuStatus, false),
-          onChange(checked: boolean) {
+          onChange(checked) {
             record.pendingStatus = true;
             const newStatus = checked ? 1 : 0;
 
