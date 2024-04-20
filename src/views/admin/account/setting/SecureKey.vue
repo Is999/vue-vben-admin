@@ -3,7 +3,7 @@
     v-bind="$attrs"
     @register="registerDrawer"
     showFooter
-    title="修改当前用户Google安全码"
+    title="修改绑定的 MFA 设备(Google Authenticator)秘钥"
     :isDetail="true"
     @ok="handleSubmit"
   >
@@ -18,10 +18,12 @@
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4></h4>
-      <h4>1. Google安全秘钥</h4>
+      <h4>1. MFA 设备(Google Authenticator)秘钥</h4>
       <p>
         <span id="buildSecretKeyUrl">
-          如若没有安全秘钥，<a :href="buildSecretKeyUrl" target="_blank">点击此处去绑定</a>。
+          如若没有Google Authenticator秘钥，<a :href="buildSecretKeyUrl" target="_blank"
+            >点击此处去绑定</a
+          >。
           <Tooltip title="复制地址到粘贴板" placement="top">
             <a @click="handleCopyBuildSecretKeyUrl" style="color: #0cc00c"
               ><strong>复制地址到粘贴板</strong> </a
@@ -59,7 +61,7 @@
       component: 'Input',
       componentProps: {
         maxlength: 16,
-        placeholder: '请输入要绑定的Google安全码秘钥',
+        placeholder: '请输入要绑定的Google Authenticator秘钥',
       },
       rules: [
         {
@@ -67,7 +69,7 @@
           // @ts-ignore
           validator: async (rule, value) => {
             if (!/^[A-Za-z0-9]{16}$/.test(value)) {
-              return Promise.reject('安全码秘钥为16位字符串');
+              return Promise.reject('秘钥为16位字符串');
             }
             return Promise.resolve();
           },

@@ -38,14 +38,14 @@
     {
       key: '1',
       title: '账户密码',
-      description: '',
+      description: '防止密码泄露，定时修改密码',
       extra: '修改',
       click: handleEditPassword,
     },
     {
       key: '2',
-      title: 'Google安全码',
-      description: '',
+      title: 'MFA 设备(Google Authenticator)',
+      description: 'MFA 设备，绑定后，可以进行二次确认',
       extra: '修改',
       click: handleEditSecureCard,
     },
