@@ -26,7 +26,7 @@
 <script setup lang="ts">
   import { onBeforeMount, ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form';
-  import { BasicTree, TreeItem, TreeActionType, CheckKeys } from '/@/components/Tree';
+  import {BasicTree, TreeItem, TreeActionType, CheckKeys, KeyType} from '/@/components/Tree';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
@@ -68,7 +68,7 @@
       for (const pid of e.node.pids.split(',')) {
         if (keys.includes(parseInt(pid))) {
           if (e.node.name) {
-            let parentNode: TreeDataItem = {};
+            let parentNode: TreeDataItem = <TreeDataItem>{};
 
             for (const checkedNode of e.checkedNodes) {
               if (checkedNode.id === parseInt(pid)) {
@@ -77,6 +77,7 @@
             }
 
             createConfirm({
+              iconType: 'info',
               okText: '取消选择',
               cancelText: '保留选择',
               title: '不推荐的角色分配',
@@ -84,12 +85,12 @@
               onOk: () => {
                 // 这里重新获取并设置checkedKeys, createConfirm onOK 函数可能在 主函数actionCheck执行完之后才执行
                 let checkKeys: CheckKeys = getTree().getCheckedKeys();
-                let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+                let keys = isArray(checkKeys) ? checkKeys: checkKeys.checked as KeyType[];
                 const index = keys.indexOf(e.node.eventKey);
                 if (index !== -1) {
                   keys.splice(index, 1);
                   if (!isArray(checkKeys)) {
-                    checkKeys.checked = keys;
+                    checkKeys.checked = keys as number[] | string[];
                   }
                   getTree().setCheckedKeys(checkKeys);
                 }

@@ -35,7 +35,7 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import { BasicTree, TreeActionType, CheckKeys, TreeItem } from '/@/components/Tree';
+  import {BasicTree, TreeActionType, CheckKeys, TreeItem, KeyType} from '/@/components/Tree';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
@@ -66,67 +66,85 @@
 
   function actionCheck(checkKeys, e) {
     let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
-    const keyLength = keys.length;
-    // console.log('checkedKey: ', 'checkKeys: ', checkKeys, 'node: ', e);
-    if (e.checked) {
-      // 检查是否已有父级角色
-      for (const pid of e.node.pids.split(',')) {
-        if (keys.includes(parseInt(pid))) {
-          if (e.node.name) {
-            let parentNode: TreeDataItem = {};
+    // console.log('checkKeys: ', checkKeys, 'node: ', e, 'keys: ', keys);
+    if (isUpdate.value) {
+      const keyLength = keys.length;
+      if (e.checked) {
+        // 检查是否已有父级角色
+        for (const pid of e.node.pids.split(',')) {
+          if (keys.includes(parseInt(pid))) {
+            if (e.node.name) {
+              let parentNode: TreeDataItem = <TreeDataItem>{};
 
-            for (const checkedNode of e.checkedNodes) {
-              if (checkedNode.id === parseInt(pid)) {
-                parentNode = checkedNode;
+              for (const checkedNode of e.checkedNodes) {
+                if (checkedNode.id === parseInt(pid)) {
+                  parentNode = checkedNode;
+                }
+              }
+
+              createConfirm({
+                iconType: 'info',
+                okText: '取消选择',
+                cancelText: '保留选择',
+                title: '不推荐的角色分配',
+                content: `已经选择了更高权限的父级角色<span style="color: #0ed11d">【${parentNode?.name}】</span>，是否依然要选择子级角色<span style="color: #b6085f">【${e.node.name}】</span>！<br/>`,
+                onOk: () => {
+                  // 这里重新获取并设置checkedKeys, createConfirm onOK 函数可能在 主函数actionCheck执行完之后才执行
+                  let checkKeys: CheckKeys = getTree().getCheckedKeys();
+                  let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked as KeyType[];
+                  const index = keys.indexOf(e.node.eventKey);
+                  if (index !== -1) {
+                    keys.splice(index, 1);
+                    if (!isArray(checkKeys)) {
+                      checkKeys.checked = keys as number[] | string[];
+                    }
+                    getTree().setCheckedKeys(checkKeys);
+                  }
+                },
+              });
+            } else {
+              createMessage.error(`已经选择了更高权限的父级角色，无须选择子级角色！`);
+            }
+            break;
+          }
+        }
+
+        // 取消子级角色
+        if (e.node.children && e.node.children.length) {
+          getChildrenKeys(e.node.children, 'children', (node) => {
+            if (keys.includes(parseInt(node.id))) {
+              const index = keys.indexOf(node.id);
+              if (index !== -1) {
+                keys.splice(index, 1);
               }
             }
+            return true;
+          });
+        }
 
-            createConfirm({
-              okText: '取消选择',
-              cancelText: '保留选择',
-              title: '不推荐的角色分配',
-              content: `已经选择了更高权限的父级角色<span style="color: #0ed11d">【${parentNode?.name}】</span>，是否依然要选择子级角色<span style="color: #b6085f">【${e.node.name}】</span>！<br/>`,
-              onOk: () => {
-                // 这里重新获取并设置checkedKeys, createConfirm onOK 函数可能在 主函数actionCheck执行完之后才执行
-                let checkKeys: CheckKeys = getTree().getCheckedKeys();
-                let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
-                const index = keys.indexOf(e.node.eventKey);
-                if (index !== -1) {
-                  keys.splice(index, 1);
-                  if (!isArray(checkKeys)) {
-                    checkKeys.checked = keys;
-                  }
-                  getTree().setCheckedKeys(checkKeys);
-                }
-              },
-            });
-          } else {
-            createMessage.error(`已经选择了更高权限的父级角色，无须选择子级角色！`);
+        // console.log('@@@setCheckedKeys', keyLength, keys.length);
+        if (keyLength !== keys.length) {
+          if (!isArray(checkKeys)) {
+            checkKeys.checked = keys;
           }
-          break;
+          getTree().setCheckedKeys(checkKeys);
         }
       }
-
-      // 取消子级角色
-      if (e.node.children && e.node.children.length) {
-        getChildrenKeys(e.node.children, 'children', (node) => {
-          if (keys.includes(parseInt(node.id))) {
-            const index = keys.indexOf(node.id);
-            if (index !== -1) {
-              keys.splice(index, 1);
-            }
-          }
-          return true;
-        });
-      }
-
-      // console.log('@@@setCheckedKeys', keyLength, keys.length);
-      if (keyLength !== keys.length) {
-        if (!isArray(checkKeys)) {
-          checkKeys.checked = keys;
+    } else {
+      if (e.checked) {
+        const index = keys.indexOf(e.node.eventKey);
+        if (index !== -1) {
+          keys.splice(index, 1);
         }
-        getTree().setCheckedKeys(checkKeys);
+      } else {
+        keys.push(e.node.eventKey);
       }
+
+      if (!isArray(checkKeys)) {
+        checkKeys.checked = keys;
+      }
+      //console.log('@@@setCheckedKeys', checkKeys, keys);
+      getTree().setCheckedKeys(checkKeys);
     }
   }
 
@@ -173,7 +191,7 @@
 
       // 需要在setFieldsValue之前先填充treeData，否则Tree组件可能会报key not exist警告
       // if (treeData.value.length === 0) {
-      treeData.value = (await getAccountRoleTreeList()) as any as TreeItem[];
+      treeData.value = (await getAccountRoleTreeList()) as TreeItem[];
       // }
 
       rowId.value = data?.record?.id;

@@ -61,7 +61,7 @@
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import {
     BasicTree,
-    CheckKeys,
+    CheckKeys, KeyType,
     TreeActionItem,
     TreeActionType,
     TreeItem,
@@ -116,7 +116,7 @@
   function actionSelect(selectedKeys, e) {
     if (e.node.checked !== e.selected) {
       let checkKeys: CheckKeys = getTree().getCheckedKeys();
-      let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+      let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked as KeyType[];
       if (!e.node.checked && e.selected) {
         getChildrenKeys([e.node.dataRef], 'children', (node) => {
           if (
@@ -150,7 +150,7 @@
       }
       keys = Array.from(new Set(keys)); // 去重
       if (!isArray(checkKeys)) {
-        checkKeys.checked = keys;
+        checkKeys.checked = keys as number[] | string[];
       }
 
       getTree().setCheckedKeys(checkKeys);
