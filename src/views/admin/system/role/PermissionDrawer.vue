@@ -23,6 +23,7 @@
           :actionList="actionList"
           :defaultExpandAll="true"
           :showLine="true"
+          @check="actionCheck"
           ref="treeRef"
         />
       </template>
@@ -37,6 +38,7 @@
   import { BasicTree, TreeItem, TreeActionItem, TreeActionType } from '/@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
   import type { Nullable } from '@vben/types';
+  import { isArray } from '@/utils/is';
 
   const rowId = ref('角色权限'); // 编辑记录的id
   const treeData = ref<TreeItem[]>([]); // 权限树结构
@@ -52,6 +54,26 @@
 
   function expandAll(checkAll: boolean) {
     getTree().expandAll(checkAll);
+  }
+
+  function actionCheck(checkKeys, e) {
+    let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked;
+    // console.log('checkKeys: ', checkKeys, 'node: ', e, 'keys: ', keys);
+
+    if (e.checked) {
+      const index = keys.indexOf(e.node.eventKey);
+      if (index !== -1) {
+        keys.splice(index, 1);
+      }
+    } else {
+      keys.push(e.node.eventKey);
+    }
+
+    if (!isArray(checkKeys)) {
+      checkKeys.checked = keys;
+    }
+    //console.log('@@@setCheckedKeys', checkKeys, keys);
+    getTree().setCheckedKeys(checkKeys);
   }
 
   const [registerForm, { resetFields, setFieldsValue }] = useForm({
