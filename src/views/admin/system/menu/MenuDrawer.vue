@@ -110,8 +110,10 @@
         onChange: (value: string, title: Array<string>) => {
           // console.log('@@@onChange', value, title);
           if (title) {
+            const value = title[0].split(' (')[0];
             setFieldsValue({
-              title: title[0].split(' (')[0],
+              title: value,
+              title_lang: value,
             });
           }
         },
