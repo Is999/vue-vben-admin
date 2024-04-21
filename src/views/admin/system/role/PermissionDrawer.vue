@@ -132,7 +132,7 @@
     arr.forEach((value) => {
       value.disableCheckbox = !value.checked;
       value.selectable = !value.selectable;
-      value.disabled = value.disabled || !value.checked;
+      //value.disabled = value.disabled || !value.checked;
       if (value.children) {
         recursion(value.children);
       }
