@@ -195,6 +195,19 @@
     baseColProps: { lg: 12, md: 24 },
   });
 
+  // Checkbox 禁用
+  function recursion(arr: TreeItem[], roles: Number[]) {
+    arr.forEach((value) => {
+      if (value.disabled && roles.includes(Number(value.id))) {
+        value.disabled = !value.disabled;
+        value.style = { color: '#dd7022' };
+      }
+      if (value.children) {
+        recursion(value.children, roles);
+      }
+    });
+  }
+
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
       setDrawerProps({ loading: true });
@@ -207,6 +220,10 @@
       // if (treeData.value.length === 0) {
       treeData.value = (await getAccountRoleTreeList()) as TreeItem[];
       // }
+
+      if (!isUpdate.value) {
+        recursion(treeData.value, roles);
+      }
 
       rowId.value = data?.record?.id;
       title.value = isUpdate.value
