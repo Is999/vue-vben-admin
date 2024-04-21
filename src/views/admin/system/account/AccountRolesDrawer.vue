@@ -10,6 +10,16 @@
   >
     <BasicForm @register="registerForm">
       <template #roles="{ model, field }">
+        展开层级
+        <a-input
+          type="number"
+          @input="expandOne"
+          class="mr-2 w-18"
+          step="1"
+          max="10"
+          min="0"
+          placeholder="展开层级"
+        />
         <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
         <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
@@ -35,7 +45,7 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import {BasicTree, TreeActionType, CheckKeys, TreeItem, KeyType} from '/@/components/Tree';
+  import { BasicTree, TreeActionType, CheckKeys, TreeItem, KeyType } from '/@/components/Tree';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
@@ -62,6 +72,10 @@
 
   function expandAll(checkAll: boolean) {
     getTree().expandAll(checkAll);
+  }
+
+  function expandOne(event: Event) {
+    getTree().filterByLevel(Number((event.target as HTMLInputElement).value));
   }
 
   function actionCheck(checkKeys, e) {
@@ -91,7 +105,7 @@
                 onOk: () => {
                   // 这里重新获取并设置checkedKeys, createConfirm onOK 函数可能在 主函数actionCheck执行完之后才执行
                   let checkKeys: CheckKeys = getTree().getCheckedKeys();
-                  let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked as KeyType[];
+                  let keys = isArray(checkKeys) ? checkKeys : (checkKeys.checked as KeyType[]);
                   const index = keys.indexOf(e.node.eventKey);
                   if (index !== -1) {
                     keys.splice(index, 1);
