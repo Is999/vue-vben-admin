@@ -15,11 +15,10 @@
         展开层级
         <a-input
           type="number"
-          v-model:value="level"
           @input="expandOne"
           class="mr-2 w-18"
           step="1"
-          max="100"
+          max="10"
           min="0"
           placeholder="展开层级"
         />
@@ -36,7 +35,7 @@
           :search="true"
           :showLine="true"
           title="权限分配"
-          :defaultExpandLevel="level"
+          :defaultExpandAll="true"
           :checkStrictly="true"
           :actionList="actionList"
           ref="treeRef"
@@ -61,7 +60,8 @@
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import {
     BasicTree,
-    CheckKeys, KeyType,
+    CheckKeys,
+    KeyType,
     TreeActionItem,
     TreeActionType,
     TreeItem,
@@ -76,7 +76,6 @@
 
   const emit = defineEmits(['success', 'register']);
 
-  const level = ref(7); // 展开层级
   const isUpdate = ref(true); // true 编辑, false 新增
   const rowId = ref(0); // 编辑记录的id
   const treeData = ref<TreeItem[]>([]); // 权限树结构
@@ -98,15 +97,7 @@
   }
 
   function expandOne(event: Event) {
-    if (level.value < 0) {
-      level.value = 0;
-    } else if (level.value > 100) {
-      level.value = 100;
-    }
-
-    getTree().filterByLevel(level.value);
-    const value = (event.target as HTMLInputElement).value;
-    console.log('expandOne', level.value, value);
+    getTree().filterByLevel(Number((event.target as HTMLInputElement).value));
   }
 
   function checkAll(checkAll: boolean) {
@@ -116,7 +107,7 @@
   function actionSelect(selectedKeys, e) {
     if (e.node.checked !== e.selected) {
       let checkKeys: CheckKeys = getTree().getCheckedKeys();
-      let keys = isArray(checkKeys) ? checkKeys : checkKeys.checked as KeyType[];
+      let keys = isArray(checkKeys) ? checkKeys : (checkKeys.checked as KeyType[]);
       if (!e.node.checked && e.selected) {
         getChildrenKeys([e.node.dataRef], 'children', (node) => {
           if (

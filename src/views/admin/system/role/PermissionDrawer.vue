@@ -9,6 +9,16 @@
   >
     <BasicForm @register="registerForm">
       <template #permissions="{ model, field }">
+        展开层级
+        <a-input
+          type="number"
+          @input="expandOne"
+          class="mr-2 w-18"
+          step="1"
+          max="10"
+          min="0"
+          placeholder="展开层级"
+        />
         <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
         <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
@@ -50,6 +60,10 @@
       throw new Error('tree is null!');
     }
     return tree;
+  }
+
+  function expandOne(event: Event) {
+    getTree().filterByLevel(Number((event.target as HTMLInputElement).value));
   }
 
   function expandAll(checkAll: boolean) {
