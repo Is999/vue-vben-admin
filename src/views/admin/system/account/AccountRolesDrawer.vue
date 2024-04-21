@@ -34,6 +34,7 @@
           :checkStrictly="true"
           :showLine="true"
           @check="actionCheck"
+          :actionList="actionList"
           ref="treeRef"
         />
       </template>
@@ -41,11 +42,18 @@
   </BasicDrawer>
 </template>
 <script setup lang="ts">
-  import { ref, unref } from 'vue';
+  import { h, ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import { BasicTree, TreeActionType, CheckKeys, TreeItem, KeyType } from '/@/components/Tree';
+  import {
+    BasicTree,
+    TreeActionType,
+    CheckKeys,
+    TreeItem,
+    KeyType,
+    TreeActionItem,
+  } from '/@/components/Tree';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
   import { notify } from '/@/api/api';
@@ -53,6 +61,7 @@
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { isArray } from '@/utils/is';
   import { useMessage } from '@/hooks/web/useMessage';
+  import { Tooltip } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();
   const isUpdate = ref(false); // true 编辑
@@ -178,6 +187,24 @@
       }
     }
   }
+
+  const actionList: TreeActionItem[] = [
+    {
+      render: (record) => {
+        let content = `角色：${record.title} <br/>`;
+        content += `描述：${record.describe}`;
+        return h(
+          Tooltip,
+          {
+            title: h('div', {
+              innerHTML: content,
+            }),
+          },
+          () => '详情',
+        );
+      },
+    },
+  ];
 
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     labelWidth: 100,

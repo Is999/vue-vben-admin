@@ -26,6 +26,7 @@
           :checkStrictly="true"
           :showLine="true"
           @check="actionCheck"
+          :actionList="actionList"
           ref="treeRef"
         />
       </template>
@@ -34,9 +35,16 @@
 </template>
 
 <script setup lang="ts">
-  import { onBeforeMount, ref, unref } from 'vue';
+  import { h, onBeforeMount, ref, unref } from 'vue';
   import { BasicForm, useForm } from '/@/components/Form';
-  import { BasicTree, TreeItem, TreeActionType, CheckKeys, KeyType } from '/@/components/Tree';
+  import {
+    BasicTree,
+    TreeItem,
+    TreeActionType,
+    CheckKeys,
+    KeyType,
+    TreeActionItem,
+  } from '/@/components/Tree';
   import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
@@ -45,6 +53,7 @@
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { useMessage } from '@/hooks/web/useMessage';
+  import { Tooltip } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();
 
@@ -156,6 +165,24 @@
       }
     }
   }
+
+  const actionList: TreeActionItem[] = [
+    {
+      render: (record) => {
+        let content = `角色：${record.title} <br/>`;
+        content += `描述：${record.describe}`;
+        return h(
+          Tooltip,
+          {
+            title: h('div', {
+              innerHTML: content,
+            }),
+          },
+          () => '详情',
+        );
+      },
+    },
+  ];
 
   const [registerForm, { validate, setProps }] = useForm({
     labelWidth: 100,
