@@ -32,6 +32,10 @@ export interface RequestOptions {
   trimEmpty?: boolean;
   // 特殊响应状态码处理
   statusCodes?: Array[number];
+  // 加密参数
+  cipherParams?: Array[string] | string;
+  // 签名参数
+  signParams?: Array[string];
 }
 
 export interface RetryRequest {

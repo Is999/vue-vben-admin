@@ -18,15 +18,18 @@ import { useI18n } from '/@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '/@/store/modules/user';
 import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
+import { Cipher } from '/@/utils/http/axios/cipher';
 import { buildUUID } from '/@/utils/uuid';
 import axios from 'axios';
 import { useLocaleStoreWithOut } from '/@/store/modules/locale';
 import { trimParam } from '/@/utils/helper/trimParam';
+import { encryptByBase64 } from '@/utils/cipher';
+import { cacheCipher } from '@/settings/encryptionSetting';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
 const { createMessage, createErrorModal, createSuccessModal } = useMessage();
-
+const cipher = new Cipher(cacheCipher);
 /**
  * @description: 数据处理，方便区分多种处理方式
  */
@@ -102,12 +105,19 @@ const transform: AxiosTransform = {
 
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
-    const { apiUrl, joinPrefix, joinParamsToUrl, formatDate, joinTime = true, urlPrefix, trimEmpty = true } = options;
+    const {
+      apiUrl,
+      joinPrefix,
+      joinParamsToUrl,
+      formatDate,
+      joinTime = true,
+      urlPrefix,
+      trimEmpty = true,
+    } = options;
 
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
     }
-
     if (apiUrl && isString(apiUrl)) {
       config.url = `${apiUrl}${config.url}`;
     }
@@ -116,10 +126,6 @@ const transform: AxiosTransform = {
     formatDate && data && !isString(data) && formatRequestDate(data);
     if (config.method?.toUpperCase() === RequestEnum.GET) {
       if (!isString(params)) {
-        // 去除空字符串
-        if (trimEmpty) {
-          trimParam(params);
-        }
         // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
         config.params = Object.assign(params || {}, joinTimestamp(joinTime, false));
       } else {
@@ -129,16 +135,16 @@ const transform: AxiosTransform = {
       }
     } else {
       if (!isString(params)) {
-        // 去除空字符串
-        if (trimEmpty) {
-          trimParam(params);
-        }
         formatDate && formatRequestDate(params);
         if (
           Reflect.has(config, 'data') &&
           config.data &&
           (Object.keys(config.data).length > 0 || config.data instanceof FormData)
         ) {
+          // 去除空字符串
+          if (trimEmpty) {
+            trimParam(data);
+          }
           config.data = data;
           config.params = params;
         } else {
@@ -146,6 +152,7 @@ const transform: AxiosTransform = {
           config.data = params;
           config.params = undefined;
         }
+
         if (joinParamsToUrl) {
           config.url = setObjToUrlParams(
             config.url as string,
@@ -158,6 +165,29 @@ const transform: AxiosTransform = {
         config.params = undefined;
       }
     }
+
+    // 去除空字符串
+    if (trimEmpty) {
+      if (config.params) {
+        // console.log('trimParam-params', config.params);
+        trimParam(config.params);
+      }
+
+      if (config.data) {
+        // console.log('trimParam-data', config.data);
+        trimParam(config.data);
+      }
+    }
+
+    // 字段加密
+    cipher.requestEncryptData(config, options);
+
+    // if (Object.keys(all).length > 0) {
+    //   const encryptedData = encryption.encryptByAES(JSON.stringify(all));
+    //   config.data = { ciphertext: encryptedData };
+    //   // config.data = encryptedData;
+    // }
+
     return config;
   },
 
@@ -167,19 +197,31 @@ const transform: AxiosTransform = {
   requestInterceptors: (config, options) => {
     // 请求之前处理config
     const token = getToken();
-    if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
+    if (token && (config as Recordable).requestOptions?.withToken !== false) {
       // jwt token
       (config as Recordable).headers.Authorization = options.authenticationScheme
         ? `${options.authenticationScheme} ${token}`
         : token;
     }
 
+    // APP Key
+    (config as Recordable).headers['X-App-Id'] = encryptByBase64(import.meta.env.VITE_APP_ID);
+
     // 语言
     const lang = useLocaleStoreWithOut().getLocale;
+
     (config as Recordable).headers['X-Language'] = lang == 'en' ? lang : 'zh';
 
     // 请求的唯一id
     (config as Recordable).headers['X-Request-Id'] = buildUUID(); // 生成uuid
+
+    // 加密字段写入header
+    const cipher = (config as Recordable).requestOptions?.cipherParams;
+    if (cipher?.length > 0) {
+      (config as Recordable).headers['X-Cipher'] = isString(cipher)
+        ? 'cipher'
+        : encryptByBase64(JSON.stringify(cipher));
+    }
 
     return config;
   },
@@ -188,6 +230,9 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
+    // 返回数据解密
+    cipher.responseDecryptData(res);
+
     return res;
   },
 
@@ -240,11 +285,11 @@ const transform: AxiosTransform = {
     } else {
       checkStatus(error?.response?.status, msg, errorMessageMode);
     }
-    console.log('@@@statusCodes', statusCodes, response);
+    // console.log('@@@statusCodes', statusCodes, response, config);
     // 添加自动重试机制 保险起见 只针对GET请求
     const retryRequest = new AxiosRetry();
-    const { isOpenRetry } = config.requestOptions.retryRequest;
-    config.method?.toUpperCase() === RequestEnum.GET &&
+    const { isOpenRetry } = config?.requestOptions?.retryRequest || { isOpenRetry: false };
+    config?.method?.toUpperCase() === RequestEnum.GET &&
       isOpenRetry &&
       // @ts-ignore
       retryRequest.retry(axiosInstance, error);
@@ -305,6 +350,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
     ),
   );
 }
+
 export const defHttp = createAxios();
 
 // other api url
