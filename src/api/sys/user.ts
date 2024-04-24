@@ -21,7 +21,7 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
     {
       statusCodes: [406, 403, 500],
       errorMessageMode: mode,
-      cipherParams: 'cipher',
+      cipherParams: ['name', 'password', 'secureCode'],
       signParams: ['name', 'password', 'secureCode'],
     },
   );
