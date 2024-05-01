@@ -9,6 +9,7 @@ enum Api {
   Mine = '/user/mine',
   Permissions = '/user/permissions',
   CheckSecure = '/user/checkSecure',
+  CheckMfaSecure = '/user/checkMfaSecure',
 }
 
 // 登录
@@ -22,7 +23,7 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
       statusCodes: [406, 403, 500],
       errorMessageMode: mode,
       cipherParams: ['name', 'password', 'secureCode'],
-      signParams: ['name', 'password', 'secureCode'],
+      signParams: { request: ['name', 'password', 'secureCode'] },
     },
   );
 }
@@ -92,6 +93,19 @@ export function checkSecure(secure: string) {
   return AdminApi.post<any>(
     {
       url: Api.CheckSecure,
+      params: { secure },
+    },
+    {
+      errorMessageMode: 'message', // 错误直接提示后台返回信息
+    },
+  );
+}
+
+// 验证MFA动态密码
+export function checkMfaSecure(secure: string) {
+  return AdminApi.post<any>(
+    {
+      url: Api.CheckMfaSecure,
       params: { secure },
     },
     {

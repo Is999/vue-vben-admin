@@ -51,7 +51,7 @@
   import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
   import { useGlobSetting } from '/@/hooks/setting';
   import { encryptByMd5 } from '/@/utils/cipher';
-  import { accountEdit } from '/@/api/admin/system';
+  import { updateMine } from '/@/api/admin/system';
   import { notify } from '/@/api/api';
   import { UserInfo } from '/#/store';
 
@@ -298,7 +298,7 @@
       }
 
       // 发起请求
-      await accountEdit(userinfo.value.id, values).then((res) => {
+      await updateMine(values).then((res) => {
         notify(res, true);
       });
 

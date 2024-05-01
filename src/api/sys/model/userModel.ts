@@ -41,13 +41,15 @@ export interface UserInfoModel {
   // 手机号
   phone: string;
   // 状态
-  status: string;
+  status: number;
+  // TOTP MFA (身份验证)
+  mfa_status: number;
   // 分组
   group_id: number;
   // 是否绑定了安全码
-  is_build_secure_key: boolean;
+  exist_mfa: boolean;
   // 安全码绑定地址
-  build_secure_key_url: string;
+  build_mfa_url: string;
   // 头像
   avatar: string;
   // 介绍

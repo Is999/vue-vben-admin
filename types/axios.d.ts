@@ -35,7 +35,12 @@ export interface RequestOptions {
   // 加密参数
   cipherParams?: Array[string] | string;
   // 签名参数
-  signParams?: Array[string];
+  signParams?: signParams;
+}
+
+export interface signParams {
+  request?: string[];
+  response?: string[];
 }
 
 export interface RetryRequest {

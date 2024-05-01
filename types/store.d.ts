@@ -33,6 +33,7 @@ export interface ErrorLogInfo {
 export interface UserInfo extends UserInfoModel {
   homePath?: string;
 }
+
 export type UserRole = RoleInfo;
 
 export interface UserInfos {
@@ -45,4 +46,23 @@ export interface BeforeMiniState {
   menuSplit?: boolean;
   menuMode?: MenuModeEnum;
   menuType?: MenuTypeEnum;
+}
+
+export interface MfaInfo {
+  // MFA设备绑定地址
+  build_mfa_url?: string;
+  // 状态 1 启用， 0 未启用
+  mfa_status?: number;
+  // 是否存在MFA设备
+  exist_mfa?: boolean;
+  // 两步验证：true 强制验证
+  isTwoStepVerification?: boolean;
+  // 两步验证key
+  twoStepKey?: string;
+  // 两步验证过期时间
+  twoStepExpire?: number;
+  // 两步验证value
+  twoStepValue?: string;
+  // 关闭验证
+  isOff?: boolean;
 }

@@ -31,18 +31,20 @@ enum Api {
   AccountList = '/user/index', // 账号列表
   AccountAdd = '/user/add', // 新增账号
   AccountStatus = '/user/editStatus', // 账号 禁用|启用
+  AccountMFAStatus = '/user/editMfaStatus', // MFA（身份验证）设备 禁用|启用
   AccountRoleTreeList = '/user/roleTreeList', // 新增账号|编辑账号 角色下拉框
   AccountEditRoles = '/user/editRoles', // 新增账号|编辑账号 角色下拉框
   AccountEdit = '/user/edit', // 编辑账号
-  AccountBuildSecretKeyUrl = '/user/buildSecretKeyUrl', // 获取绑定安全秘钥的地址
+  AccountBuildMFASecretKeyUrl = '/user/buildMfaSecretKeyUrl', // 获取绑定安全秘钥的地址
   AccountRoles = '/user/roles', // 账号角色
 
   DeptList = '/system/getDeptList', // 账号部门
 
   // 个人信息
-  UpdatePassword = '/user/updatePassword', // 修改密码
-  UpdateSecureKey = '/user/updateSecureKey', // 修改Google安全码
-  //UpdateMine = '/user/update', // 编辑账号
+  UpdatePassword = '/user/updatePassword', // 安全设置 账号密码
+  UpdateMFASecureKey = '/user/updateMfaSecureKey', // 安全设置 身份验证器(TOTP MFA 应用程序)
+  UpdateMFAStatus = '/user/updateMfaStatus', // 安全设置 身份验证器(TOTP MFA 应用程序)
+  UpdateMine = '/user/updateMine', // 基本设置 更新基本信息
 
   // 菜单管理
   MenuList = '/menu/index', // 菜单列表
@@ -121,6 +123,24 @@ export const setAccountStatus = (id: number, status: boolean) =>
     },
   );
 
+// 账号管理 账号 禁用|启用
+export const setAccountMFAStatus = (id: number, mfa_status: boolean) =>
+  AdminApi.post(
+    { url: Api.AccountMFAStatus + '/' + id, params: { id, mfa_status } },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
+// 账号管理 账号 禁用|启用
+export const setUpdateMFAStatus = (mfa_status: boolean) =>
+  AdminApi.post(
+    { url: Api.UpdateMFAStatus, params: { mfa_status } },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
 // 账号管理 新增账号 绑定角色
 export const accountEdit = (id: number, params: AccountModel) =>
   AdminApi.post(
@@ -131,9 +151,9 @@ export const accountEdit = (id: number, params: AccountModel) =>
   );
 
 // 账号管理 新增账号 绑定角色
-export const accountBuildSecretKeyUrl = (id: number) =>
+export const accountBuildMFASecretKeyUrl = (id: number) =>
   AdminApi.get(
-    { url: Api.AccountBuildSecretKeyUrl + '/' + id },
+    { url: Api.AccountBuildMFASecretKeyUrl + '/' + id },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
     },
@@ -148,7 +168,7 @@ export const accountRoles = (id: number) =>
     },
   );
 
-// 账号管理 修改密码
+// 个人信息 安全设置 账号密码
 export const updaetePassword = (params: updatePasswordParams) =>
   AdminApi.post(
     { url: Api.UpdatePassword, params },
@@ -157,10 +177,19 @@ export const updaetePassword = (params: updatePasswordParams) =>
     },
   );
 
-// 账号管理 修改Google安全码
-export const updateSecureKey = (params: Recordable) =>
+// 个人信息 安全设置 身份验证器(TOTP MFA 应用程序)
+export const updateMFASecureKey = (params: Recordable) =>
   AdminApi.post(
-    { url: Api.UpdateSecureKey, params },
+    { url: Api.UpdateMFASecureKey, params },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
+// 个人信息 基本设置 更新基本信息
+export const updateMine = (params: AccountModel) =>
+  AdminApi.post(
+    { url: Api.UpdateMine, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },

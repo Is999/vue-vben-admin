@@ -15,6 +15,9 @@ export const PROJ_CFG_KEY = 'PROJ__CFG__KEY__';
 // lock info
 export const LOCK_INFO_KEY = 'LOCK__INFO__KEY__';
 
+// 身份验证器（MFA）
+export const MFA_INFO_KEY = 'MFA__INFO__KEY__';
+
 export const MULTIPLE_TABS_KEY = 'MULTIPLE_TABS__KEY__';
 
 export const APP_DARK_MODE_KEY = '__APP__DARK__MODE__';

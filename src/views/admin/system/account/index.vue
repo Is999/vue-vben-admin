@@ -38,7 +38,12 @@
 <script setup lang="ts">
   import { h } from 'vue';
   import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '/@/components/Table';
-  import { getAccountList, getRoleTreeList, setAccountStatus } from '/@/api/admin/system';
+  import {
+    getAccountList,
+    getRoleTreeList,
+    setAccountStatus,
+    setAccountMFAStatus,
+  } from '/@/api/admin/system';
   import AccountDrawer from './AccountDrawer.vue';
   import EditAccountDrawer from './EditAccountDrawer.vue';
   import AccountRolesDrawer from './AccountRolesDrawer.vue';
@@ -151,6 +156,38 @@
           },
           '查看角色',
         );
+      },
+    },
+    {
+      title: 'MFA校验',
+      dataIndex: 'mfa_status',
+      width: 120,
+      customRender: ({ record }) => {
+        if (!Reflect.has(record, 'pendingMfaStatus')) {
+          record.pendingMfaStatus = false;
+        }
+        return h(Switch, {
+          checked: record.mfa_status == 1,
+          checkedChildren: '已启用',
+          unCheckedChildren: '已禁用',
+          loading: record.pendingMfaStatus,
+          disabled: !hasPermission(PermissionsEnum.AccountMfaStatus, false),
+          onChange: (checked) => {
+            record.pendingMfaStatus = true;
+            // 请求接口
+            setAccountMFAStatus(record.id, checked as boolean)
+              .then((res) => {
+                notify(res, true);
+                record.mfa_status = checked ? 1 : 0;
+              })
+              .catch((e) => {
+                console.log('@@@ setAccountStatus', e);
+              })
+              .finally(() => {
+                record.pendingMfaStatus = false;
+              });
+          },
+        });
       },
     },
     {

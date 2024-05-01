@@ -33,7 +33,8 @@ export interface AccountModel {
   password?: string; // 密码
   status?: boolean; // 状态
   role?: string; // 角色
-  secure_key?: string; // 安全码秘钥
+  mfa_secure_key?: string; // 基于时间的动态密码 (TOTP) 多重身份验证 (MFA)秘钥：如Google Authenticator、Microsoft Authenticator
+  mfa_status?: boolean; // 启用 TOTP MFA (两步验证 2FA)：0 不启用，1 启用
   remark?: string; // 备注
 }
 
@@ -50,7 +51,8 @@ export interface AccountListItem {
   real_name: string; // 昵称
   email: string; // 邮箱
   phone: string; // 电话
-  secure_key: string; // 安全码秘钥
+  mfa_secure_key: string; // 基于时间的动态密码 (TOTP) 多重身份验证 (MFA)秘钥：如Google Authenticator、Microsoft Authenticator
+  mfa_status: boolean; // 启用 TOTP MFA (两步验证 2FA)：0 不启用，1 启用
   status: boolean; // 状态
   avatar: string; // 头像
   role?: string; // 角色

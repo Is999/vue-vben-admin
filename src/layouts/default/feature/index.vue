@@ -16,6 +16,7 @@
     name: 'LayoutFeatures',
     components: {
       BackTop,
+      LayoutMfaPage: createAsyncComponent(() => import('/@/views/sys/mfa/index.vue')),
       LayoutLockPage: createAsyncComponent(() => import('/@/views/sys/lock/index.vue')),
       SettingDrawer: createAsyncComponent(() => import('/@/layouts/default/setting/index.vue')),
       SessionTimeoutLogin,
@@ -53,6 +54,7 @@
 </script>
 
 <template>
+  <LayoutMfaPage />
   <LayoutLockPage />
   <BackTop v-if="getUseOpenBackTop" :target="getTarget" />
   <SettingDrawer v-if="getIsFixedSettingDrawer" :class="prefixCls" />

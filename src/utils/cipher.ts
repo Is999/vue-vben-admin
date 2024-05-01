@@ -4,6 +4,8 @@ import pkcs7 from 'crypto-js/pad-pkcs7';
 // import ECB from 'crypto-js/mode-ecb';
 import md5 from 'crypto-js/md5';
 import Base64 from 'crypto-js/enc-base64';
+import JSEncrypt from 'jsencrypt';
+import sha256 from 'crypto-js/sha256';
 
 export interface EncryptionParams {
   key: string;
@@ -51,4 +53,36 @@ export function decodeByBase64(cipherText: string) {
 
 export function encryptByMd5(password: string) {
   return md5(password).toString();
+}
+
+export function signData(data: string, privateKey: string) {
+  const rsa = new JSEncrypt();
+  rsa.setPrivateKey(privateKey); // 设置私钥
+  return rsa.sign(data, sha256, 'sha256'); // 使用SHA-256算法进行签名
+}
+
+export function verifySignature(data: string, signature: string, publicKey: string): boolean {
+  const rsa = new JSEncrypt();
+  rsa.setPublicKey(publicKey); // 设置公钥
+  return rsa.verify(data, signature, sha256); // 使用SHA-256算法进行验证签名
+}
+
+export function generateKeyPair() {
+  const rsa = new JSEncrypt();
+  rsa.getKey(); // 生成RSA密钥对
+  return {
+    publicKey: rsa.getPublicKey(), // 获取公钥
+    privateKey: rsa.getPrivateKey(), // 获取私钥
+  };
+}
+export function encryptByRSA(data: string, pubKey: string) {
+  const encrypt = new JSEncrypt();
+  encrypt.setPublicKey(pubKey);
+  return encrypt.encrypt(data);
+}
+
+export function decryptByAES(encrypted: string, privkey: string) {
+  const decrypt = new JSEncrypt();
+  decrypt.setPrivateKey(privkey);
+  return decrypt.decrypt(encrypted);
 }

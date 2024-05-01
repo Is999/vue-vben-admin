@@ -1,4 +1,4 @@
-import type { UserInfo, UserInfos, UserRole } from '/#/store';
+import { MfaInfo, UserInfo, UserInfos, UserRole } from '/#/store';
 import type { ErrorMessageMode } from '/#/axios';
 import { defineStore } from 'pinia';
 import { store } from '/@/store';
@@ -15,12 +15,14 @@ import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { h } from 'vue';
 import {
+  checkMfaSecure,
   checkSecure,
   login as loginApi,
   logout as doLogout,
   mine,
   userPermissions,
 } from '/@/api/sys/user';
+import { useMfaStore } from '@/store/modules/mfa';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -123,6 +125,17 @@ export const useUserStore = defineStore({
         this.setToken(token);
         // 设置用户信息缓存
         this.setUserInfo(user);
+        // 登录两步验证校验MFA动态密码
+        if (!user.exist_mfa || parseInt(user.mfa_status) !== 0) {
+          const mfaInfo: MfaInfo = {
+            build_mfa_url: user.build_mfa_url,
+            mfa_status: user.mfa_status,
+            exist_mfa: user.exist_mfa,
+            isTwoStepVerification: true,
+            isOff: false,
+          };
+          useMfaStore().setMfaInfo(mfaInfo);
+        }
         // return this.afterLoginAction(goHome);
         this.afterLoginAction(goHome);
         return user;
@@ -244,10 +257,24 @@ export const useUserStore = defineStore({
      * @description: 锁屏密码
      */
     async checkPassword(password = ''): Promise<boolean> {
-      if (this.getToken || password) {
+      if (this.getToken && password) {
         try {
           const { isOk } = await checkSecure(password);
           return isOk as boolean;
+        } catch {
+          return false;
+        }
+      }
+      return false;
+    },
+
+    /**
+     * @description: MFA动态密码
+     */
+    async checkMfaPassword(password = ''): Promise<any> {
+      if (this.getToken && password) {
+        try {
+          return await checkMfaSecure(password);
         } catch {
           return false;
         }

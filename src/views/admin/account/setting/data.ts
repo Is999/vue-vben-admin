@@ -1,8 +1,10 @@
+import { Ref } from 'vue';
+
 export interface Item {
   key: string;
-  title: string;
+  title: string | Ref<any>;
   description: string;
-  extra?: string;
+  extra?: string | Ref<any>;
   avatar?: string;
   color?: string;
   click?: () => void;

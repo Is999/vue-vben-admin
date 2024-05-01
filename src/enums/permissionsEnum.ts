@@ -37,12 +37,12 @@ export enum PermissionsEnum {
   AccountEditSave = '100027', // 保存	编辑管理员(修改)	user.edit
   AccountBuildSecretKeyUrl = '100051', // 生成绑定安全秘钥地址	生成绑定安全秘钥地址(按钮，查看)	user.buildSecretKeyUrl
   AccountStatus = '100028', // 启用/禁用	启用/禁用 管理员(按钮,修改)	user.editStatus
+  AccountMfaStatus = '100034', // 启用 TOTP MFA (身份验证）	启用/禁用 管理员(按钮,修改)	user.editStatus
   AccountEditRoles = '100029', // 用户角色	用户角色(弹框页面)	user.roleList
   // AccountEditAddRoles = '100030', // 给用户分配角色	给用户分配角色(按钮,新增)	user.addRole
   // AccountEditPassword = '100031', // 修改密码	修改密码(按钮,修改)	user.editPassword
   // AccountEditDel = '100032', // 解除角色与用户的关系	解除角色与用户的关系(按钮,删除)	user.delRole
   // AccountRestPassword = '100033', // 重置密码	重置用户的密码(按钮,修改)	user.resetPassword
-  // AccountBindSecurityCard = '100034', // 绑定安全验证卡	绑定安全验证卡(按钮,修改)	user.bindSecureCard
   AccountEditRolesSave = '100035', // 编辑账号角色	编辑账号角色/确认 (按钮, 新增, 删除)	user.editRoles
 
   // 字典管理

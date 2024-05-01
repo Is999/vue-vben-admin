@@ -84,7 +84,7 @@ export class Cipher {
         param = param.replace(/^[json:]+/g, '');
       }
       // 判断数据是否存在该参数
-      let originalData = params[param];
+      const originalData = params[param];
       if (undefined !== originalData) {
         let decryptedData = this.aes.decryptByAES(originalData);
         // 对json数据处理进行编码在加密
@@ -97,7 +97,6 @@ export class Cipher {
               isJson,
               param,
             );
-            // throw new Error(' （◐ˍ◑）好大一个🪳, 快快消灭它');
           }
         }
         params[param] = decryptedData;

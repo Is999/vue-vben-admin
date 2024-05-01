@@ -44,7 +44,7 @@
             </template>
           </Input>
           <div style="min-width: 100px">
-            <a @click="handleBuildSecret()" style="line-height: 41px">没有？去绑定！</a>
+            <a @click="handleBuildMFASecret()" style="line-height: 41px">没有？去绑定！</a>
           </div>
         </div>
       </InputGroup>
@@ -75,7 +75,7 @@
   import { captchaApi } from '/@/api/api';
   import { encryptByMd5 } from '/@/utils/cipher';
   import { buildSecretVerifyAccount } from '/@/api/sys/user';
-  import { useGlobSetting } from '/@/hooks/setting/index';
+  import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars } from '@/utils/passport';
 
   const { t } = useI18n();
@@ -212,51 +212,51 @@
         },
       ],
     },
-    {
-      field: 'secureCode',
-      component: 'Input',
-      label: '',
-      defaultValue: formData.secureCode,
-      colProps: {
-        // span: 24,
-      },
-      slot: 'secureCode',
-      componentProps: {
-        maxlength: 6,
-        type: 'text',
-        allowClear: false,
-        addonBefore: h(InsuranceTwoTone),
-        addonAfter: h(
-          'a',
-          {
-            onClick: () => handleBuildSecret(),
-          },
-          '还没有？去绑定吧！',
-        ),
-        placeholder: t('sys.login.secureCode'),
-      },
-      rules: [
-        {
-          required: true,
-          // @ts-ignore
-          validator: async (rule, value) => {
-            if (!isLogin.value) {
-              return Promise.resolve();
-            }
-            if (!value) {
-              /* eslint-disable-next-line */
-              return Promise.reject(t('sys.login.secureCode'));
-            }
-            if (!/\d{6}/.test(value)) {
-              /* eslint-disable-next-line */
-              return Promise.reject(t('sys.login.secureCodePlaceholder'));
-            }
-            return Promise.resolve();
-          },
-          trigger: 'change',
-        },
-      ],
-    },
+    // {
+    //   field: 'secureCode',
+    //   component: 'Input',
+    //   label: '',
+    //   defaultValue: formData.secureCode,
+    //   colProps: {
+    //     // span: 24,
+    //   },
+    //   slot: 'secureCode',
+    //   componentProps: {
+    //     maxlength: 6,
+    //     type: 'text',
+    //     allowClear: false,
+    //     addonBefore: h(InsuranceTwoTone),
+    //     addonAfter: h(
+    //       'a',
+    //       {
+    //         onClick: () => handleBuildMFASecret(),
+    //       },
+    //       '还没有？去绑定吧！',
+    //     ),
+    //     placeholder: t('sys.login.secureCode'),
+    //   },
+    //   rules: [
+    //     {
+    //       required: true,
+    //       // @ts-ignore
+    //       validator: async (rule, value) => {
+    //         if (!isLogin.value) {
+    //           return Promise.resolve();
+    //         }
+    //         if (!value) {
+    //           /* eslint-disable-next-line */
+    //           return Promise.reject(t('sys.login.secureCode'));
+    //         }
+    //         if (!/\d{6}/.test(value)) {
+    //           /* eslint-disable-next-line */
+    //           return Promise.reject(t('sys.login.secureCodePlaceholder'));
+    //         }
+    //         return Promise.resolve();
+    //       },
+    //       trigger: 'change',
+    //     },
+    //   ],
+    // },
     {
       field: 'submit',
       component: 'Input',
@@ -322,7 +322,7 @@
     }
   }
 
-  async function handleBuildSecret() {
+  async function handleBuildMFASecret() {
     try {
       //clearValidate(); // 清除验证信息
       isLogin.value = false;
@@ -347,12 +347,12 @@
         // 获取配置
         const globSetting = useGlobSetting();
 
-        if (!user.is_build_secure_key) {
-          window.open(globSetting.apiUrl + user.build_secure_key_url, '_blank');
+        if (!user.exist_mfa) {
+          window.open(globSetting.apiUrl + user.build_mfa_url, '_blank');
         } else {
           createConfirm({
             onOk: () => {
-              window.open(globSetting.apiUrl + user.build_secure_key_url, '_blank');
+              window.open(globSetting.apiUrl + user.build_mfa_url, '_blank');
             },
             iconType: 'warning',
             title: '注意',

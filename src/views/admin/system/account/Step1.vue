@@ -5,6 +5,7 @@
         <template #pwd="{ model, field }">
           <div class="flex justify-center">
             <InputPassword
+              class="mr-2"
               autocomplete="new-password"
               placeholder="请输入密码"
               :maxlength="20"
@@ -29,9 +30,23 @@
         </Tooltip>
         。
       </p>
-      <h4>2. 安全秘钥</h4>
+      <h4>2. MFA秘钥</h4>
+      <p style="font-size: 12px; color: #7c8087; margin-left: 1em">
+        MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
+        - TOTP：基于时间的动态密码；<br />
+        - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
+        - 常用的身份验证器APP(基于时间的动态密码 (TOTP) 多重身份验证 (MFA))：Google
+        Authenticator、Microsoft Authenticator、Authing令牌、宁盾令牌 ......，可在应用市场搜索下载
+      </p>
+      绑定MFA秘钥方式：
+      <p style="font-size: 12px; margin-left: 1em">
+        1）可以让用户提供已有的MFA秘钥进行绑定；<br />
+        2）可以在用户首次登录后进行MFA秘钥绑定；<br />
+        3）添加完账号后进入编辑页面生成绑定MFA秘钥地址，提供生成的地址给用户去绑定。
+      </p>
+      <h4>3. MFA校验</h4>
       <p>
-        Google安全秘钥可以在登录页面绑定，也可以让用户提供已有的秘钥进行绑定。或者添加完账号后进入编辑页面生成绑定安全秘钥地址，提供生成的地址给用户去绑定。
+        只有在绑定了MFA秘钥，才能启用MFA校验；启用MFA校验后，进行登录或其它敏感操作会进行身份校验
       </p>
     </div>
   </div>
@@ -233,14 +248,14 @@
       colProps: { lg: 12, md: 12 },
     },
     {
-      field: 'secure_key',
-      label: '安全秘钥',
-      helpMessage: ['Google安全码秘钥，可以在登录的时候绑定'],
+      field: 'mfa_secure_key',
+      label: 'MFA秘钥',
+      // helpMessage: ['Google安全码秘钥，可以在登录的时候绑定'],
       component: 'Input',
       componentProps: {
         maxlength: 16,
         placeholder: '请输入要绑定的Google安全码秘钥',
-        id: 'form_item_secure_key',
+        id: 'form_item_mfa_secure_key',
       },
       rules: [
         {
@@ -272,6 +287,20 @@
           { label: '停用', value: 0 },
         ],
         id: 'form_item_status',
+      },
+      colProps: { lg: 12, md: 12 },
+    },
+    {
+      field: 'mfa_status',
+      label: 'MFA校验',
+      component: 'RadioButtonGroup',
+      defaultValue: 1,
+      componentProps: {
+        options: [
+          { label: '启用', value: 1 },
+          { label: '停用', value: 0 },
+        ],
+        id: 'form_item_mfa_status_edit',
       },
       colProps: { lg: 12, md: 12 },
     },

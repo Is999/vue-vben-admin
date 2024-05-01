@@ -12,20 +12,24 @@
       <template #pwd="{ model, field }">
         <div class="flex justify-center">
           <InputPassword
+            class="mr-2"
             autocomplete="new-password"
             placeholder="请输入密码"
             v-model:value="model[field]"
             :allowClear="true"
           />
           <Tooltip title="生成新密码并复制" placement="bottom">
-            <Button type="primary" @click="handleCopy(model, field)"> 复制 </Button>
+            <Button type="primary" @click="handleCopy(model, field)"> 复制</Button>
           </Tooltip>
         </div>
       </template>
     </BasicForm>
     <Divider />
     <div>
-      <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
+      <h3>
+        <SoundTwoTone twoToneColor="#eb2f96" />
+        说明
+      </h3>
       <h4>1. 新密码</h4>
       <p>
         新密码为空值时，表示不修改密码，点击复制按钮可生产新的密码并复制到剪切板。也可以点击此处
@@ -34,29 +38,39 @@
         </Tooltip>
         。
       </p>
-      <h4>2. 安全秘钥</h4>
+      <h4>2. MFA秘钥</h4>
+      <p style="font-size: 12px; color: #7c8087; margin-left: 1em">
+        MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
+        - TOTP：基于时间的动态密码；<br />
+        - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
+        - 常用的身份验证器APP(基于时间的动态密码 (TOTP) 多重身份验证 (MFA))：Google
+        Authenticator、Microsoft Authenticator、Authing令牌、宁盾令牌 ......，可在应用市场搜索下载
+      </p>
       <p>
-        Google安全秘钥为空值时，表示不修改安全秘钥。也可以点击此处
-        <Tooltip title="生成绑定安全秘钥地址并复制" placement="top">
+        MFA秘钥为空值时，表示不修改MFA秘钥。也可以点击此处
+        <Tooltip title="生成绑定MFA秘钥地址并复制" placement="top">
           <a @click="handleBuildSecretKeyUrl" style="color: #0cc00c"
-            ><strong>生成绑定安全秘钥页面地址</strong>
+            ><strong>生成绑定MFA秘钥页面地址</strong>
           </a>
         </Tooltip>
         并复制该地址给用户让用户去绑定。<br /><br />
 
-        <span id="buildSecretKeyUrl" style="display: none">
-          绑定安全秘钥页面地址已
+        <span id="buildMFAUrl" style="display: none">
+          绑定MFA秘钥页面地址已
           <Tooltip title="复制已生成的地址" placement="top">
-            <a @click="handleCopyBuildSecretKeyUrl" style="color: #0cc00c"
+            <a @click="handleCopyBuildMFASecretKeyUrl" style="color: #0cc00c"
               ><strong>复制到粘贴板</strong>
             </a>
           </Tooltip>
-          ，请直接使用Ctr+v或Command+v粘贴。 预览地址：<a
-            :href="buildSecretKeyUrl"
-            target="_blank"
-            >{{ buildSecretKeyUrl }}</a
-          >
+          ，请直接使用Ctr+v或Command+v粘贴。 预览地址：
+          <p style="padding: 1em; overflow-wrap: break-word">
+            <a :href="buildMFAUrl" target="_blank">{{ buildMFAUrl }}</a>
+          </p>
         </span>
+      </p>
+      <h4>3. MFA校验</h4>
+      <p>
+        只有在绑定了MFA秘钥，才能启用MFA校验；启用MFA校验后，进行登录或其它敏感操作会进行身份校验
       </p>
     </div>
   </BasicDrawer>
@@ -67,7 +81,7 @@
   import { SoundTwoTone } from '@ant-design/icons-vue';
   import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { accountBuildSecretKeyUrl, accountEdit } from '/@/api/admin/system';
+  import { accountBuildMFASecretKeyUrl, accountEdit } from '/@/api/admin/system';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { PermissionsEnum } from '/@/enums/permissionsEnum';
@@ -86,7 +100,7 @@
 
   const rowId = ref(0); // 编辑记录的id
   const isGetParentTreeData = ref(true); // 是否请求下拉框数据
-  const buildSecretKeyUrl = ref(''); // 是否请求下拉框数据
+  const buildMFAUrl = ref(''); // 是否请求下拉框数据
 
   // form 框
   const formSchema: FormSchema[] = [
@@ -262,14 +276,14 @@
       colProps: { lg: 12, md: 12 },
     },
     {
-      field: 'secure_key',
-      label: '安全码',
-      helpMessage: ['Google安全码秘钥，可以在登录的时候绑定'],
+      field: 'mfa_secure_key',
+      label: 'MFA秘钥',
+      // helpMessage: ['MFA 设备秘钥，可以在登录的时候绑定'],
       component: 'Input',
       componentProps: {
         maxlength: 16,
         placeholder: '请输入要绑定的Google安全码秘钥',
-        id: 'form_item_secure_key',
+        id: 'form_item_mfa_secure_key',
       },
       rules: [
         {
@@ -306,6 +320,20 @@
       colProps: { lg: 12, md: 12 },
     },
     {
+      field: 'mfa_status',
+      label: 'MFA校验',
+      component: 'RadioButtonGroup',
+      defaultValue: 1,
+      componentProps: {
+        options: [
+          { label: '启用', value: 1 },
+          { label: '停用', value: 0 },
+        ],
+        id: 'form_item_mfa_status_edit',
+      },
+      colProps: { lg: 12, md: 12 },
+    },
+    {
       label: '备注',
       field: 'remark',
       helpMessage: ['最多输入255个字符'],
@@ -331,15 +359,15 @@
     setDrawerProps({ confirmLoading: false }); // loading
     await resetFields(); // 重置
     rowId.value = data.record.id;
-    buildSecretKeyUrl.value = '';
+    buildMFAUrl.value = '';
     // console.log('@@@data', data.record);
     await setFieldsValue({
       ...data.record,
       password: '', // 密码置空处理
-      secure_key: '', // 密码置空处理
+      mfa_secure_key: '', // MFA（身份验证器）秘钥置空处理
     });
 
-    const node = document.querySelector('#buildSecretKeyUrl');
+    const node = document.querySelector('#buildMFAUrl');
     node?.setAttribute('style', 'display:none');
   });
 
@@ -408,17 +436,17 @@
       }
 
       // 发起请求
-      await accountBuildSecretKeyUrl(rowId.value).then((data) => {
-        if (data.build_secure_key_url) {
+      await accountBuildMFASecretKeyUrl(rowId.value).then((data) => {
+        if (data.build_mfa_url) {
           // 获取配置
           const globSetting = useGlobSetting();
           let currentDomain = window.location.origin;
 
-          buildSecretKeyUrl.value = currentDomain + globSetting.apiUrl + data.build_secure_key_url;
+          buildMFAUrl.value = currentDomain + globSetting.apiUrl + data.build_mfa_url;
 
-          clipboardRef.value = buildSecretKeyUrl.value;
+          clipboardRef.value = buildMFAUrl.value;
 
-          const node = document.querySelector('#buildSecretKeyUrl');
+          const node = document.querySelector('#buildMFAUrl');
           node?.setAttribute('style', 'display:block');
 
           if (unref(copiedRef)) {
@@ -429,16 +457,16 @@
 
       isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
     } catch (e) {
-      console.log('@@@ handleBuildSecretKeyUrl', e);
+      console.log('@@@ handleBuildMFASecretKeyUrl', e);
     } finally {
       setDrawerProps({ confirmLoading: false });
     }
   }
 
   // 强制生成密码并复制
-  function handleCopyBuildSecretKeyUrl() {
-    if (buildSecretKeyUrl.value) {
-      clipboardRef.value = buildSecretKeyUrl.value;
+  function handleCopyBuildMFASecretKeyUrl() {
+    if (buildMFAUrl.value) {
+      clipboardRef.value = buildMFAUrl.value;
       if (unref(copiedRef)) {
         createMessage.success('copy success！');
       }
