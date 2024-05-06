@@ -175,7 +175,7 @@
           onChange: (checked) => {
             record.pendingMfaStatus = true;
             // 请求接口
-            setAccountMFAStatus(record.id, checked as boolean)
+            setAccountMFAStatus(record.id, (checked as boolean) ? 1 : 0)
               .then((res) => {
                 notify(res, true);
                 record.mfa_status = checked ? 1 : 0;

@@ -110,7 +110,7 @@
       mfa_status = true;
     }
     // 请求接口
-    setUpdateMFAStatus(!mfa_status)
+    setUpdateMFAStatus(!mfa_status ? 1 : 0)
       .then((res) => {
         notify(res, true);
         user.mfa_status = !mfa_status ? 1 : 0;

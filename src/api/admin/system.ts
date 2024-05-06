@@ -124,7 +124,7 @@ export const setAccountStatus = (id: number, status: boolean) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setAccountMFAStatus = (id: number, mfa_status: boolean) =>
+export const setAccountMFAStatus = (id: number, mfa_status: number) =>
   AdminApi.post(
     { url: Api.AccountMFAStatus + '/' + id, params: { id, mfa_status } },
     {
@@ -133,7 +133,7 @@ export const setAccountMFAStatus = (id: number, mfa_status: boolean) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setUpdateMFAStatus = (mfa_status: boolean) =>
+export const setUpdateMFAStatus = (mfa_status: number) =>
   AdminApi.post(
     { url: Api.UpdateMFAStatus, params: { mfa_status } },
     {

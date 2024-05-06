@@ -127,7 +127,11 @@
       loading.value = true;
       const isOk = await mfaStore.checkMFA(pwd);
       if (!isOk) {
-        errMsg.value = '动态密码错误，请重新输入';
+        if (!mfaStore.getMfaInfo?.exist_mfa) {
+          errMsg.value = '您还未绑定MFA设备，请先完成绑定';
+        } else {
+          errMsg.value = '动态密码错误，请重新输入';
+        }
       }
     } finally {
       loading.value = false;
