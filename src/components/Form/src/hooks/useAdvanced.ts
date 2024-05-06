@@ -1,9 +1,9 @@
 import type { ColEx } from '../types';
 import type { AdvanceState } from '../types/hooks';
 import { ComputedRef, getCurrentInstance, Ref, shallowReactive, computed, unref, watch } from 'vue';
-import type { FormProps, FormSchema } from '../types/form';
-import { isBoolean, isFunction, isNumber, isObject } from '/@/utils/is';
-import { useBreakpoint } from '/@/hooks/event/useBreakpoint';
+import type { FormProps, FormSchemaInner as FormSchema } from '../types/form';
+import { isBoolean, isFunction, isNumber, isObject } from '@/utils/is';
+import { useBreakpoint } from '@/hooks/event/useBreakpoint';
 import { useDebounceFn } from '@vueuse/core';
 
 const BASIC_COL_LEN = 24;
@@ -160,7 +160,7 @@ export default function ({
 
     getAdvanced(unref(getProps).actionColOptions || { span: BASIC_COL_LEN }, itemColSum, true);
 
-    emit('advanced-change');
+    emit('advanced-change', advanceState.isAdvanced);
   }
 
   function handleToggleAdvanced() {

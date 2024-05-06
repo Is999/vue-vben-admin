@@ -1,7 +1,45 @@
 import type { PropType } from 'vue';
-import { FileBasicColumn } from './typing';
+import { FileBasicColumn } from './types/typing';
+
+import type { Options } from 'sortablejs';
+
+import { Merge } from '@/utils/types';
+import { propTypes } from '@/utils/propTypes';
+import { BasicColumn } from '@/components/Table';
+
+type SortableOptions = Merge<
+  Omit<Options, 'onEnd'>,
+  {
+    onAfterEnd?: <T = any, R = any>(params: T) => R;
+    // ...可扩展
+  }
+>;
+type previewColumnsFnType = {
+  handleRemove: (record: Record<string, any>, key: string) => any;
+  handleAdd: (record: Record<string, any>, key: string) => any;
+};
+export const previewType = {
+  previewColumns: {
+    type: [Array, Function] as PropType<
+      BasicColumn[] | ((arg: previewColumnsFnType) => BasicColumn[])
+    >,
+    required: false,
+  },
+  beforePreviewData: {
+    type: Function as PropType<(arg: string[]) => Recordable<any>>,
+    default: null,
+    required: false,
+  },
+};
+
+type ListType = 'text' | 'picture' | 'picture-card';
 
 export const basicProps = {
+  disabled: { type: Boolean, default: false },
+  listType: {
+    type: String as PropType<ListType>,
+    default: 'picture-card',
+  },
   helpText: {
     type: String as PropType<string>,
     default: '',
@@ -14,7 +52,7 @@ export const basicProps = {
   // 最大数量的文件，Infinity不限制
   maxNumber: {
     type: Number as PropType<number>,
-    default: Infinity,
+    default: 1,
   },
   // 根据后缀，或者其他
   accept: {
@@ -23,7 +61,7 @@ export const basicProps = {
   },
   multiple: {
     type: Boolean as PropType<boolean>,
-    default: true,
+    default: false,
   },
   uploadParams: {
     type: Object as PropType<any>,
@@ -42,6 +80,17 @@ export const basicProps = {
     type: String as PropType<string>,
     default: null,
   },
+  fileListOpenDrag: {
+    type: Boolean,
+    default: true,
+  },
+
+  fileListDragOptions: {
+    type: Object as PropType<SortableOptions>,
+    default: () => ({}),
+  },
+  // support xxx.xxx.xx
+  resultField: propTypes.string.def(''),
 };
 
 export const uploadContainerProps = {
@@ -58,6 +107,7 @@ export const uploadContainerProps = {
     type: Boolean as PropType<boolean>,
     default: false,
   },
+  ...previewType,
 };
 
 export const previewProps = {
@@ -65,11 +115,16 @@ export const previewProps = {
     type: Array as PropType<string[]>,
     default: () => [],
   },
+  maxNumber: {
+    type: Number as PropType<number>,
+    default: 1,
+  },
+  ...previewType,
 };
 
 export const fileListProps = {
   columns: {
-    type: Array as PropType<FileBasicColumn[]>,
+    type: Array as PropType<BasicColumn[] | FileBasicColumn[]>,
     default: null,
   },
   actionColumn: {
@@ -79,5 +134,13 @@ export const fileListProps = {
   dataSource: {
     type: Array as PropType<any[]>,
     default: null,
+  },
+  openDrag: {
+    type: Boolean,
+    default: false,
+  },
+  dragOptions: {
+    type: Object as PropType<SortableOptions>,
+    default: () => ({}),
   },
 };

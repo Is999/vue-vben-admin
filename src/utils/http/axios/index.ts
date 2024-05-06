@@ -3,26 +3,26 @@
 
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import { clone } from 'lodash-es';
-import type { RequestOptions, Result } from '/#/axios';
+import type { RequestOptions, Result } from '#/axios';
 import type { AxiosTransform, CreateAxiosOptions } from './axiosTransform';
 import { VAxios } from './Axios';
 import { checkStatus } from './checkStatus';
-import { useGlobSetting } from '/@/hooks/setting';
-import { useMessage } from '/@/hooks/web/useMessage';
-import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
-import { isString, isUnDef, isNull, isEmpty } from '/@/utils/is';
-import { getToken } from '/@/utils/auth';
-import { setObjToUrlParams, deepMerge } from '/@/utils';
-import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
-import { useI18n } from '/@/hooks/web/useI18n';
+import { useGlobSetting } from '@/hooks/setting';
+import { useMessage } from '@/hooks/web/useMessage';
+import { RequestEnum, ResultEnum, ContentTypeEnum } from '@/enums/httpEnum';
+import { isString, isUndefined, isNull, isEmpty } from '@/utils/is';
+import { getToken } from '@/utils/auth';
+import { setObjToUrlParams, deepMerge } from '@/utils';
+import { useErrorLogStoreWithOut } from '@/store/modules/errorLog';
+import { useI18n } from '@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
-import { useUserStoreWithOut } from '/@/store/modules/user';
-import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
-import { Cipher } from '/@/utils/http/axios/cipher';
-import { buildUUID } from '/@/utils/uuid';
+import { useUserStoreWithOut } from '@/store/modules/user';
+import { AxiosRetry } from '@/utils/http/axios/axiosRetry';
 import axios from 'axios';
-import { useLocaleStoreWithOut } from '/@/store/modules/locale';
-import { trimParam } from '/@/utils/helper/trimParam';
+import { Cipher } from '@/utils/http/axios/cipher';
+import { buildUUID } from '@/utils/uuid';
+import { useLocaleStoreWithOut } from '@/store/modules/locale';
+import { trimParam } from '@/utils/helper/trimParam';
 import { encryptByBase64 } from '@/utils/cipher';
 import { cacheCipher } from '@/settings/encryptionSetting';
 
@@ -64,7 +64,7 @@ const transform: AxiosTransform = {
     if (hasSuccess) {
       let successMsg = message;
 
-      if (isNull(successMsg) || isUnDef(successMsg) || isEmpty(successMsg)) {
+      if (isNull(successMsg) || isUndefined(successMsg) || isEmpty(successMsg)) {
         successMsg = t(`sys.api.operationSuccess`);
       }
 
@@ -84,7 +84,8 @@ const transform: AxiosTransform = {
         timeoutMsg = t('sys.api.timeoutMessage');
         const userStore = useUserStoreWithOut();
         userStore.setToken(undefined);
-        userStore.logout(true);
+        // 被动登出，带redirect地址
+        userStore.logout(false);
         break;
       default:
         if (message) {
@@ -288,9 +289,10 @@ const transform: AxiosTransform = {
     // console.log('@@@statusCodes', statusCodes, response, config);
     // 添加自动重试机制 保险起见 只针对GET请求
     const retryRequest = new AxiosRetry();
-    const { isOpenRetry } = config?.requestOptions?.retryRequest || { isOpenRetry: false };
-    config?.method?.toUpperCase() === RequestEnum.GET &&
+    const { isOpenRetry } = config.requestOptions.retryRequest;
+    config.method?.toUpperCase() === RequestEnum.GET &&
       isOpenRetry &&
+      error?.response?.status !== 401 &&
       // @ts-ignore
       retryRequest.retry(axiosInstance, error);
     return Promise.reject(error);

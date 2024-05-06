@@ -1,21 +1,21 @@
 import type { RouteRecordRaw } from 'vue-router';
 
-import { useAppStore } from '/@/store/modules/app';
-import { usePermissionStore } from '/@/store/modules/permission';
-import { useUserStore } from '/@/store/modules/user';
+import { useAppStore } from '@/store/modules/app';
+import { usePermissionStore } from '@/store/modules/permission';
+import { useUserStore } from '@/store/modules/user';
 
 import { useTabs } from './useTabs';
 
-import { router, resetRouter } from '/@/router';
-// import { RootRoute } from '/@/router/routes';
+import { router, resetRouter } from '@/router';
+// import { RootRoute } from '@/router/routes';
 
-import projectSetting from '/@/settings/projectSetting';
-import { PermissionModeEnum } from '/@/enums/appEnum';
-import { RoleEnum } from '/@/enums/roleEnum';
+import projectSetting from '@/settings/projectSetting';
+import { PermissionModeEnum } from '@/enums/appEnum';
+import { RoleEnum } from '@/enums/roleEnum';
 
 import { intersection } from 'lodash-es';
-import { isArray } from '/@/utils/is';
-import { useMultipleTabStore } from '/@/store/modules/multipleTab';
+import { isArray } from '@/utils/is';
+import { useMultipleTabStore } from '@/store/modules/multipleTab';
 
 // User permissions related operations
 export function usePermission() {
@@ -25,7 +25,7 @@ export function usePermission() {
   const { closeAll } = useTabs(router);
 
   /**
-   * 更改权限模式
+   * Change permission mode
    */
   async function togglePermissionMode() {
     appStore.setProjectConfig({
@@ -40,35 +40,37 @@ export function usePermission() {
   /**
    * Reset and regain authority resource information
    * 重置和重新获得权限资源信息
-   * @param id
    */
   async function resume() {
     const tabStore = useMultipleTabStore();
     tabStore.clearCacheTabs();
     resetRouter();
+
+    // 动态加载路由（再次）
     const routes = await permissionStore.buildRoutesAction();
     routes.forEach((route) => {
       router.addRoute(route as unknown as RouteRecordRaw);
     });
+
     permissionStore.setLastBuildMenuTime();
     closeAll();
   }
 
   /**
-   * 判断是否有权限
+   * Determine whether there is permission
    */
   function hasPermission(value?: RoleEnum | RoleEnum[] | string | string[], def = true): boolean {
     // Visible by default
     if (!value) {
       return def;
     }
-
+    
     // 超级管理员所有都可见
     if (userStore.getUserRole?.superUserRole) {
       return true;
     }
-
-    const permMode = projectSetting.permissionMode;
+    
+    const permMode = appStore.getProjectConfig.permissionMode;
 
     if ([PermissionModeEnum.ROUTE_MAPPING, PermissionModeEnum.ROLE].includes(permMode)) {
       if (!isArray(value)) {
@@ -92,28 +94,7 @@ export function usePermission() {
       }
       return (intersection(value, allCodeList) as string[]).length > 0;
     }
-    return def;
-  }
-
-  /**
-   * 判断是否有角色
-   */
-  function hasRole(value?: RoleEnum | RoleEnum[] | string | string[], def = true): boolean {
-    // Visible by default
-    if (!value) {
-      return def;
-    }
-
-    // 超级管理员所有都可见
-    if (userStore.getUserRole?.superUserRole) {
-      return true;
-    }
-
-    if (!isArray(value)) {
-      return userStore.getRoleList?.includes(value as RoleEnum);
-    }
-
-    return (intersection(value, userStore.getRoleList) as RoleEnum[]).length > 0;
+    return true;
   }
 
   /**
@@ -139,6 +120,27 @@ export function usePermission() {
    */
   async function refreshMenu() {
     resume();
+  }
+
+  /**
+   * 判断是否有角色
+   */
+  function hasRole(value?: RoleEnum | RoleEnum[] | string | string[], def = true): boolean {
+    // Visible by default
+    if (!value) {
+      return def;
+    }
+
+    // 超级管理员所有都可见
+    if (userStore.getUserRole?.superUserRole) {
+      return true;
+    }
+
+    if (!isArray(value)) {
+      return userStore.getRoleList?.includes(value as RoleEnum);
+    }
+
+    return (intersection(value, userStore.getRoleList) as RoleEnum[]).length > 0;
   }
 
   return { changeRole, hasPermission, togglePermissionMode, refreshMenu, hasRole };

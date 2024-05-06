@@ -1,4 +1,4 @@
-import { isDevMode } from '/@/utils/env';
+import { isDevMode } from '@/utils/env';
 
 // System default cache time, in seconds
 export const DEFAULT_CACHE_TIME = 60 * 60 * 24 * 7;
@@ -10,7 +10,7 @@ export const cacheCipher = {
 };
 
 // Whether the system cache is encrypted using aes
-export const enableStorageEncryption = !isDevMode();
+export const SHOULD_ENABLE_STORAGE_ENCRYPTION = !isDevMode();
 
 export const rsaCipher = {
   privateKey: import.meta.env.VITE_RSA_PRIVATE_KEY,

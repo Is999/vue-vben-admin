@@ -3,7 +3,7 @@ import type { App, Component } from 'vue';
 
 import { intersectionWith, isEqual, mergeWith, unionWith } from 'lodash-es';
 import { unref } from 'vue';
-import { isArray, isObject } from '/@/utils/is';
+import { isArray, isObject } from '@/utils/is';
 
 export const noop = () => {};
 
@@ -97,7 +97,7 @@ export function openWindow(
 export function getDynamicProps<T extends Record<string, unknown>, U>(props: T): Partial<U> {
   const ret: Recordable = {};
 
-  Object.keys(props).map((key) => {
+  Object.keys(props).forEach((key) => {
     ret[key] = unref((props as Recordable)[key]);
   });
 

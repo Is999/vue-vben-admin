@@ -1,4 +1,4 @@
-import { AdminApi } from '/@/api/api';
+import { AdminApi } from '@/api/api';
 import { getMenuListResultModel } from './model/menuModel';
 
 enum Api {

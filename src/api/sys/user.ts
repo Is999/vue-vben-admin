@@ -1,6 +1,6 @@
-import { AdminApi } from '/@/api/api';
+import { AdminApi } from '@/api/api';
 import { UserInfoModel, LoginParams, LoginResult, RoleInfo } from './model/userModel';
-import { ErrorMessageMode } from '/#/axios';
+import { ErrorMessageMode } from '#/axios';
 
 enum Api {
   Login = '/user/login',

@@ -67,14 +67,14 @@
   } from '@ant-design/icons-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
-  import { useI18n } from '/@/hooks/web/useI18n';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { useUserStore } from '/@/store/modules/user';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { captchaApi } from '/@/api/api';
-  import { encryptByMd5 } from '/@/utils/cipher';
-  import { buildSecretVerifyAccount } from '/@/api/sys/user';
+  import { useI18n } from '@/hooks/web/useI18n';
+  import { useMessage } from '@/hooks/web/useMessage';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { useUserStore } from '@/store/modules/user';
+  import { useDesign } from '@/hooks/web/useDesign';
+  import { captchaApi } from '@/api/api';
+  import { encryptByMd5 } from '@/utils/cipher';
+  import { buildSecretVerifyAccount } from '@/api/sys/user';
   import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars } from '@/utils/passport';
 

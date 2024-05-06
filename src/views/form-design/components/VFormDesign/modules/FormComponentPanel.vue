@@ -103,8 +103,7 @@
       .list-main {
         display: flex;
         flex-wrap: wrap;
-        align-content: flex-start;
-        justify-content: flex-start;
+        place-content: flex-start flex-start;
 
         .layout-width {
           width: 100%;
@@ -131,7 +130,7 @@
     }
 
     .draggable-box {
-      height: calc(100vh - 200px);
+      height: calc(100vh - 120px);
       // width: 100%;
       overflow: auto;
 
