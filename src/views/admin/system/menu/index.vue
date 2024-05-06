@@ -103,10 +103,10 @@
             { label: '缓存', value: 1 },
             { label: '实时', value: 0 },
           ],
-          onChange: (value) => {
-            console.log('@@@@', formModel, value);
-            cache.value = parseInt(value);
-          },
+          // change: (value) => {
+          //   console.log('@@@@ value', value);
+          //   cache.value = parseInt(value);
+          // },
         };
       },
       colProps: { span: 4, push: 1 },
@@ -249,7 +249,7 @@
     title: '菜单列表',
     defaultExpandAllRows: cache.value == 1,
     api: getMenuList,
-    onExpand,
+    // onExpand,
     columns,
     beforeFetch,
     rowKey: 'id',

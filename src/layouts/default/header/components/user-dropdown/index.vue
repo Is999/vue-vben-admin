@@ -4,7 +4,7 @@
       <img :class="`${prefixCls}__header`" :src="getUserInfo.avatar" />
       <span :class="`${prefixCls}__info hidden md:block`">
         <span :class="`${prefixCls}__name`" class="truncate">
-          {{ getUserInfo.real_name }}
+          {{ getUserInfo.realName }}
         </span>
       </span>
     </span>
@@ -74,7 +74,7 @@
   const userStore = useUserStore();
 
   const getUserInfo = computed(() => {
-    const { realName = '', avatar, remark } = userStore.getUserInfo || {};
+    const { real_name: realName = '', avatar, remark } = userStore.getUserInfo || {};
     return { realName, avatar: avatar || headerImg, remark };
   });
 

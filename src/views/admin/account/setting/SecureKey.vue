@@ -18,7 +18,7 @@
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. MFA秘钥</h4>
-      <p style=" margin-left: 1em; color: #7c8087;font-size: 12px">
+      <p style="margin-left: 1em; color: #7c8087; font-size: 12px">
         MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
         - TOTP：基于时间的动态密码；<br />
         - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
@@ -48,13 +48,10 @@
   import { useUserStore } from '@/store/modules/user';
   import { notify } from '@/api/api';
   import { useGlobSetting } from '@/hooks/setting';
-  import { ref, unref } from 'vue';
-  import { useCopyToClipboard } from '@/hooks/web/useCopyToClipboard';
-  import { useMessage } from '@/hooks/web/useMessage';
+  import { ref } from 'vue';
+  import { copyText } from '@/utils/copyTextToClipboard';
 
   const userStore = useUserStore();
-  const { clipboardRef, copiedRef } = useCopyToClipboard();
-  const { createMessage } = useMessage();
   const globSetting = useGlobSetting();
   const title = ref('修改MFA设备秘钥');
   const buildMFAUrl = ref(globSetting.apiUrl + userStore.getUserInfo?.build_mfa_url);
@@ -134,9 +131,6 @@
 
   function handleCopyBuildSecretKeyUrl() {
     let currentDomain = window.location.origin;
-    clipboardRef.value = currentDomain + buildMFAUrl.value;
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(currentDomain + buildMFAUrl.value);
   }
 </script>

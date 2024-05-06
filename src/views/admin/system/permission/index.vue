@@ -238,10 +238,10 @@
             { label: '缓存', value: 1 },
             { label: '实时', value: 0 },
           ],
-          onChange: (value) => {
-            // console.log('@@@@', formModel, value);
-            cache.value = value;
-          },
+          // onChange: (value) => {
+          //   // console.log('@@@@', formModel, value);
+          //   cache.value = value;
+          // },
         };
       },
       colProps: { span: 4, push: 1 },
@@ -266,7 +266,7 @@
     defaultExpandAllRows: cache.value == 1,
     api: getPermissionList,
     // dataSource: getPermissionList(),
-    onExpand,
+    // onExpand,
     columns,
     rowKey: 'id',
     formConfig: {

@@ -11,7 +11,7 @@
     <BasicForm @register="registerForm">
       <template #roles="{ model, field }">
         展开层级
-        <a-input
+        <Input
           type="number"
           @input="expandOne"
           class="mr-2 w-18"
@@ -20,8 +20,8 @@
           min="0"
           placeholder="展开层级"
         />
-        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
-        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
+        <Button @click="expandAll(true)" class="mr-2"> 展开全部 </Button>
+        <Button @click="expandAll(false)" class="mr-2"> 折叠全部 </Button>
         <BasicTree
           title="账号角色"
           v-if="treeData.length"
@@ -61,7 +61,7 @@
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { isArray } from '@/utils/is';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { Tooltip } from 'ant-design-vue';
+  import { Tooltip, Input, Button } from 'ant-design-vue';
   import { AccountRoleModel } from '@/api/admin/model/systemModel';
 
   const { hasPermission } = usePermission();

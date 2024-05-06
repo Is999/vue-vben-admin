@@ -31,7 +31,7 @@
         。
       </p>
       <h4>2. MFA秘钥</h4>
-      <p style=" margin-left: 1em; color: #7c8087;font-size: 12px">
+      <p style="margin-left: 1em; color: #7c8087; font-size: 12px">
         MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
         - TOTP：基于时间的动态密码；<br />
         - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
@@ -39,7 +39,7 @@
         Authenticator、Microsoft Authenticator、Authing令牌、宁盾令牌 ......，可在应用市场搜索下载
       </p>
       绑定MFA秘钥方式：
-      <p style=" margin-left: 1em;font-size: 12px">
+      <p style="margin-left: 1em; font-size: 12px">
         1）可以让用户提供已有的MFA秘钥进行绑定；<br />
         2）可以在用户首次登录后进行MFA秘钥绑定；<br />
         3）添加完账号后进入编辑页面生成绑定MFA秘钥地址，提供生成的地址给用户去绑定。
@@ -315,7 +315,7 @@
     },
   ];
 
-  const [register, { validate, setFieldsValue }] = useForm({
+  const [register, { validate, getFieldsValue, setFieldsValue }] = useForm({
     labelWidth: 100,
     schemas: formSchema,
     actionColOptions: {
@@ -358,9 +358,9 @@
   // 强制生成密码并复制
   function handleClick() {
     let pwd = generate(12);
-    setFieldsValue({
-      password: pwd,
-    });
+    const data = getFieldsValue();
+    data.password = pwd;
+    setFieldsValue(data);
     copyText(pwd);
   }
 </script>

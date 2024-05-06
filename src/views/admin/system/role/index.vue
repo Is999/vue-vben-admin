@@ -244,10 +244,10 @@
             { label: '缓存', value: 1 },
             { label: '实时', value: 0 },
           ],
-          onChange: (value) => {
-            // console.log('@@@@', formModel, value);
-            cache.value = value;
-          },
+          // onChange: (value) => {
+          //   // console.log('@@@@', formModel, value);
+          //   cache.value = value;
+          // },
         };
       },
       colProps: { span: 4, push: 1 },
@@ -269,7 +269,7 @@
     title: '角色列表',
     defaultExpandAllRows: cache.value == 1,
     api: getRoleList,
-    onExpand,
+    // onExpand,
     columns,
     rowKey: 'id',
     formConfig: {

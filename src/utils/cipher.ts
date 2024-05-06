@@ -1,11 +1,11 @@
 import { decrypt as aesDecrypt, encrypt as aesEncrypt } from 'crypto-js/aes';
 import UTF8, { parse } from 'crypto-js/enc-utf8';
 import pkcs7 from 'crypto-js/pad-pkcs7';
-import CTR from 'crypto-js/mode-ctr';
 import Base64 from 'crypto-js/enc-base64';
 import MD5 from 'crypto-js/md5';
 import SHA256 from 'crypto-js/sha256';
 import SHA512 from 'crypto-js/sha512';
+import { isEmpty } from '@/utils/is';
 
 // Define an interface for encryption
 // 定义一个加密器的接口
@@ -27,18 +27,24 @@ export interface EncryptionParams {
 class AesEncryption implements Encryption {
   private readonly key;
   private readonly iv;
+  private readonly mode;
 
-  constructor({ key, iv }: EncryptionParams) {
+  constructor({ key, iv }: EncryptionParams, mode?) {
     this.key = parse(key);
     this.iv = parse(iv);
+    this.mode = mode;
   }
 
   get getOptions() {
-    return {
-      mode: CTR,
+    const opt = {
       padding: pkcs7,
       iv: this.iv,
-    };
+    } as { [key: string]: any };
+
+    if (this.mode !== undefined && !isEmpty(this.mode)) {
+      opt.mode = this.mode;
+    }
+    return opt;
   }
 
   encrypt(plainText: string) {
