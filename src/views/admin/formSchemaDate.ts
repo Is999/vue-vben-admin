@@ -1,5 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { FormSchema } from '/@/components/Form';
+import { FormSchema } from '@/components/Form';
+
 export type RangeValue = [Dayjs, Dayjs];
 // 今日
 export const todayRange = [dayjs().startOf('day'), dayjs().endOf('day')];

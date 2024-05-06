@@ -64,12 +64,12 @@ export function usePermission() {
     if (!value) {
       return def;
     }
-    
+
     // 超级管理员所有都可见
     if (userStore.getUserRole?.superUserRole) {
       return true;
     }
-    
+
     const permMode = appStore.getProjectConfig.permissionMode;
 
     if ([PermissionModeEnum.ROUTE_MAPPING, PermissionModeEnum.ROLE].includes(permMode)) {

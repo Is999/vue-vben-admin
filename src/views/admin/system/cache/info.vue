@@ -96,11 +96,11 @@
     ListItem,
     InputSearch,
   } from 'ant-design-vue';
-  import { PageWrapper } from '/@/components/Page';
-  import Icon from '/@/components/Icon//Icon.vue';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { cacheInfo } from '/@/api/admin/system';
-  import { RedisInfoModel } from '/@/api/admin/model/systemModel';
+  import { PageWrapper } from '@/components/Page';
+  import Icon from '@/components/Icon//Icon.vue';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { cacheInfo } from '@/api/admin/system';
+  import { RedisInfoModel } from '@/api/admin/model/systemModel';
   import { ColumnType } from 'ant-design-vue/lib/table';
 
   const prefixCls = 'list-card';

@@ -42,14 +42,14 @@
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { configAdd, configEdit } from '/@/api/admin/system';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { CodeEditor, MODE } from '/@/components/CodeEditor';
-  import { notify } from '/@/api/api';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { configAdd, configEdit } from '@/api/admin/system';
+  import { useMessage } from '@/hooks/web/useMessage';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { CodeEditor, MODE } from '@/components/CodeEditor';
+  import { notify } from '@/api/api';
   import { Divider } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();

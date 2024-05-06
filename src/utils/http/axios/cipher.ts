@@ -10,18 +10,18 @@
  * Array或者Object类型的数据要标记`json:`标签
  */
 
-import { AesEncryption, decodeByBase64, EncryptionParams } from '@/utils/cipher';
-import { isEmpty, isObject, isArray } from '/@/utils/is';
+import { Encryption, EncryptionFactory, EncryptionParams } from '@/utils/cipher';
+import { isEmpty, isObject, isArray } from '@/utils/is';
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
 import { RequestEnum } from '@/enums/httpEnum';
 import { RequestOptions } from '#/axios';
 
 export class Cipher {
-  private aes: AesEncryption;
+  private aes: Encryption;
 
-  constructor(opt: Partial<EncryptionParams> = {}) {
-    this.aes = new AesEncryption(opt);
+  constructor(opt: EncryptionParams = {} as EncryptionParams) {
+    this.aes = EncryptionFactory.createAesEncryption(opt);
   }
 
   encryptData(params: any, cipherParams: string[]) {
@@ -59,7 +59,7 @@ export class Cipher {
           }
           originalData = JSON.stringify(params[param]);
         }
-        params[param] = this.aes.encryptByAES(originalData);
+        params[param] = this.aes.encrypt(originalData);
       }
     });
   }
@@ -86,7 +86,7 @@ export class Cipher {
       // 判断数据是否存在该参数
       const originalData = params[param];
       if (undefined !== originalData) {
-        let decryptedData = this.aes.decryptByAES(originalData);
+        let decryptedData = this.aes.decrypt(originalData);
         // 对json数据处理进行编码在加密
         if (isJson && '' !== decryptedData) {
           decryptedData = JSON.parse(decryptedData);
@@ -126,7 +126,7 @@ export class Cipher {
       }
     } else if (toLower(cipher) === 'cipher') {
       const all = Object.assign({}, config.params, config.data);
-      const encryptedData = this.aes.encryptByAES(JSON.stringify(all));
+      const encryptedData = this.aes.encrypt(JSON.stringify(all));
       if (config.method?.toUpperCase() === RequestEnum.POST) {
         config.data = { ciphertext: encryptedData };
         config.params = undefined;
@@ -156,7 +156,7 @@ export class Cipher {
 
     // 响应的整个body需要解密
     if (toLower(cipher) === 'cipher') {
-      res.data = JSON.parse(this.aes.decryptByAES(data)) || {};
+      res.data = JSON.parse(this.aes.decrypt(data)) || {};
       return;
     }
 
@@ -167,7 +167,9 @@ export class Cipher {
     }
 
     // 指定的参数需要解密
-    const cipherParams = JSON.parse(decodeByBase64(cipher)) as Array<string>;
+    const cipherParams = JSON.parse(
+      EncryptionFactory.createBase64Encryption().decrypt(cipher),
+    ) as Array<string>;
 
     this.decryptData(result, cipherParams);
   }

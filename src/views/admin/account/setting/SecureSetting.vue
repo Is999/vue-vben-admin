@@ -28,7 +28,7 @@
   import Password from './Password.vue';
   import SecureKey from './SecureKey.vue';
   import { Item } from './data';
-  import { useDrawer } from '/@/components/Drawer';
+  import { useDrawer } from '@/components/Drawer';
   import { useUserStore } from '@/store/modules/user';
   import { setUpdateMFAStatus } from '@/api/admin/system';
   import { notify } from '@/api/api';

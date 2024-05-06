@@ -13,7 +13,6 @@ import { router } from '@/router';
 import { usePermissionStore } from '@/store/modules/permission';
 import { RouteRecordRaw } from 'vue-router';
 import { PAGE_NOT_FOUND_ROUTE } from '@/router/routes/basic';
-import { isArray } from '@/utils/is';
 import { h } from 'vue';
 import {
   checkMfaSecure,
@@ -171,7 +170,7 @@ export const useUserStore = defineStore({
           permissionStore.setDynamicAddedRoute(true);
         }
 
-        goHome && (await router.replace(userInfo?.homePath || PageEnum.BASE_HOME));
+        goHome && (await router.replace(this.getUserInfo?.homePath || PageEnum.BASE_HOME));
       }
       return this.getUserInfo;
     },

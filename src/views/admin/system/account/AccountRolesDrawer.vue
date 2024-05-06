@@ -43,9 +43,9 @@
 </template>
 <script setup lang="ts">
   import { h, ref, unref } from 'vue';
-  import { BasicForm, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '/@/api/admin/system';
+  import { BasicForm, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { accountEditRoles, accountRoles, getAccountRoleTreeList } from '@/api/admin/system';
   import {
     BasicTree,
     TreeActionType,
@@ -53,15 +53,16 @@
     TreeItem,
     KeyType,
     TreeActionItem,
-  } from '/@/components/Tree';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { notify } from '/@/api/api';
+  } from '@/components/Tree';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { notify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { isArray } from '@/utils/is';
   import { useMessage } from '@/hooks/web/useMessage';
   import { Tooltip } from 'ant-design-vue';
+  import { AccountRoleModel } from '@/api/admin/model/systemModel';
 
   const { hasPermission } = usePermission();
   const isUpdate = ref(false); // true 编辑
@@ -97,7 +98,7 @@
         for (const pid of e.node.pids.split(',')) {
           if (keys.includes(parseInt(pid))) {
             if (e.node.name) {
-              let parentNode: TreeDataItem = <TreeDataItem>{};
+              let parentNode: TreeDataItem = {} as TreeDataItem;
 
               for (const checkedNode of e.checkedNodes) {
                 if (checkedNode.id === parseInt(pid)) {
@@ -213,7 +214,6 @@
         label: ' ',
         field: 'roles',
         slot: 'roles',
-        component: 'Input',
         defaultValue: [],
         colProps: { lg: 22, md: 22 },
       },
@@ -274,7 +274,7 @@
       values.roles = values.roles.checked ?? values.roles;
       values.id = rowId.value;
       // 发起请求
-      await accountEditRoles(rowId.value, values).then((res) => {
+      await accountEditRoles(rowId.value, values as AccountRoleModel).then((res) => {
         notify(res, true);
       });
 

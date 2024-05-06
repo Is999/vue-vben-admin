@@ -7,14 +7,14 @@
 </template>
 <script lang="ts" setup>
   import { reactive } from 'vue';
-  import { ActionItem, TableAction } from '/@/components/Table';
+  import { ActionItem, TableAction } from '@/components/Table';
   import {
     BasicTableProps,
     VxeBasicTable,
     VxeFormItemProps,
     VxeGridPropTypes,
-  } from '/@/components/VxeTable';
-  import { getUserLogActionList, getUserLogList } from '/@/api/admin/system';
+  } from '@/components/VxeTable';
+  import { getUserLogActionList, getUserLogList } from '@/api/admin/system';
 
   const vxeTableColumns: VxeGridPropTypes.Columns = [
     {

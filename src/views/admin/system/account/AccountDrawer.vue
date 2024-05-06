@@ -28,9 +28,9 @@
   import { ref, computed } from 'vue';
   import Step1 from './Step1.vue';
   import Step2 from './Step2.vue';
-  import { PageWrapper } from '/@/components/Page';
+  import { PageWrapper } from '@/components/Page';
   import { Steps, Step } from 'ant-design-vue';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
 
   const emit = defineEmits(['success', 'register']);
 

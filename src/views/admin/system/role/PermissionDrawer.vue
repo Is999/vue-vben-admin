@@ -42,10 +42,10 @@
 </template>
 <script setup lang="ts">
   import { ref, computed, h, unref } from 'vue';
-  import { BasicForm, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { getRolePermissionTreeList } from '/@/api/admin/system';
-  import { BasicTree, TreeItem, TreeActionItem, TreeActionType } from '/@/components/Tree';
+  import { BasicForm, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { getRolePermissionTreeList } from '@/api/admin/system';
+  import { BasicTree, TreeItem, TreeActionItem, TreeActionType } from '@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
@@ -97,7 +97,6 @@
         label: ' ',
         field: 'permissions_id',
         slot: 'permissions',
-        component: 'Input',
         defaultValue: [],
         colProps: { lg: 22, md: 22 },
       },

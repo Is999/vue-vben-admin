@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ScrollContainer } from '/@/components/Container/index';
+  import { ScrollContainer } from '@/components/Container';
   import { Tabs, TabPane } from 'ant-design-vue';
   import BaseSetting from './BaseSetting.vue';
   import SecureSetting from './SecureSetting.vue';

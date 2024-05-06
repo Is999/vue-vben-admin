@@ -39,7 +39,7 @@
         。
       </p>
       <h4>2. MFA秘钥</h4>
-      <p style="font-size: 12px; color: #7c8087; margin-left: 1em">
+      <p style=" margin-left: 1em; color: #7c8087;font-size: 12px">
         MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
         - TOTP：基于时间的动态密码；<br />
         - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
@@ -77,26 +77,26 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, unref } from 'vue';
+  import { ref, computed } from 'vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { accountBuildMFASecretKeyUrl, accountEdit } from '/@/api/admin/system';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { accountBuildMFASecretKeyUrl, accountEdit } from '@/api/admin/system';
+  import { useMessage } from '@/hooks/web/useMessage';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { Tooltip, Divider, InputPassword, Button } from 'ant-design-vue';
-  import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
-  import { notify } from '/@/api/api';
-  import { encryptByMd5 } from '/@/utils/cipher';
+  import { copyText } from '@/utils/copyTextToClipboard';
+  import { notify } from '@/api/api';
+  import { HashingFactory } from '@/utils/cipher';
   import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars, generate } from '@/utils/passport';
+  import { AccountModel } from '@/api/admin/model/systemModel';
 
   const emit = defineEmits(['success', 'register']);
 
   const { hasPermission } = usePermission();
   const { createMessage } = useMessage();
-  const { clipboardRef, copiedRef } = useCopyToClipboard();
 
   const rowId = ref(0); // 编辑记录的id
   const isGetParentTreeData = ref(true); // 是否请求下拉框数据
@@ -232,7 +232,6 @@
     {
       field: 'password',
       label: '密码',
-      component: 'InputPassword',
       slot: 'pwd',
       componentProps: {
         maxlength: 20,
@@ -379,14 +378,14 @@
     try {
       const values = await validate();
       if (values.password) {
-        values.password = encryptByMd5(values.password);
+        values.password = HashingFactory.createMD5Hashing().hash(values.password);
       }
 
       setDrawerProps({ confirmLoading: true });
       // console.log('@@@提交数据', values);
 
       // 发起请求
-      await accountEdit(rowId.value, values).then((res) => {
+      await accountEdit(rowId.value, values as AccountModel).then((res) => {
         notify(res, true);
       });
 
@@ -408,10 +407,7 @@
       // return;
       model[field] = generate(12);
     }
-    clipboardRef.value = model[field];
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(model[field]);
   }
 
   // 强制生成密码并复制
@@ -420,10 +416,7 @@
     setFieldsValue({
       password: pwd,
     });
-    clipboardRef.value = pwd;
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(pwd);
   }
 
   // 提交数据
@@ -444,14 +437,10 @@
 
           buildMFAUrl.value = currentDomain + globSetting.apiUrl + data.build_mfa_url;
 
-          clipboardRef.value = buildMFAUrl.value;
+          copyText(buildMFAUrl.value);
 
           const node = document.querySelector('#buildMFAUrl');
           node?.setAttribute('style', 'display:block');
-
-          if (unref(copiedRef)) {
-            createMessage.success('copy success！');
-          }
         }
       });
 
@@ -466,10 +455,7 @@
   // 强制生成密码并复制
   function handleCopyBuildMFASecretKeyUrl() {
     if (buildMFAUrl.value) {
-      clipboardRef.value = buildMFAUrl.value;
-      if (unref(copiedRef)) {
-        createMessage.success('copy success！');
-      }
+      copyText(buildMFAUrl.value);
     } else {
       handleBuildSecretKeyUrl();
     }

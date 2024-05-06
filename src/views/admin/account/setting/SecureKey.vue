@@ -18,7 +18,7 @@
     <div>
       <h3><SoundTwoTone twoToneColor="#eb2f96" /> 说明</h3>
       <h4>1. MFA秘钥</h4>
-      <p style="font-size: 12px; color: #7c8087; margin-left: 1em">
+      <p style=" margin-left: 1em; color: #7c8087;font-size: 12px">
         MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
         - TOTP：基于时间的动态密码；<br />
         - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
@@ -42,15 +42,15 @@
 <script setup lang="ts">
   import { Tooltip, Divider } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form';
-  import { updateMFASecureKey } from '/@/api/admin/system';
-  import { useUserStore } from '/@/store/modules/user';
-  import { notify } from '/@/api/api';
-  import { useGlobSetting } from '/@/hooks/setting';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form';
+  import { updateMFASecureKey } from '@/api/admin/system';
+  import { useUserStore } from '@/store/modules/user';
+  import { notify } from '@/api/api';
+  import { useGlobSetting } from '@/hooks/setting';
   import { ref, unref } from 'vue';
-  import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { useCopyToClipboard } from '@/hooks/web/useCopyToClipboard';
+  import { useMessage } from '@/hooks/web/useMessage';
 
   const userStore = useUserStore();
   const { clipboardRef, copiedRef } = useCopyToClipboard();

@@ -37,21 +37,21 @@
 </template>
 <script setup lang="ts">
   import { h } from 'vue';
-  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '/@/components/Table';
+  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '@/components/Table';
   import {
     getAccountList,
     getRoleTreeList,
     setAccountStatus,
     setAccountMFAStatus,
-  } from '/@/api/admin/system';
+  } from '@/api/admin/system';
   import AccountDrawer from './AccountDrawer.vue';
   import EditAccountDrawer from './EditAccountDrawer.vue';
   import AccountRolesDrawer from './AccountRolesDrawer.vue';
   import { Switch, Button } from 'ant-design-vue';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { useDrawer } from '/@/components/Drawer';
-  import { notify } from '/@/api/api';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { useDrawer } from '@/components/Drawer';
+  import { notify } from '@/api/api';
 
   const { hasPermission } = usePermission();
 
@@ -81,7 +81,6 @@
         api: getRoleTreeList,
         fieldNames: {
           label: 'title',
-          key: 'id',
           value: 'id',
         },
         labelField: 'title',

@@ -47,17 +47,17 @@
 </template>
 <script setup lang="ts">
   import { ref, computed, unref, h } from 'vue';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   import {
     getRolePermissionTreeList,
     roleAdd,
     roleEdit,
     getRoleTreeList,
-  } from '/@/api/admin/system';
-  import { TreeSelect } from '/@/api/admin/model/systemModel';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
+  } from '@/api/admin/system';
+  import { RoleModel, TreeSelect } from '@/api/admin/model/systemModel';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
   import {
     BasicTree,
     CheckKeys,
@@ -65,9 +65,9 @@
     TreeActionItem,
     TreeActionType,
     TreeItem,
-  } from '/@/components/Tree';
+  } from '@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
-  import { notify } from '/@/api/api';
+  import { notify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
@@ -200,7 +200,6 @@
         placeholder: '请选择上级角色',
         fieldNames: {
           label: 'title',
-          key: 'id',
           value: 'id',
         },
         getPopupContainer: () => document.body,
@@ -223,7 +222,6 @@
       label: '',
       field: 'permissions_id',
       slot: 'permissions',
-      component: 'Input',
       defaultValue: [],
       helpMessage: ['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑'],
       colProps: { lg: 22, md: 22 },
@@ -332,12 +330,12 @@
       // 发起请求
       if (unref(isUpdate)) {
         // 编辑
-        await roleEdit(rowId.value, values).then((res) => {
+        await roleEdit(rowId.value, values as RoleModel).then((res) => {
           notify(res, true);
         });
       } else {
         // 新增
-        await roleAdd(values).then((res) => {
+        await roleAdd(values as RoleModel).then((res) => {
           notify(res, true);
         });
       }

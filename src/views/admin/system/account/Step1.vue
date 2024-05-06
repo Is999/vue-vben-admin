@@ -31,7 +31,7 @@
         。
       </p>
       <h4>2. MFA秘钥</h4>
-      <p style="font-size: 12px; color: #7c8087; margin-left: 1em">
+      <p style=" margin-left: 1em; color: #7c8087;font-size: 12px">
         MFA秘钥是指身份验证器绑定的秘钥（TOTP MFA 应用程序）<br />
         - TOTP：基于时间的动态密码；<br />
         - MFA：多重身份验证，如两步验证（2FA），常用于登录或其它敏感操作的身份验证；<br />
@@ -39,7 +39,7 @@
         Authenticator、Microsoft Authenticator、Authing令牌、宁盾令牌 ......，可在应用市场搜索下载
       </p>
       绑定MFA秘钥方式：
-      <p style="font-size: 12px; margin-left: 1em">
+      <p style=" margin-left: 1em;font-size: 12px">
         1）可以让用户提供已有的MFA秘钥进行绑定；<br />
         2）可以在用户首次登录后进行MFA秘钥绑定；<br />
         3）添加完账号后进入编辑页面生成绑定MFA秘钥地址，提供生成的地址给用户去绑定。
@@ -53,24 +53,21 @@
 </template>
 
 <script setup lang="ts">
-  import { unref } from 'vue';
-  import { BasicForm, useForm, FormSchema } from '/@/components/Form';
+  import { BasicForm, useForm, FormSchema } from '@/components/Form';
   import { Tooltip, Divider, Button, InputPassword } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { accountAdd } from '/@/api/admin/system';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
-  import { checkChars, containSpecialChars, generate } from '/@/utils/passport';
-  import { notify } from '/@/api/api';
-  import { encryptByMd5 } from '/@/utils/cipher';
+  import { accountAdd } from '@/api/admin/system';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { copyText } from '@/utils/copyTextToClipboard';
+  import { checkChars, containSpecialChars, generate } from '@/utils/passport';
+  import { notify } from '@/api/api';
+  import { HashingFactory } from '@/utils/cipher';
+  import { AccountModel } from '@/api/admin/model/systemModel';
 
   const emit = defineEmits(['next']);
 
   const { hasPermission } = usePermission();
-  const { createMessage } = useMessage();
-  const { clipboardRef, copiedRef } = useCopyToClipboard();
 
   // form 框
   const formSchema: FormSchema[] = [
@@ -201,7 +198,6 @@
     {
       field: 'password',
       label: '密码',
-      component: 'InputPassword',
       slot: 'pwd',
       componentProps: {
         maxlength: 20,
@@ -338,9 +334,9 @@
     try {
       // emit('next', { id: 85 });
       const values = await validate();
-      values.password = encryptByMd5(values.password);
+      values.password = HashingFactory.createMD5Hashing().hash(values.password);
       // 新增
-      await accountAdd(values).then((res) => {
+      await accountAdd(values as AccountModel).then((res) => {
         notify(res, true);
         emit('next', res.data);
       });
@@ -356,10 +352,7 @@
       // return;
       model[field] = generate(12);
     }
-    clipboardRef.value = model[field];
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(model[field]);
   }
 
   // 强制生成密码并复制
@@ -368,9 +361,6 @@
     setFieldsValue({
       password: pwd,
     });
-    clipboardRef.value = pwd;
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(pwd);
   }
 </script>

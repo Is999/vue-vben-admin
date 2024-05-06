@@ -21,10 +21,10 @@ import {
   TreeSelect,
   updatePasswordParams,
 } from './model/systemModel';
-import { AdminApi } from '/@/api/api';
+import { AdminApi } from '@/api/api';
 import { SelectItem } from './model/public';
-import { TreeItem } from '/@/components/Tree';
-import { BasicFetchResult } from '/@/api/model/baseModel';
+import { TreeItem } from '@/components/Tree';
+import { BasicFetchResult } from '@/api/model/baseModel';
 
 enum Api {
   // 账号管理

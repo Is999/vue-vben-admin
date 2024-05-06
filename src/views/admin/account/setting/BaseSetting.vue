@@ -39,23 +39,22 @@
 
 <script setup lang="ts">
   import { Button, Tooltip, Col, Row } from 'ant-design-vue';
-  import { computed, onMounted, ref, unref } from 'vue';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form/index';
-  import { CollapseContainer } from '/@/components/Container';
-  import { CropperAvatar } from '/@/components/Cropper';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { computed, onMounted, ref } from 'vue';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
+  import { CollapseContainer } from '@/components/Container';
+  import { CropperAvatar } from '@/components/Cropper';
+  import { useMessage } from '@/hooks/web/useMessage';
 
-  import headerImg from '/@/assets/images/header.jpg';
-  import { useUserStore } from '/@/store/modules/user';
-  import { uploadApi } from '/@/api/sys/upload';
-  import { useCopyToClipboard } from '/@/hooks/web/useCopyToClipboard';
-  import { useGlobSetting } from '/@/hooks/setting';
-  import { encryptByMd5 } from '/@/utils/cipher';
-  import { updateMine } from '/@/api/admin/system';
-  import { notify } from '/@/api/api';
-  import { UserInfo } from '/#/store';
-
-  const { clipboardRef, copiedRef } = useCopyToClipboard();
+  import headerImg from '@/assets/images/header.jpg';
+  import { useUserStore } from '@/store/modules/user';
+  import { uploadApi } from '@/api/sys/upload';
+  import { copyText } from '@/utils/copyTextToClipboard';
+  import { useGlobSetting } from '@/hooks/setting';
+  import { HashingFactory } from '@/utils/cipher';
+  import { updateMine } from '@/api/admin/system';
+  import { notify } from '@/api/api';
+  import { UserInfo } from '#/store';
+  import { AccountModel } from '@/api/admin/model/systemModel';
 
   // 基础设置 form
   const form: FormSchema[] = [
@@ -294,11 +293,11 @@
     const values = await validate();
     try {
       if (values.password) {
-        values.password = encryptByMd5(values.password);
+        values.password = HashingFactory.createMD5Hashing().hash(values.password);
       }
 
       // 发起请求
-      await updateMine(values).then((res) => {
+      await updateMine(values as AccountModel).then((res) => {
         notify(res, true);
       });
 
@@ -313,10 +312,7 @@
   function handleCopyBuildSecretKeyUrl(url) {
     const globSetting = useGlobSetting();
     let currentDomain = window.location.origin;
-    clipboardRef.value = currentDomain + globSetting.apiUrl + url;
-    if (unref(copiedRef)) {
-      createMessage.success('copy success！');
-    }
+    copyText(currentDomain + globSetting.apiUrl + url);
   }
 </script>
 

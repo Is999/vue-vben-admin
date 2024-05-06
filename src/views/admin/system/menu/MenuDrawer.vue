@@ -45,22 +45,22 @@
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { BasicForm, useForm } from '/@/components/Form/index';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { BasicForm, useForm } from '@/components/Form/index';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   import {
     menuAdd,
     menuEdit,
     getMenuPermissionUuidTreeList,
     getMenuTreeList,
-  } from '/@/api/admin/system';
-  import { TreeSelect } from '/@/api/admin/model/systemModel';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
+  } from '@/api/admin/system';
+  import { MenuModel, TreeSelect } from '@/api/admin/model/systemModel';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { cloneDeep } from 'lodash-es';
-  import { useGo } from '/@/hooks/web/usePage';
+  import { useGo } from '@/hooks/web/usePage';
   import { Tooltip, Divider, InputNumber } from 'ant-design-vue';
-  import { FormSchema } from '/@/components/Table';
-  import { notify } from '/@/api/api';
+  import { FormSchema } from '@/components/Table';
+  import { notify } from '@/api/api';
 
   const go = useGo();
   const { hasPermission } = usePermission();
@@ -152,7 +152,6 @@
       field: 'sort',
       label: '排序',
       helpMessage: ['0 值会自动计算排序哦'],
-      component: 'InputNumber',
       defaultValue: 0,
       slot: 'sort',
       required: true,
@@ -162,7 +161,7 @@
       label: '图标',
       component: 'IconPicker',
       componentProps: {
-        placeholder: '请选择图标',
+        // placeholder: '请选择图标',
       },
       required: true,
     },
@@ -331,12 +330,12 @@
       // 发起请求
       if (unref(isUpdate)) {
         // 编辑
-        await menuEdit(rowId.value, values).then((res) => {
+        await menuEdit(rowId.value, values as MenuModel).then((res) => {
           notify(res, true);
         });
       } else {
         // 新增
-        await menuAdd(values).then((res) => {
+        await menuAdd(values as MenuModel).then((res) => {
           notify(res, true);
         });
       }

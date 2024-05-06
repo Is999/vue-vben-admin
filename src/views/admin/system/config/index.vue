@@ -45,15 +45,15 @@
 </template>
 <script setup lang="ts">
   import { h } from 'vue';
-  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '/@/components/Table';
-  import { configGetCache, configRenew, getConfigList } from '/@/api/admin/system';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { useDrawer } from '/@/components/Drawer';
+  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '@/components/Table';
+  import { configGetCache, configRenew, getConfigList } from '@/api/admin/system';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { useDrawer } from '@/components/Drawer';
   import ConfigDrawer from './ConfigDrawer.vue';
   import { Modal, Tag, Button } from 'ant-design-vue';
-  import { JsonPreview } from '/@/components/CodeEditor';
-  import { notify } from '/@/api/api';
+  import { JsonPreview } from '@/components/CodeEditor';
+  import { notify } from '@/api/api';
   import { isArray } from '@/utils/is';
 
   const { hasPermission } = usePermission();

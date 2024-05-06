@@ -26,13 +26,14 @@
 <script setup lang="ts">
   import { Divider } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
-  import { BasicForm, FormSchema, useForm } from '/@/components/Form';
-  import { updaetePassword } from '/@/api/admin/system';
-  import { useUserStore } from '/@/store/modules/user';
-  import { notify } from '/@/api/api';
-  import { encryptByMd5 } from '/@/utils/cipher';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
+  import { BasicForm, FormSchema, useForm } from '@/components/Form';
+  import { updaetePassword } from '@/api/admin/system';
+  import { useUserStore } from '@/store/modules/user';
+  import { notify } from '@/api/api';
+  import { HashingFactory } from '@/utils/cipher';
   import { checkChars, containSpecialChars } from '@/utils/passport';
+  import { updatePasswordParams } from '@/api/admin/model/systemModel';
 
   const formSchema: FormSchema[] = [
     {
@@ -165,14 +166,15 @@
     const values = await validate();
     try {
       setDrawerProps({ loading: true });
-      values.passwordOld = encryptByMd5(values.passwordOld);
-      values.passwordNew = encryptByMd5(values.passwordNew);
-      values.confirmPassword = encryptByMd5(values.confirmPassword);
+      const md5 = HashingFactory.createMD5Hashing();
+      values.passwordOld = md5.hash(values.passwordOld);
+      values.passwordNew = md5.hash(values.passwordNew);
+      values.confirmPassword = md5.hash(values.confirmPassword);
       // const { passwordOld, passwordNew } = values;
       // console.log('@@@ password', passwordOld, passwordNew);
 
       // 修改密码
-      await updaetePassword(values).then((res) => {
+      await updaetePassword(values as updatePasswordParams).then((res) => {
         notify(res, true);
         closeDrawer();
         setTimeout(() => {

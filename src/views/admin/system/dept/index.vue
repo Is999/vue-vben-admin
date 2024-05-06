@@ -31,10 +31,10 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
 
-  import { BasicTable, useTable, TableAction } from '/@/components/Table';
-  import { getDeptList } from '/@/api/admin/system';
+  import { BasicTable, useTable, TableAction } from '@/components/Table';
+  import { getDeptList } from '@/api/admin/system';
 
-  import { useModal } from '/@/components/Modal';
+  import { useModal } from '@/components/Modal';
   import DeptModal from './DeptModal.vue';
 
   import { columns, searchFormSchema } from './dept.data';

@@ -1,5 +1,5 @@
-import { BasicPageParams } from '/@/api/model/baseModel';
-import { TreeItem } from '/@/components/Tree';
+import { BasicPageParams } from '@/api/model/baseModel';
+import { TreeItem } from '@/components/Tree';
 
 // 部门
 export type DeptParams = {

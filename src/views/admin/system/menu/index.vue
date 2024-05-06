@@ -2,7 +2,7 @@
   <div>
     <BasicTable
       @register="registerTable"
-      @row-dbClick="onDbClickRowExpand"
+      @row-db-click="onDbClickRowExpand"
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
@@ -41,15 +41,15 @@
 </template>
 <script setup lang="ts">
   import { h, nextTick, ref } from 'vue';
-  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '/@/components/Table';
-  import { getMenuList, setMenuStatus } from '/@/api/admin/system';
-  import { useDrawer } from '/@/components/Drawer';
+  import { BasicColumn, BasicTable, FormSchema, TableAction, useTable } from '@/components/Table';
+  import { getMenuList, setMenuStatus } from '@/api/admin/system';
+  import { useDrawer } from '@/components/Drawer';
   import MenuDrawer from './MenuDrawer.vue';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { Switch, Tag, Button } from 'ant-design-vue';
-  import Icon from '/@/components/Icon/Icon.vue';
-  import { notify } from '/@/api/api';
+  import Icon from '@/components/Icon/Icon.vue';
+  import { notify } from '@/api/api';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const { hasPermission } = usePermission();
@@ -104,8 +104,8 @@
             { label: '实时', value: 0 },
           ],
           onChange: (value) => {
-            // console.log('@@@@', formModel, value);
-            cache.value = value;
+            console.log('@@@@', formModel, value);
+            cache.value = parseInt(value);
           },
         };
       },

@@ -36,7 +36,7 @@
 
 <script setup lang="ts">
   import { h, onBeforeMount, ref, unref } from 'vue';
-  import { BasicForm, useForm } from '/@/components/Form';
+  import { BasicForm, useForm } from '@/components/Form';
   import {
     BasicTree,
     TreeItem,
@@ -44,16 +44,17 @@
     CheckKeys,
     KeyType,
     TreeActionItem,
-  } from '/@/components/Tree';
-  import { accountEditRoles, getAccountRoleTreeList } from '/@/api/admin/system';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { notify } from '/@/api/api';
+  } from '@/components/Tree';
+  import { accountEditRoles, getAccountRoleTreeList } from '@/api/admin/system';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { notify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { useMessage } from '@/hooks/web/useMessage';
   import { Tooltip } from 'ant-design-vue';
+  import { AccountRoleModel } from '@/api/admin/model/systemModel';
 
   const { hasPermission } = usePermission();
 
@@ -91,7 +92,7 @@
       for (const pid of e.node.pids.split(',')) {
         if (keys.includes(parseInt(pid))) {
           if (e.node.name) {
-            let parentNode: TreeDataItem = <TreeDataItem>{};
+            let parentNode: TreeDataItem = {} as TreeDataItem;
 
             for (const checkedNode of e.checkedNodes) {
               if (checkedNode.id === parseInt(pid)) {
@@ -191,7 +192,6 @@
         label: ' ',
         field: 'roles',
         slot: 'roles',
-        component: 'Input',
         defaultValue: [],
         colProps: { lg: 22, md: 24 },
       },
@@ -229,7 +229,7 @@
         },
       });
 
-      accountEditRoles(values.id, values)
+      accountEditRoles(values.id, values as AccountRoleModel)
         .then((res) => {
           notify(res, true);
           emit('redo');

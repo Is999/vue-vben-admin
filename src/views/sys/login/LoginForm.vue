@@ -73,7 +73,7 @@
   import { useUserStore } from '@/store/modules/user';
   import { useDesign } from '@/hooks/web/useDesign';
   import { captchaApi } from '@/api/api';
-  import { encryptByMd5 } from '@/utils/cipher';
+  import { HashingFactory } from '@/utils/cipher';
   import { buildSecretVerifyAccount } from '@/api/sys/user';
   import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars } from '@/utils/passport';
@@ -180,7 +180,6 @@
     },
     {
       field: 'captcha',
-      component: 'Input',
       label: '',
       defaultValue: formData.captcha,
       colProps: {
@@ -259,7 +258,6 @@
     // },
     {
       field: 'submit',
-      component: 'Input',
       label: '',
       slot: 'submit',
       colProps: {
@@ -293,7 +291,7 @@
       try {
         loading.value = true;
         const userInfo = await userStore.login({
-          password: encryptByMd5(data.password),
+          password: HashingFactory.createMD5Hashing().hash(data.password),
           name: data.name,
           captcha: data.captcha,
           key: formData.key,
@@ -331,7 +329,7 @@
       try {
         const result = await buildSecretVerifyAccount(
           {
-            password: encryptByMd5(data.password),
+            password: HashingFactory.createMD5Hashing().hash(data.password),
             name: data.name,
             captcha: data.captcha,
             key: formData.key,

@@ -29,20 +29,20 @@
 
 <script setup lang="ts">
   import { ref, computed, unref } from 'vue';
-  import { BasicForm, useForm } from '/@/components/Form/index';
+  import { BasicForm, useForm } from '@/components/Form/index';
   import { SoundTwoTone } from '@ant-design/icons-vue';
-  import { FormSchema } from '/@/components/Table';
-  import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
+  import { FormSchema } from '@/components/Table';
+  import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   import {
     permissionAdd,
     permissionEdit,
     getPermissionTreeList,
     getPermissionMaxUuid,
-  } from '/@/api/admin/system';
-  import { TreeSelect } from '/@/api/admin/model/systemModel';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { notify } from '/@/api/api';
+  } from '@/api/admin/system';
+  import { PermissionModel, TreeSelect } from '@/api/admin/model/systemModel';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { notify } from '@/api/api';
   import { Divider } from 'ant-design-vue';
   import { useMessage } from '@/hooks/web/useMessage';
 
@@ -96,7 +96,6 @@
         placeholder: '请选择上级权限',
         fieldNames: {
           label: 'title',
-          key: 'id',
           value: 'id',
         },
         getPopupContainer: () => document.body,
@@ -226,12 +225,12 @@
       // 发起请求
       if (unref(isUpdate)) {
         // 编辑
-        await permissionEdit(rowId.value, values).then((res) => {
+        await permissionEdit(rowId.value, values as PermissionModel).then((res) => {
           notify(res, true);
         });
       } else {
         // 新增
-        await permissionAdd(values).then(async (res) => {
+        await permissionAdd(values as PermissionModel).then(async (res) => {
           // uuid 特殊的处理
           if (res.success === false && res.code === 100034) {
             // notify(res, false);

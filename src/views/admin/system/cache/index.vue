@@ -40,14 +40,14 @@
 </template>
 <script setup lang="ts">
   import { h } from 'vue';
-  import { BasicTable, useTable, TableAction, BasicColumn } from '/@/components/Table';
-  import { cacheRenew, cacheRenewAll, getCacheList } from '/@/api/admin/system';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { useDrawer } from '/@/components/Drawer';
+  import { BasicTable, useTable, TableAction, BasicColumn } from '@/components/Table';
+  import { cacheRenew, cacheRenewAll, getCacheList } from '@/api/admin/system';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { useDrawer } from '@/components/Drawer';
   import InfoDrawer from './info.vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
-  import { notify } from '/@/api/api';
+  import { useMessage } from '@/hooks/web/useMessage';
+  import { notify } from '@/api/api';
   import { Button } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();

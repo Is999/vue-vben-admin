@@ -23,7 +23,7 @@ import { Cipher } from '@/utils/http/axios/cipher';
 import { buildUUID } from '@/utils/uuid';
 import { useLocaleStoreWithOut } from '@/store/modules/locale';
 import { trimParam } from '@/utils/helper/trimParam';
-import { encryptByBase64 } from '@/utils/cipher';
+import { EncryptionFactory } from '@/utils/cipher';
 import { cacheCipher } from '@/settings/encryptionSetting';
 
 const globSetting = useGlobSetting();
@@ -204,9 +204,9 @@ const transform: AxiosTransform = {
         ? `${options.authenticationScheme} ${token}`
         : token;
     }
-
+    const base64 = EncryptionFactory.createBase64Encryption();
     // APP Key
-    (config as Recordable).headers['X-App-Id'] = encryptByBase64(import.meta.env.VITE_APP_ID);
+    (config as Recordable).headers['X-App-Id'] = base64.encrypt(import.meta.env.VITE_APP_ID);
 
     // 语言
     const lang = useLocaleStoreWithOut().getLocale;
@@ -221,7 +221,7 @@ const transform: AxiosTransform = {
     if (cipher?.length > 0) {
       (config as Recordable).headers['X-Cipher'] = isString(cipher)
         ? 'cipher'
-        : encryptByBase64(JSON.stringify(cipher));
+        : base64.encrypt(JSON.stringify(cipher));
     }
 
     return config;

@@ -2,7 +2,7 @@
   <div>
     <BasicTable
       @register="registerTable"
-      @row-dbClick="onDbClickRowExpand"
+      @row-db-click="onDbClickRowExpand"
       @fetch-success="onFetchSuccess"
     >
       <template #bodyCell="{ column, record }">
@@ -48,17 +48,17 @@
 </template>
 <script setup lang="ts">
   import { createVNode, h, nextTick, ref } from 'vue';
-  import { BasicTable, useTable, TableAction, BasicColumn, FormSchema } from '/@/components/Table';
-  import { roleDel, getRoleList, setRoleStatus } from '/@/api/admin/system';
-  import { useDrawer } from '/@/components/Drawer';
+  import { BasicTable, useTable, TableAction, BasicColumn, FormSchema } from '@/components/Table';
+  import { roleDel, getRoleList, setRoleStatus } from '@/api/admin/system';
+  import { useDrawer } from '@/components/Drawer';
   import RoleDrawer from './RoleDrawer.vue';
   import PermissionDrawer from './PermissionDrawer.vue';
-  import { usePermission } from '/@/hooks/web/usePermission';
-  import { PermissionsEnum } from '/@/enums/permissionsEnum';
-  import { PermissionListItem } from '/@/api/admin/model/systemModel';
+  import { usePermission } from '@/hooks/web/usePermission';
+  import { PermissionsEnum } from '@/enums/permissionsEnum';
+  import { PermissionListItem } from '@/api/admin/model/systemModel';
   import { Modal, Switch } from 'ant-design-vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { notify } from '/@/api/api';
+  import { notify } from '@/api/api';
   import { RoleEnum } from '@/enums/roleEnum';
 
   const [registerDrawer, { openDrawer }] = useDrawer();

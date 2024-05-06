@@ -14,8 +14,8 @@
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
 
-  import { BasicTree, TreeItem } from '/@/components/Tree';
-  import { getDeptList } from '/@/api/admin/system';
+  import { BasicTree, TreeItem } from '@/components/Tree';
+  import { getDeptList } from '@/api/admin/system';
 
   export default defineComponent({
     name: 'DeptTree',
