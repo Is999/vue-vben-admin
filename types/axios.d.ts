@@ -31,9 +31,9 @@ export interface RequestOptions {
   // 去除空字符
   trimEmpty?: boolean;
   // 特殊响应状态码处理
-  statusCodes?: Array[number];
+  statusCodes?: number[];
   // 加密参数
-  cipherParams?: Array[string] | string;
+  cipherParams?: string[] | string;
   // 签名参数
   signParams?: signParams;
 }

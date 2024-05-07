@@ -6,22 +6,42 @@ import MD5 from 'crypto-js/md5';
 import SHA256 from 'crypto-js/sha256';
 import SHA512 from 'crypto-js/sha512';
 import { isEmpty } from '@/utils/is';
+import JSEncrypt from 'jsencrypt';
+import { IJSEncryptOptions } from 'jsencrypt/lib/JSEncrypt';
 
 // Define an interface for encryption
 // 定义一个加密器的接口
 export interface Encryption {
   encrypt(plainText: string): string;
+
   decrypt(cipherText: string): string;
+
+  isErr(): boolean;
 }
+
+export interface Signature {
+  sign(plainText: string): string | false;
+
+  verify(str: string, signature: string): boolean;
+}
+
 // Define an interface for Hashing
 // 定义一个哈希算法的接口
 export interface Hashing {
   hash(data: string): string;
 }
 
-export interface EncryptionParams {
+export interface AesOptions {
   key: string;
   iv: string;
+  mode?: any;
+}
+
+export interface RsaOptions {
+  key: string;
+  digestMethod?: (str: string) => string;
+  digestName?: string;
+  options?: IJSEncryptOptions;
 }
 
 class AesEncryption implements Encryption {
@@ -29,7 +49,7 @@ class AesEncryption implements Encryption {
   private readonly iv;
   private readonly mode;
 
-  constructor({ key, iv }: EncryptionParams, mode?) {
+  constructor({ key, iv, mode }: AesOptions) {
     this.key = parse(key);
     this.iv = parse(iv);
     this.mode = mode;
@@ -54,6 +74,82 @@ class AesEncryption implements Encryption {
   decrypt(cipherText: string) {
     return aesDecrypt(cipherText, this.key, this.getOptions).toString(UTF8);
   }
+
+  isErr(): boolean {
+    return false;
+  }
+}
+
+class RsaEncryption implements Encryption {
+  private readonly key: string;
+  private readonly options: IJSEncryptOptions;
+  private err: boolean = false;
+
+  constructor({ key, options }: RsaOptions) {
+    this.key = key;
+    this.options = options || ({} as IJSEncryptOptions);
+  }
+
+  encrypt(plainText: string) {
+    // 重置err
+    this.err = false;
+
+    const rsa = new JSEncrypt(this.options);
+    rsa.setKey(this.key);
+    const res = rsa.encrypt(plainText);
+    if (typeof res === 'boolean') {
+      return '';
+    }
+    return res;
+  }
+
+  decrypt(cipherText: string) {
+    // 重置err
+    this.err = false;
+
+    const rsa = new JSEncrypt(this.options);
+    rsa.setKey(this.key);
+    const res = rsa.decrypt(cipherText);
+    if (typeof res === 'boolean') {
+      return '';
+    }
+    return res;
+  }
+
+  isErr(): boolean {
+    return this.err;
+  }
+}
+
+class RsaSignature implements Signature {
+  private readonly key: string;
+  private readonly digestMethod: (str: string) => string;
+  private readonly digestName: string;
+  private readonly options: IJSEncryptOptions;
+
+  constructor({ key, digestMethod, digestName, options }: RsaOptions) {
+    this.key = key;
+    this.digestMethod =
+      digestMethod ||
+      function (str) {
+        return SHA256(str).toString();
+      };
+
+    this.digestName = digestName || 'sha256';
+    this.options = options || ({} as IJSEncryptOptions);
+  }
+
+  sign(str: string) {
+    const rsa = new JSEncrypt(this.options);
+    rsa.setKey(this.key);
+    return rsa.sign(str, this.digestMethod, this.digestName);
+  }
+
+  verify(str: string, signature: string) {
+    const rsa = new JSEncrypt(this.options);
+    rsa.setKey(this.key);
+    return rsa.verify(str, signature, this.digestMethod);
+  }
 }
 
 // Define a singleton class for Base64 encryption
@@ -77,6 +173,10 @@ class Base64Encryption implements Encryption {
 
   decrypt(cipherText: string) {
     return Base64.parse(cipherText).toString(UTF8);
+  }
+
+  isErr(): boolean {
+    return false;
   }
 }
 
@@ -141,12 +241,24 @@ class SHA512Hashing implements Hashing {
 }
 
 export class EncryptionFactory {
-  public static createAesEncryption(params: EncryptionParams): Encryption {
+  public static createAesEncryption(params: AesOptions): Encryption {
     return new AesEncryption(params);
+  }
+
+  // 公钥加密，私钥解密
+  public static createRsaEncryption(params: RsaOptions): Encryption {
+    return new RsaEncryption(params);
   }
 
   public static createBase64Encryption(): Encryption {
     return Base64Encryption.getInstance();
+  }
+}
+
+export class SignatureFactory {
+  // 私钥签名，公钥验证签名
+  public static createRsaSignature(params: RsaOptions): Signature {
+    return new RsaSignature(params);
   }
 }
 

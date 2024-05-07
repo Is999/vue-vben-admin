@@ -1,8 +1,8 @@
-import Http, { defHttp } from '/@/utils/http/axios';
+import Http, { defHttp } from '@/utils/http/axios';
 // import { useGlobSetting } from '/@/hooks/setting/index';
-import { captchaApiResultModel } from '/@/api/sys/model/captcha';
-import type { Result } from '/#/axios';
-import { useMessage } from '/@/hooks/web/useMessage';
+import { captchaApiResultModel } from '@/api/sys/model/captcha';
+import type { Result } from '#/axios';
+import { useMessage } from '@/hooks/web/useMessage';
 
 // const globSetting = useGlobSetting();
 

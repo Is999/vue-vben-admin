@@ -1,7 +1,7 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
 // The axios configuration can be changed according to the project, just change the file, other files can be left unchanged
 
-import type { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from 'axios';
 import { clone } from 'lodash-es';
 import type { RequestOptions, Result } from '#/axios';
 import type { AxiosTransform, CreateAxiosOptions } from './axiosTransform';
@@ -18,18 +18,18 @@ import { useI18n } from '@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import { AxiosRetry } from '@/utils/http/axios/axiosRetry';
-import axios from 'axios';
-import { Cipher } from '@/utils/http/axios/cipher';
+import { CipherData } from '@/utils/http/axios/cipherData';
 import { buildUUID } from '@/utils/uuid';
 import { useLocaleStoreWithOut } from '@/store/modules/locale';
 import { trimParam } from '@/utils/helper/trimParam';
-import { EncryptionFactory } from '@/utils/cipher';
-import { cacheCipher } from '@/settings/encryptionSetting';
+import { EncryptionFactory, SignatureFactory } from '@/utils/cipher';
+import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
+import { SignData } from '@/utils/http/axios/signData';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
 const { createMessage, createErrorModal, createSuccessModal } = useMessage();
-const cipher = new Cipher(cacheCipher);
+
 /**
  * @description: 数据处理，方便区分多种处理方式
  */
@@ -106,88 +106,14 @@ const transform: AxiosTransform = {
 
   // 请求之前处理config
   beforeRequestHook: (config, options) => {
-    const {
-      apiUrl,
-      joinPrefix,
-      joinParamsToUrl,
-      formatDate,
-      joinTime = true,
-      urlPrefix,
-      trimEmpty = true,
-    } = options;
-
+    const { apiUrl, joinPrefix, urlPrefix } = options;
+    // console.log('@@@@beforeRequestHook', config, options);
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
     }
     if (apiUrl && isString(apiUrl)) {
       config.url = `${apiUrl}${config.url}`;
     }
-    const params = config.params || {};
-    const data = config.data || false;
-    formatDate && data && !isString(data) && formatRequestDate(data);
-    if (config.method?.toUpperCase() === RequestEnum.GET) {
-      if (!isString(params)) {
-        // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
-        config.params = Object.assign(params || {}, joinTimestamp(joinTime, false));
-      } else {
-        // 兼容restful风格
-        config.url = config.url + params + `${joinTimestamp(joinTime, true)}`;
-        config.params = undefined;
-      }
-    } else {
-      if (!isString(params)) {
-        formatDate && formatRequestDate(params);
-        if (
-          Reflect.has(config, 'data') &&
-          config.data &&
-          (Object.keys(config.data).length > 0 || config.data instanceof FormData)
-        ) {
-          // 去除空字符串
-          if (trimEmpty) {
-            trimParam(data);
-          }
-          config.data = data;
-          config.params = params;
-        } else {
-          // 非GET请求如果没有提供data，则将params视为data
-          config.data = params;
-          config.params = undefined;
-        }
-
-        if (joinParamsToUrl) {
-          config.url = setObjToUrlParams(
-            config.url as string,
-            Object.assign({}, config.params, config.data),
-          );
-        }
-      } else {
-        // 兼容restful风格
-        config.url = config.url + params;
-        config.params = undefined;
-      }
-    }
-
-    // 去除空字符串
-    if (trimEmpty) {
-      if (config.params) {
-        // console.log('trimParam-params', config.params);
-        trimParam(config.params);
-      }
-
-      if (config.data) {
-        // console.log('trimParam-data', config.data);
-        trimParam(config.data);
-      }
-    }
-
-    // 字段加密
-    cipher.requestEncryptData(config, options);
-
-    // if (Object.keys(all).length > 0) {
-    //   const encryptedData = encryption.encryptByAES(JSON.stringify(all));
-    //   config.data = { ciphertext: encryptedData };
-    //   // config.data = encryptedData;
-    // }
 
     return config;
   },
@@ -196,34 +122,150 @@ const transform: AxiosTransform = {
    * @description: 请求拦截器处理
    */
   requestInterceptors: (config, options) => {
+    const requestOptions = (config as Recordable).requestOptions as RequestOptions;
+    const {
+      joinParamsToUrl,
+      formatDate,
+      joinTime = true,
+      trimEmpty = true,
+      withToken = true,
+      cipherParams = '',
+      signParams,
+    } = requestOptions;
+
+    // console.log('@@@@requestInterceptors', requestOptions, options.requestOptions);
+
+    const headers = (config as Recordable).headers as AxiosRequestHeaders;
+
     // 请求之前处理config
     const token = getToken();
-    if (token && (config as Recordable).requestOptions?.withToken !== false) {
+    if (token && withToken) {
       // jwt token
-      (config as Recordable).headers.Authorization = options.authenticationScheme
+      const authorization = options.authenticationScheme
         ? `${options.authenticationScheme} ${token}`
         : token;
+      headers.set('Authorization', authorization as string);
     }
+
     const base64 = EncryptionFactory.createBase64Encryption();
+
     // APP Key
-    (config as Recordable).headers['X-App-Id'] = base64.encrypt(import.meta.env.VITE_APP_ID);
+    const appId = import.meta.env.VITE_APP_ID;
+    headers.set('X-App-Id', base64.encrypt(appId));
 
     // 语言
     const lang = useLocaleStoreWithOut().getLocale;
-
-    (config as Recordable).headers['X-Language'] = lang == 'en' ? lang : 'zh';
+    headers.set('X-Language', lang == 'en' ? lang : 'zh');
 
     // 请求的唯一id
-    (config as Recordable).headers['X-Request-Id'] = buildUUID(); // 生成uuid
+    const requestId = buildUUID();
+    headers.set('X-Request-Id', requestId);
 
     // 加密字段写入header
-    const cipher = (config as Recordable).requestOptions?.cipherParams;
-    if (cipher?.length > 0) {
-      (config as Recordable).headers['X-Cipher'] = isString(cipher)
-        ? 'cipher'
-        : base64.encrypt(JSON.stringify(cipher));
+    if (cipherParams?.length > 0) {
+      headers.set(
+        'X-Cipher',
+        isString(cipherParams) ? 'cipher' : base64.encrypt(JSON.stringify(cipherParams)),
+      );
     }
 
+    const processing = function (datas: Recordable) {
+      // 时间处理
+      formatDate && formatRequestDate(datas);
+
+      // 去除空格
+      trimEmpty && trimParam(datas);
+    };
+
+    const params = config.params || {};
+    const paramsIsStr = isString(params);
+    if (paramsIsStr) {
+      // 兼容restful风格
+      config.url = config.url + params;
+
+      // 重写params
+      config.params = {};
+    }
+
+    if (config.method?.toUpperCase() === RequestEnum.GET) {
+      // 给 get 请求加上时间戳参数，避免从缓存中拿数据。
+      config.params = Object.assign(config.params || {}, joinTimestamp(joinTime, false));
+    }
+
+    if (!isEmpty(config.params)) {
+      processing(config.params);
+    }
+
+    let hasData = false;
+    if (
+      Reflect.has(config, 'data') &&
+      config.data &&
+      (Object.keys(config.data).length > 0 || config.data instanceof FormData)
+    ) {
+      hasData = true;
+      processing(config.data);
+    }
+
+    // 请求的数据先签名再加密
+    // 数据签名
+    if (undefined !== signParams && undefined !== signParams.request) {
+      const signData = new SignData(
+        SignatureFactory.createRsaSignature({
+          key: rsaCipher.privateKey, // 私钥签名
+          options: {
+            log: true,
+          },
+        }),
+      );
+
+      // 将所有参数合并
+      const all = Object.assign({}, config.params, config.data);
+      const signStr = signData.getSignStr(all, signParams.request, requestId, appId);
+      const sign = signData.sign(signStr);
+      if (false === sign) {
+        console.error(
+          '请求数据签名失败, data: ',
+          all,
+          'signParams: ',
+          signParams.request,
+          'requestId: ',
+          requestId,
+          'signStr: ',
+          signStr,
+        );
+        // throw new Error('请求数据签名失败！');
+      } else {
+        config.params = Object.assign(config.params || {}, { sign: sign });
+      }
+    }
+
+    // 数据加密
+    if (cipherParams.length > 0) {
+      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+      cipherData.requestEncryptData(config, requestOptions);
+    }
+
+    // url 处理
+    if (paramsIsStr) {
+      // 兼容restful风格
+      if (config.method?.toUpperCase() === RequestEnum.GET) {
+        config.url = setObjToUrlParams(config.url as string, config.params);
+      }
+      config.params = undefined;
+    } else {
+      if (!hasData && config.method?.toUpperCase() !== RequestEnum.GET) {
+        // 非GET请求如果没有提供data，则将params视为data
+        config.data = config.params;
+        config.params = {};
+      }
+
+      if (joinParamsToUrl) {
+        config.url = setObjToUrlParams(
+          config.url as string,
+          Object.assign({}, config.params, config.data),
+        );
+      }
+    }
     return config;
   },
 
@@ -231,8 +273,12 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
+    // 响应的数据先解密再验证签名
     // 返回数据解密
-    cipher.responseDecryptData(res);
+    const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+    cipherData.responseDecryptData(res);
+
+    // 验证签名
 
     return res;
   },

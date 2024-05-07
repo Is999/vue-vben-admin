@@ -114,13 +114,12 @@
           // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              /* eslint-disable-next-line */
               return Promise.reject(t('sys.login.namePlaceholder'));
             }
-            if (!/^[A-Za-z0-9]{6,20}$/.test(value)) {
-              /* eslint-disable-next-line */
-              return Promise.reject('账号为6-20个字母加数字组成');
-            }
+            // if (!/^[A-Za-z0-9]{6,20}$/.test(value)) {
+            //   /* eslint-disable-next-line */
+            //   return Promise.reject('账号为6-20个字母加数字组成');
+            // }
             return Promise.resolve();
           },
           trigger: 'change',
