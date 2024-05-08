@@ -11,9 +11,6 @@
  */
 
 import { HashingFactory, Signature } from '@/utils/cipher';
-import { isEmpty, isObject, isArray } from '@/utils/is';
-import type { AxiosResponse } from 'axios';
-import { toLower } from 'lodash-es';
 
 export class SignData {
   private signature: Signature;
@@ -48,31 +45,10 @@ export class SignData {
 
   /**
    * 响应参数验证签名
-   * @param res
+   * @param str
+   * @param sign
    */
-  responseVerifyData(res: AxiosResponse<any>) {
-    // 判断响应数据
-    const { data } = res;
-    if (!data) {
-      return;
-    }
-
-    // 判断响应头
-    const cipher = res.headers['x-cipher'];
-    if (undefined === cipher) {
-      return;
-    }
-
-    // 响应的整个body需要解密
-    if (toLower(cipher) === 'cipher') {
-      // res.data = JSON.parse(this.aes.decrypt(data)) || {};
-      return;
-    }
-
-    //  判断返回的数据是成功还是失败数据,数据类型是否符合,数据是否为空
-    const { success, data: result } = data;
-    if (!success || !(isArray(result) || isObject(result)) || isEmpty(result)) {
-      return;
-    }
+  verify(str: string, sign: string) {
+    return this.signature.verify(str, sign);
   }
 }

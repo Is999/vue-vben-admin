@@ -38,54 +38,62 @@ const transform: AxiosTransform = {
    * @description: 处理响应数据。如果数据不是预期格式，可直接抛出错误
    */
   transformResponseHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
-    const { t } = useI18n();
     const { isTransformResponse, isReturnNativeResponse } = options;
+
     // 是否返回原生响应头 比如：需要获取响应头时使用该属性
     if (isReturnNativeResponse) {
       return res;
     }
+
     // 不进行任何处理，直接返回
     // 用于页面代码可能需要直接获取code，data，message这些信息时开启
     if (!isTransformResponse) {
       return res.data;
     }
-    // 错误的时候返回
 
+    const { t } = useI18n(); // 加载多语种
+
+    // 对返回数据的处理
     const { data } = res;
     if (!data) {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
+
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     const { success, code, message, data: result } = data;
-    // console.log('@@@success', success, data);
-    // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'success') && success;
-    if (hasSuccess) {
+
+    // 判断响应数据是否成功
+    // 成功数据处理
+    if (success) {
       let successMsg = message;
 
       if (isNull(successMsg) || isUndefined(successMsg) || isEmpty(successMsg)) {
         successMsg = t(`sys.api.operationSuccess`);
       }
 
+      // 判断是否直接弹框提示消息
       if (options.successMessageMode === 'modal') {
         createSuccessModal({ title: t('sys.api.successTip'), content: successMsg });
       } else if (options.successMessageMode === 'message') {
-        createMessage.success(successMsg);
+        createMessage.success(successMsg).then();
       }
+
+      // 返回data数据
       return result;
     }
 
+    // 错误数据处理
     // 在此处根据自己项目的实际情况对不同的code执行不同的操作
     // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
     let timeoutMsg = '';
     switch (code) {
-      case ResultEnum.TIMEOUT:
+      case ResultEnum.TIMEOUT: // 超时处理
         timeoutMsg = t('sys.api.timeoutMessage');
         const userStore = useUserStoreWithOut();
-        userStore.setToken(undefined);
+        // userStore.setToken(undefined);
         // 被动登出，带redirect地址
-        userStore.logout(false);
+        userStore.logout(false).then();
         break;
       default:
         if (message) {
@@ -98,7 +106,7 @@ const transform: AxiosTransform = {
     if (options.errorMessageMode === 'modal') {
       createErrorModal({ title: t('sys.api.errorTip'), content: timeoutMsg });
     } else if (options.errorMessageMode === 'message') {
-      createMessage.error(timeoutMsg);
+      createMessage.error(timeoutMsg).then();
     }
 
     throw new Error(timeoutMsg || t('sys.api.apiRequestFailed'));
@@ -138,13 +146,15 @@ const transform: AxiosTransform = {
     const headers = (config as Recordable).headers as AxiosRequestHeaders;
 
     // 请求之前处理config
-    const token = getToken();
-    if (token && withToken) {
-      // jwt token
-      const authorization = options.authenticationScheme
-        ? `${options.authenticationScheme} ${token}`
-        : token;
-      headers.set('Authorization', authorization as string);
+    if (withToken) {
+      const token = getToken();
+      if (token) {
+        // jwt token
+        const authorization = options.authenticationScheme
+          ? options.authenticationScheme + ' ' + token
+          : token;
+        headers.set('Authorization', authorization as string);
+      }
     }
 
     const base64 = EncryptionFactory.createBase64Encryption();
@@ -226,12 +236,14 @@ const transform: AxiosTransform = {
         console.error(
           '请求数据签名失败, data: ',
           all,
-          'signParams: ',
+          ' signParams: ',
           signParams.request,
-          'requestId: ',
+          ' requestId: ',
           requestId,
-          'signStr: ',
+          ' signStr: ',
           signStr,
+          ' URL: ',
+          config.url,
         );
         // throw new Error('请求数据签名失败！');
       } else {
@@ -273,12 +285,73 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
+    console.log('@@@responseInterceptors', res);
+
+    const requestOptions = (res.config as Recordable).requestOptions as RequestOptions;
+    const { signParams } = requestOptions;
+
     // 响应的数据先解密再验证签名
     // 返回数据解密
-    const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
-    cipherData.responseDecryptData(res);
+    const cipher = res.headers['x-cipher'];
+    if (undefined !== cipher) {
+      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+      cipherData.responseDecryptData(res, cipher);
+    }
 
     // 验证签名
+    console.log('@@@signParams', signParams);
+    if (undefined !== signParams && undefined !== signParams.response) {
+      // 判断响应数据
+      const { data } = res;
+      if (!data) {
+        const { t } = useI18n();
+        throw new Error(t('sys.api.apiRequestFailed'));
+      }
+      //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+      const { success, data: result } = data;
+      if (success) {
+        const { sign } = result;
+        if (undefined !== sign) {
+          const signData = new SignData(
+            SignatureFactory.createRsaSignature({
+              key: rsaCipher.publicKeyServer, // 公钥验证签名
+              options: {
+                log: true,
+              },
+            }),
+          );
+
+          let requestId = res.headers['X-Request-Id'];
+          if (undefined === requestId) {
+            requestId = res.config.headers['X-Request-Id'];
+          }
+
+          // 将所有参数合并
+          const appId = import.meta.env.VITE_APP_ID;
+          const signStr = signData.getSignStr(result, signParams.response, requestId, appId);
+          const ok = signData.verify(signStr, result.sign);
+          if (!ok) {
+            console.error(
+              '响应数据签名失败, data: ',
+              result,
+              ' signParams: ',
+              signParams.response,
+              ' requestId: ',
+              requestId,
+              ' signStr: ',
+              signStr,
+              ' URL: ',
+              res.request?.responseURL,
+            );
+            // throw new Error('响应数据签名失败！');
+          } else {
+            console.log('响应数据签名成功: ', res.request?.responseURL);
+          }
+        } else {
+          console.error('响应数据签名不存在, data: ', result, ' URL: ', res.request?.responseURL);
+        }
+      }
+    }
 
     return res;
   },
@@ -287,6 +360,7 @@ const transform: AxiosTransform = {
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (axiosInstance: AxiosInstance, error: any) => {
+    console.log('responseInterceptorsCatch', axiosInstance, error);
     const { t } = useI18n();
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
@@ -299,7 +373,7 @@ const transform: AxiosTransform = {
     if (0 !== respCode) {
       msg = '【' + respCode + '】' + respMsg;
     }
-    const err: string = error?.toString?.() ?? '';
+    const err: string = error?.toString() ?? '';
     let errMessage = '';
 
     if (axios.isCancel(error)) {
@@ -318,7 +392,7 @@ const transform: AxiosTransform = {
         if (errorMessageMode === 'modal') {
           createErrorModal({ title: t('sys.api.errorTip'), content: errMessage });
         } else if (errorMessageMode === 'message') {
-          createMessage.error(errMessage);
+          createMessage.error(errMessage).then();
         }
         return Promise.reject(error);
       }

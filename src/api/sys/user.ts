@@ -23,7 +23,10 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
       statusCodes: [406, 403, 500],
       errorMessageMode: mode,
       cipherParams: ['name', 'password', 'secureCode'],
-      signParams: { request: ['name', 'password', 'secureCode'] },
+      signParams: {
+        request: ['name', 'password', 'secureCode'],
+        response: ['name', 'email', 'phone', 'build_mfa_url'],
+      },
     },
   );
 }

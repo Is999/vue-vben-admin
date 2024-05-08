@@ -229,6 +229,7 @@ export const useUserStore = defineStore({
           console.log('注销Token失败');
         }
       }
+
       console.log('注销Token: 清空缓存');
       // 清空缓存
       this.setToken(undefined);

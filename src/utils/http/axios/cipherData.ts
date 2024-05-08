@@ -184,17 +184,17 @@ export class CipherData {
   /**
    * 响应参数解密
    * @param res
+   * @param cipher
    */
-  responseDecryptData(res: AxiosResponse<any>) {
-    // 判断响应数据
-    const { data } = res;
-    if (!data) {
+  responseDecryptData(res: AxiosResponse<any>, cipher: string) {
+    // 判断cipher
+    if (cipher.length === 0) {
       return;
     }
 
-    // 判断响应头
-    const cipher = res.headers['x-cipher'];
-    if (undefined === cipher) {
+    // 判断响应数据
+    const { data } = res;
+    if (!data) {
       return;
     }
 
