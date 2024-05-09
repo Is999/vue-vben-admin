@@ -11,11 +11,11 @@
  */
 
 import { Encryption, EncryptionFactory } from '@/utils/cipher';
-import { isEmpty, isObject, isArray } from '@/utils/is';
-import type { AxiosResponse, AxiosRequestConfig } from 'axios';
+import { isEmpty, isObject, isArray, isUndefined, isString } from '@/utils/is';
+import type { AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
 import { RequestEnum } from '@/enums/httpEnum';
-import { RequestOptions } from '#/axios';
+import { Result } from '#/axios';
 
 export class CipherData {
   private cipher: Encryption;
@@ -27,13 +27,13 @@ export class CipherData {
   encryptData(params: any, cipherParams: string[]) {
     // 判断数据格式
     if (!(isArray(params) || isObject(params))) {
-      return;
+      return params;
     }
 
     // 判断数据长度
     const length = Array.isArray(params) ? params.length : Object.keys(params).length;
     if (length === 0) {
-      return;
+      return params;
     }
 
     for (let param of cipherParams) {
@@ -54,12 +54,14 @@ export class CipherData {
           if (!(isArray(params[param]) || isObject(params[param]))) {
             console.error(
               param + '参数，数据类型不是Array或者Object类型，无须Json编码！',
+              ' isJson: ',
               isJson,
+              ' originalData: ',
               originalData,
             );
-            // eslint-disable-next-line no-irregular-whitespace
-            //throw new Error(' （◐ˍ◑）好大一个🪳, 快快消灭它');
-            continue;
+
+            // continue;
+            throw new Error('【100100】系统异常：加密数据类型格式错误！');
           }
           originalData = JSON.stringify(params[param]);
         }
@@ -70,26 +72,28 @@ export class CipherData {
         // 验证加密是否有错误
         if (this.cipher.isErr()) {
           console.error(param + '参数，数据加密失败！', isJson, originalData);
-          //throw new Error(param + '参数，数据加密失败！');
-          continue;
+          // continue;
+          throw new Error('【100100】系统异常：' + param + ' 参数，数据加密失败！');
         }
 
         // 重新赋值
         params[param] = encryptData;
       }
     }
+
+    return params;
   }
 
   decryptData(params: any, cipherParams: string[]) {
     // 判断数据格式
     if (!(isArray(params) || isObject(params))) {
-      return;
+      return params;
     }
 
     // 判断数据长度
     const length = Array.isArray(params) ? params.length : Object.keys(params).length;
     if (length === 0) {
-      return;
+      return params;
     }
 
     for (let param of cipherParams) {
@@ -103,15 +107,16 @@ export class CipherData {
 
       // 判断数据是否存在该参数
       const originalData = params[param];
-      if (undefined !== originalData) {
+      if (undefined !== originalData && isString(originalData) && originalData.length > 0) {
         // 解密
         let decryptedData = this.cipher.decrypt(originalData);
 
         // 验证解密是否有错误
         if (this.cipher.isErr()) {
           console.error(param + '参数，数据解密失败！', isJson, originalData);
-          // 解密失败跳过后面步骤
-          continue;
+          // // 解密失败跳过后面步骤
+          // continue;
+          throw new Error('【100100】系统异常：数据解密失败!');
         }
 
         // 对json数据处理进行解码
@@ -131,17 +136,18 @@ export class CipherData {
         params[param] = decryptedData;
       }
     }
+
+    return params;
   }
 
   /**
    *  请求参数加密
    * @constructor
    * @param config
-   * @param options
+   * @param cipher
    */
-  requestEncryptData(config: AxiosRequestConfig, options: RequestOptions) {
-    const cipher = options.cipherParams;
-    if (!cipher || cipher.length === 0) {
+  requestEncryptData(config: AxiosRequestConfig, cipher: string | string[]) {
+    if (cipher.length === 0) {
       return;
     }
 
@@ -149,12 +155,12 @@ export class CipherData {
     if (isArray(cipher)) {
       // params 参加加密
       if (undefined !== config.params) {
-        this.encryptData(config.params, cipher);
+        config.params = this.encryptData(config.params, cipher);
       }
 
       // data 参加加密
       if (undefined !== config.data) {
-        this.encryptData(config.data, cipher);
+        config.data = this.encryptData(config.data, cipher);
       }
     } else if (toLower(cipher) === 'cipher') {
       // 将所有参数合并
@@ -166,8 +172,7 @@ export class CipherData {
       // 验证加密是否有错误
       if (this.cipher.isErr()) {
         console.error('请求数据加密失败！', all, JSON.stringify(all));
-        // throw new Error('请求数据加密失败！');
-        return;
+        throw new Error('请求数据加密失败！');
       }
 
       // post 请求加密数据放在data, 其它请求加密数据放在params
@@ -183,46 +188,55 @@ export class CipherData {
 
   /**
    * 响应参数解密
-   * @param res
+   * @param result
    * @param cipher
    */
-  responseDecryptData(res: AxiosResponse<any>, cipher: string) {
+  responseDecryptData(result: Result | string, cipher: string) {
     // 判断cipher
     if (cipher.length === 0) {
-      return;
+      return result;
     }
 
     // 判断响应数据
-    const { data } = res;
-    if (!data) {
-      return;
+    if (isUndefined(result) || isEmpty(result)) {
+      return result;
     }
 
     // 响应的整个body需要解密
     if (toLower(cipher) === 'cipher') {
-      const decryptData = this.cipher.decrypt(data);
+      if (isString(result)) {
+        const decryptData = this.cipher.decrypt(result);
 
-      // 验证解密是否有错误
-      if (this.cipher.isErr()) {
-        console.error('响应数据解密失败！', data, decryptData);
-        return;
+        // 验证解密是否有错误
+        if (this.cipher.isErr()) {
+          console.error('响应数据解密失败，result: ', result, ' decryptData: ', decryptData);
+          throw new Error('【100100】系统异常：数据解密失败!');
+        }
+
+        return JSON.parse(decryptData) || decryptData;
+      } else {
+        console.error('响应待解密数据格式错误，result: ', result, ' cipher: ', cipher);
+        throw new Error('【100101】系统异常：待解密数据格式错误!');
+      }
+    }
+
+    if (isObject(result)) {
+      //  判断返回的数据是成功还是失败数据,数据类型是否符合,数据是否为空
+      const { success, data } = result;
+      if (!success || !(isArray(data) || isObject(data)) || isEmpty(data)) {
+        return result;
       }
 
-      res.data = JSON.parse(decryptData) || {};
-      return;
+      // 指定的参数需要解密
+      const cipherParams = JSON.parse(
+        EncryptionFactory.createBase64Encryption().decrypt(cipher),
+      ) as Array<string>;
+
+      result.data = this.decryptData(data, cipherParams);
+
+      return result;
     }
 
-    //  判断返回的数据是成功还是失败数据,数据类型是否符合,数据是否为空
-    const { success, data: result } = data;
-    if (!success || !(isArray(result) || isObject(result)) || isEmpty(result)) {
-      return;
-    }
-
-    // 指定的参数需要解密
-    const cipherParams = JSON.parse(
-      EncryptionFactory.createBase64Encryption().decrypt(cipher),
-    ) as Array<string>;
-
-    this.decryptData(result, cipherParams);
+    return result;
   }
 }

@@ -5,7 +5,7 @@
     <template #captcha="{ model, field }">
       <InputGroup>
         <div class="flex justify-center">
-          <Input
+          <AInput
             class="mr-2"
             type="text"
             name="captcha"
@@ -16,7 +16,7 @@
             <template #addonBefore>
               <SafetyOutlined class="site-form-item-icon" />
             </template>
-          </Input>
+          </AInput>
           <div style="min-width: 100px">
             <img
               :src="formData.img"
@@ -31,7 +31,7 @@
     <template #secureCode="{ model, field }">
       <InputGroup>
         <div class="flex justify-center">
-          <Input
+          <AInput
             class="mr-2"
             type="text"
             name="secureCode"
@@ -42,7 +42,7 @@
             <template #addonBefore>
               <InsuranceTwoTone class="site-form-item-icon" />
             </template>
-          </Input>
+          </AInput>
           <div style="min-width: 100px">
             <a @click="handleBuildMFASecret()" style="line-height: 41px">没有？去绑定！</a>
           </div>
@@ -50,15 +50,15 @@
       </InputGroup>
     </template>
     <template #submit="{}">
-      <Button type="primary" block @click="handleLogin" :loading="loading">
+      <AButton type="primary" block @click="handleLogin" :loading="loading">
         {{ t('sys.login.loginButton') }}
-      </Button>
+      </AButton>
     </template>
   </BasicForm>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, onMounted, h } from 'vue';
-  import { Button, Input, InputGroup } from 'ant-design-vue';
+  import { InputGroup } from 'ant-design-vue';
   import {
     UserOutlined,
     LockOutlined,
@@ -111,15 +111,13 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
               return Promise.reject(t('sys.login.namePlaceholder'));
             }
-            // if (!/^[A-Za-z0-9]{6,20}$/.test(value)) {
-            //   /* eslint-disable-next-line */
-            //   return Promise.reject('账号为6-20个字母加数字组成');
-            // }
+            if (!/^[A-Za-z0-9]{6,20}$/.test(value)) {
+              return Promise.reject('账号为6-20个字母加数字组成');
+            }
             return Promise.resolve();
           },
           trigger: 'change',
@@ -194,7 +192,6 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
               /* eslint-disable-next-line */

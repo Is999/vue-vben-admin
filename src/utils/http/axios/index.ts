@@ -1,7 +1,14 @@
 // axios配置  可自行根据项目进行更改，只需更改该文件即可，其他文件可以不动
 // The axios configuration can be changed according to the project, just change the file, other files can be left unchanged
 
-import axios, { AxiosInstance, AxiosRequestHeaders, AxiosResponse } from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosHeaders,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+  AxiosError,
+} from 'axios';
 import { clone } from 'lodash-es';
 import type { RequestOptions, Result } from '#/axios';
 import type { AxiosTransform, CreateAxiosOptions } from './axiosTransform';
@@ -38,11 +45,79 @@ const transform: AxiosTransform = {
    * @description: 处理响应数据。如果数据不是预期格式，可直接抛出错误
    */
   transformResponseHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
+    // console.log('transformResponseHook', res, options);
     const { isTransformResponse, isReturnNativeResponse } = options;
 
     // 是否返回原生响应头 比如：需要获取响应头时使用该属性
     if (isReturnNativeResponse) {
       return res;
+    }
+
+    const { signParams } = options;
+
+    // 响应的数据先解密再验证签名
+    // 返回数据解密
+    const cipher = res.headers['x-cipher'];
+    if (undefined !== cipher) {
+      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+      res.data = cipherData.responseDecryptData(res.data, cipher);
+    }
+
+    // 验证签名
+    if (undefined !== signParams && undefined !== signParams.response) {
+      // console.log('@@@signParams-response', signParams.response);
+      // 判断响应数据
+      const { data = undefined } = res;
+      if (undefined === data) {
+        const { t } = useI18n();
+        throw new Error(t('sys.api.apiRequestFailed'));
+      }
+
+      //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+      const { success, data: result } = data;
+      if (success) {
+        const { sign } = result;
+        if (undefined !== sign) {
+          const signData = new SignData(
+            SignatureFactory.createRsaSignature({
+              key: rsaCipher.publicKeyServer, // 公钥验证签名
+              options: {
+                log: true,
+              },
+            }),
+          );
+
+          let requestId = res.headers['X-Request-Id'];
+          if (undefined === requestId) {
+            requestId = res.config.headers['X-Request-Id'];
+          }
+
+          // 将所有参数合并
+          const appId = import.meta.env.VITE_APP_ID;
+          const signStr = signData.getSignStr(result, signParams.response, requestId, appId);
+          const ok = signData.verify(signStr, result.sign);
+          if (!ok) {
+            console.error(
+              '响应数据验证签名失败, data: ',
+              result,
+              ' signParams: ',
+              signParams.response,
+              ' requestId: ',
+              requestId,
+              ' signStr: ',
+              signStr,
+              ' URL: ',
+              res.request?.responseURL,
+            );
+            throw new Error('【100100】系统异常：数据验证签名失败！');
+          } else {
+            // console.log('响应数据验证签名成功: ', res.request?.responseURL);
+          }
+        } else {
+          console.error('响应数据sign不存在, data: ', result, ' URL: ', res.request?.responseURL);
+          throw new Error('【100101】系统异常：数据sign不存在！');
+        }
+      }
     }
 
     // 不进行任何处理，直接返回
@@ -54,8 +129,8 @@ const transform: AxiosTransform = {
     const { t } = useI18n(); // 加载多语种
 
     // 对返回数据的处理
-    const { data } = res;
-    if (!data) {
+    const { data = undefined } = res;
+    if (undefined === data) {
       // return '[HTTP] Request has no return value';
       throw new Error(t('sys.api.apiRequestFailed'));
     }
@@ -91,7 +166,7 @@ const transform: AxiosTransform = {
       case ResultEnum.TIMEOUT: // 超时处理
         timeoutMsg = t('sys.api.timeoutMessage');
         const userStore = useUserStoreWithOut();
-        // userStore.setToken(undefined);
+        userStore.setToken(undefined);
         // 被动登出，带redirect地址
         userStore.logout(false).then();
         break;
@@ -113,9 +188,21 @@ const transform: AxiosTransform = {
   },
 
   // 请求之前处理config
-  beforeRequestHook: (config, options) => {
-    const { apiUrl, joinPrefix, urlPrefix } = options;
-    // console.log('@@@@beforeRequestHook', config, options);
+  beforeRequestHook: (config: AxiosRequestConfig, options: RequestOptions) => {
+    // console.log('@@@-beforeRequestHook', config, options);
+    const {
+      apiUrl,
+      joinPrefix,
+      urlPrefix,
+      joinParamsToUrl,
+      formatDate,
+      joinTime = true,
+      trimEmpty = true,
+      cipherParams = '',
+      signParams,
+    } = options;
+
+    // url 处理
     if (joinPrefix) {
       config.url = `${urlPrefix}${config.url}`;
     }
@@ -123,49 +210,12 @@ const transform: AxiosTransform = {
       config.url = `${apiUrl}${config.url}`;
     }
 
-    return config;
-  },
-
-  /**
-   * @description: 请求拦截器处理
-   */
-  requestInterceptors: (config, options) => {
-    const requestOptions = (config as Recordable).requestOptions as RequestOptions;
-    const {
-      joinParamsToUrl,
-      formatDate,
-      joinTime = true,
-      trimEmpty = true,
-      withToken = true,
-      cipherParams = '',
-      signParams,
-    } = requestOptions;
-
-    // console.log('@@@@requestInterceptors', requestOptions, options.requestOptions);
-
-    const headers = (config as Recordable).headers as AxiosRequestHeaders;
-
-    // 请求之前处理config
-    if (withToken) {
-      const token = getToken();
-      if (token) {
-        // jwt token
-        const authorization = options.authenticationScheme
-          ? options.authenticationScheme + ' ' + token
-          : token;
-        headers.set('Authorization', authorization as string);
-      }
-    }
-
+    // headers 处理
+    const headers = new AxiosHeaders();
     const base64 = EncryptionFactory.createBase64Encryption();
-
     // APP Key
     const appId = import.meta.env.VITE_APP_ID;
     headers.set('X-App-Id', base64.encrypt(appId));
-
-    // 语言
-    const lang = useLocaleStoreWithOut().getLocale;
-    headers.set('X-Language', lang == 'en' ? lang : 'zh');
 
     // 请求的唯一id
     const requestId = buildUUID();
@@ -178,16 +228,26 @@ const transform: AxiosTransform = {
         isString(cipherParams) ? 'cipher' : base64.encrypt(JSON.stringify(cipherParams)),
       );
     }
+    // 语言
+    const lang = useLocaleStoreWithOut().getLocale;
+    headers.set('X-Language', lang == 'en' ? lang : 'zh');
 
+    if (undefined === config.headers) {
+      config.headers = headers;
+    } else {
+      config.headers = Object.assign(config.headers, headers);
+    }
+
+    // 数据处理
     const processing = function (datas: Recordable) {
-      // 时间处理
-      formatDate && formatRequestDate(datas);
-
       // 去除空格
       trimEmpty && trimParam(datas);
+
+      // 时间处理
+      formatDate && formatRequestDate(datas);
     };
 
-    const params = config.params || {};
+    const { params = {} } = config;
     const paramsIsStr = isString(params);
     if (paramsIsStr) {
       // 兼容restful风格
@@ -229,7 +289,10 @@ const transform: AxiosTransform = {
       );
 
       // 将所有参数合并
-      const all = Object.assign({}, config.params, config.data);
+      let all = Object.assign({}, config.params);
+      if (hasData) {
+        all = Object.assign(all, config.data);
+      }
       const signStr = signData.getSignStr(all, signParams.request, requestId, appId);
       const sign = signData.sign(signStr);
       if (false === sign) {
@@ -245,39 +308,73 @@ const transform: AxiosTransform = {
           ' URL: ',
           config.url,
         );
-        // throw new Error('请求数据签名失败！');
+        throw new Error('【100001】系统异常：数据签名失败！');
       } else {
         config.params = Object.assign(config.params || {}, { sign: sign });
+        // console.log('请求数据数据签名成功!');
       }
     }
 
     // 数据加密
     if (cipherParams.length > 0) {
       const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
-      cipherData.requestEncryptData(config, requestOptions);
+      cipherData.requestEncryptData(config, cipherParams);
+      // console.log('请求数据数据加密成功!');
     }
 
     // url 处理
     if (paramsIsStr) {
-      // 兼容restful风格
+      // 兼容restful风格, GET 请求加上params参数时间
       if (config.method?.toUpperCase() === RequestEnum.GET) {
         config.url = setObjToUrlParams(config.url as string, config.params);
       }
-      config.params = undefined;
+      config.params = undefined; // 重置
     } else {
       if (!hasData && config.method?.toUpperCase() !== RequestEnum.GET) {
         // 非GET请求如果没有提供data，则将params视为data
         config.data = config.params;
-        config.params = {};
+        config.params = undefined;
       }
 
       if (joinParamsToUrl) {
-        config.url = setObjToUrlParams(
-          config.url as string,
-          Object.assign({}, config.params, config.data),
-        );
+        let all = Object({});
+        if (config.params) {
+          all = Object.assign(all, config.params);
+        }
+
+        if (config.data) {
+          all = Object.assign(all, config.data);
+        }
+
+        config.url = setObjToUrlParams(config.url as string, all);
       }
     }
+
+    return config;
+  },
+
+  /**
+   * @description: 请求拦截器处理
+   */
+  requestInterceptors: (config: InternalAxiosRequestConfig, options: CreateAxiosOptions) => {
+    // console.log('@@@-requestInterceptors', config, options);
+    const { withToken = true } =
+      ((config as Recordable).requestOptions as RequestOptions) || options.requestOptions;
+
+    const { headers } = config;
+
+    // 请求之前处理config
+    if (withToken) {
+      const token = getToken();
+      if (token) {
+        // jwt token
+        const authorization = options.authenticationScheme
+          ? options.authenticationScheme + ' ' + token
+          : token;
+        headers.set('Authorization', authorization as string);
+      }
+    }
+
     return config;
   },
 
@@ -285,73 +382,7 @@ const transform: AxiosTransform = {
    * @description: 响应拦截器处理
    */
   responseInterceptors: (res: AxiosResponse<any>) => {
-    console.log('@@@responseInterceptors', res);
-
-    const requestOptions = (res.config as Recordable).requestOptions as RequestOptions;
-    const { signParams } = requestOptions;
-
-    // 响应的数据先解密再验证签名
-    // 返回数据解密
-    const cipher = res.headers['x-cipher'];
-    if (undefined !== cipher) {
-      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
-      cipherData.responseDecryptData(res, cipher);
-    }
-
-    // 验证签名
-    console.log('@@@signParams', signParams);
-    if (undefined !== signParams && undefined !== signParams.response) {
-      // 判断响应数据
-      const { data } = res;
-      if (!data) {
-        const { t } = useI18n();
-        throw new Error(t('sys.api.apiRequestFailed'));
-      }
-      //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-      const { success, data: result } = data;
-      if (success) {
-        const { sign } = result;
-        if (undefined !== sign) {
-          const signData = new SignData(
-            SignatureFactory.createRsaSignature({
-              key: rsaCipher.publicKeyServer, // 公钥验证签名
-              options: {
-                log: true,
-              },
-            }),
-          );
-
-          let requestId = res.headers['X-Request-Id'];
-          if (undefined === requestId) {
-            requestId = res.config.headers['X-Request-Id'];
-          }
-
-          // 将所有参数合并
-          const appId = import.meta.env.VITE_APP_ID;
-          const signStr = signData.getSignStr(result, signParams.response, requestId, appId);
-          const ok = signData.verify(signStr, result.sign);
-          if (!ok) {
-            console.error(
-              '响应数据签名失败, data: ',
-              result,
-              ' signParams: ',
-              signParams.response,
-              ' requestId: ',
-              requestId,
-              ' signStr: ',
-              signStr,
-              ' URL: ',
-              res.request?.responseURL,
-            );
-            // throw new Error('响应数据签名失败！');
-          } else {
-            console.log('响应数据签名成功: ', res.request?.responseURL);
-          }
-        } else {
-          console.error('响应数据签名不存在, data: ', result, ' URL: ', res.request?.responseURL);
-        }
-      }
-    }
+    // console.log('responseInterceptors', res);
 
     return res;
   },
@@ -360,30 +391,40 @@ const transform: AxiosTransform = {
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (axiosInstance: AxiosInstance, error: any) => {
-    console.log('responseInterceptorsCatch', axiosInstance, error);
-    const { t } = useI18n();
+    // console.log('responseInterceptorsCatch', axiosInstance, error);
+
+    const {
+      response = {} as AxiosResponse,
+      code = '',
+      message = '',
+      config = {} as InternalAxiosRequestConfig,
+    } = (error || {}) as AxiosError;
+
+    const { errorMessageMode = 'none', statusCodes = [200] } = ((config as Recordable)
+      .requestOptions || {}) as RequestOptions;
+
+    // 特殊状态码状态码处理
+    if (undefined !== response.status && statusCodes.includes(response.status)) {
+      return Promise.resolve(response);
+    }
+
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
-    const { response, code, message, config } = error || {};
-    const errorMessageMode = config?.requestOptions?.errorMessageMode || 'none';
-    const statusCodes = config?.requestOptions?.statusCodes || [200];
-    const respCode: number = response?.data?.code ?? 0;
-    const respMsg: string = response?.data?.message ?? '';
-    let msg = '';
-    if (0 !== respCode) {
-      msg = '【' + respCode + '】' + respMsg;
-    }
-    const err: string = error?.toString() ?? '';
-    let errMessage = '';
 
     if (axios.isCancel(error)) {
+      console.log('axios is cancel');
       return Promise.reject(error);
     }
 
+    const err: string = error?.toString?.() ?? '';
+    let errMessage = '';
+
+    const { t } = useI18n();
     try {
       if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
         errMessage = t('sys.api.apiTimeoutMessage');
       }
+
       if (err?.includes('Network Error')) {
         errMessage = t('sys.api.networkExceptionMsg');
       }
@@ -400,21 +441,25 @@ const transform: AxiosTransform = {
       throw new Error(error as unknown as string);
     }
 
-    // 特殊状态码状态码处理
-    if (statusCodes.includes(response?.status)) {
-      return Promise.resolve(response);
+    const { code: respCode = 0, message: respMsg = '' } = (response.data || {}) as Result;
+
+    if (0 !== respCode) {
+      errMessage = '【' + respCode + '】' + respMsg;
     } else {
-      checkStatus(error?.response?.status, msg, errorMessageMode);
+      errMessage = respMsg;
     }
-    // console.log('@@@statusCodes', statusCodes, response, config);
+
+    checkStatus(response.status as number, errMessage, errorMessageMode);
+
     // 添加自动重试机制 保险起见 只针对GET请求
     const retryRequest = new AxiosRetry();
-    const { isOpenRetry } = config.requestOptions.retryRequest;
+    const { isOpenRetry } = (config as Recordable)?.requestOptions?.retryRequest || {};
     config.method?.toUpperCase() === RequestEnum.GET &&
       isOpenRetry &&
-      error?.response?.status !== 401 &&
+      response.status !== 401 &&
       // @ts-ignore
       retryRequest.retry(axiosInstance, error);
+
     return Promise.reject(error);
   },
 };
