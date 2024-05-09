@@ -1,4 +1,4 @@
-import { LockInfo, MfaInfo, UserInfo, UserRole } from '#/store';
+import { LockInfo, MfaInfo, UserInfo, UserRole, TableSetting } from '#/store';
 import type { ProjectConfig } from '#/config';
 import type { RouteLocationNormalized } from 'vue-router';
 

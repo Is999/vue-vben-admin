@@ -34,7 +34,7 @@
       <h4>1. 唯一标识</h4>
       <p> 配置唯一标识，不能重复，具体参数询问开发人员。 </p>
       <h4>2. 配置值</h4>
-      <p> 一定要注意配置的数据格式。 </p>
+      <p> 一定要注意配置的数据格式。Boolean 数据格式可用数字 1 代表 true，数字 0 代表 false 。</p>
     </div>
   </BasicDrawer>
 </template>
@@ -51,6 +51,7 @@
   import { CodeEditor, MODE } from '@/components/CodeEditor';
   import { notify } from '@/api/api';
   import { Divider } from 'ant-design-vue';
+  import { ConfigModel } from '@/api/admin/model/systemModel';
 
   const { hasPermission } = usePermission();
 
@@ -133,7 +134,6 @@
       label: '配置示例',
       field: 'example',
       helpMessage: ['请输入配置值'],
-      component: 'Input',
       slot: 'configExample',
       rules: [
         {
@@ -188,7 +188,6 @@
       label: '配置值',
       field: 'value',
       helpMessage: ['请输入配置值'],
-      component: 'Input',
       slot: 'configValue',
       rules: [
         {
@@ -322,12 +321,12 @@
       // 发起请求
       if (unref(isUpdate)) {
         // 编辑
-        await configEdit(rowId.value, values).then((res) => {
+        await configEdit(rowId.value, values as ConfigModel).then((res) => {
           notify(res, true);
         });
       } else {
         // 新增
-        await configAdd(values).then((res) => {
+        await configAdd(values as ConfigModel).then((res) => {
           notify(res, true);
         });
       }

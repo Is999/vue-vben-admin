@@ -183,79 +183,17 @@
       ],
       colProps: { span: 18 },
     },
-    // {
-    //   field: 'password',
-    //   label: '密码',
-    //   component: 'InputPassword',
-    //   componentProps: {
-    //     maxlength: 20,
-    //     placeholder: '请输入密码',
-    //     id: 'form_item_password_edit',
-    //   },
-    //   rules: [
-    //     {
-    //       // @ts-ignore
-    //       validator: async (rule, value) => {
-    //         if (!value) {
-    //           /* eslint-disable-next-line */
-    //             return Promise.resolve();
-    //         }
-    //         if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
-    //           /* eslint-disable-next-line */
-    //             return Promise.reject('密码为6-20个字母加数字组成');
-    //         }
-    //         return Promise.resolve();
-    //       },
-    //       trigger: 'change',
-    //     },
-    //   ],
-    //   colProps: { span: 18 },
-    // },
-    // {
-    //   field: 'secure_key',
-    //   label: '安全码',
-    //   helpMessage: ['Google安全码秘钥，可以在登录的时候绑定'],
-    //   component: 'Input',
-    //   componentProps: {
-    //     maxlength: 16,
-    //     placeholder: '请输入要绑定的Google安全码秘钥',
-    //     id: 'form_item_secure_key',
-    //   },
-    //   rules: [
-    //     {
-    //       // @ts-ignore
-    //       validator: async (rule, value) => {
-    //         if (!value) {
-    //           /* eslint-disable-next-line */
-    //             return Promise.resolve();
-    //         }
-    //         if (!/^[A-Za-z0-9]{16}$/.test(value)) {
-    //           /* eslint-disable-next-line */
-    //             return Promise.reject('安全码秘钥为16位字符串');
-    //         }
-    //         return Promise.resolve();
-    //       },
-    //       trigger: 'change',
-    //     },
-    //   ],
-    //   colProps: { span: 18 },
-    // },
-    // {
-    //   field: 'build_secure_key_url',
-    //   label: '',
-    //   component: 'Input',
-    //   slot: 'buildSecretKeyUrl',
-    //   colProps: { span: 18 },
-    // },
     {
       label: '备注',
       field: 'remark',
       helpMessage: ['最多输入255个字符'],
       component: 'InputTextArea',
+      dynamicDisabled: true,
       componentProps: {
         placeholder: '请输入备注信息, 最多输入255个字符',
         showCount: true,
         maxlength: 255,
+        id: 'form_item_remark_edit',
       },
       colProps: { span: 18 },
       rules: [{ max: 255, message: '最多输入255个字符' }],
