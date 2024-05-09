@@ -9,19 +9,22 @@
     @ok="handleSubmit"
   >
     <BasicForm @register="registerForm">
+      <template #tools>
+        <div class="px-4">
+          <AButton @click="expandAll(true)" class="mr-2"> 展开全部 </AButton>
+          <AButton @click="expandAll(false)" class="mr-2"> 折叠全部 </AButton>
+          <AInput
+            type="number"
+            @input="expandOne"
+            class="w-24"
+            step="1"
+            max="10"
+            min="0"
+            placeholder="展开层级"
+          />
+        </div>
+      </template>
       <template #roles="{ model, field }">
-        展开层级
-        <Input
-          type="number"
-          @input="expandOne"
-          class="mr-2 w-18"
-          step="1"
-          max="10"
-          min="0"
-          placeholder="展开层级"
-        />
-        <Button @click="expandAll(true)" class="mr-2"> 展开全部 </Button>
-        <Button @click="expandAll(false)" class="mr-2"> 折叠全部 </Button>
         <BasicTree
           title="账号角色"
           v-if="treeData.length"
@@ -61,7 +64,7 @@
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { isArray } from '@/utils/is';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { Tooltip, Input, Button } from 'ant-design-vue';
+  import { Tooltip } from 'ant-design-vue';
   import { AccountRoleModel } from '@/api/admin/model/systemModel';
 
   const { hasPermission } = usePermission();
@@ -212,9 +215,21 @@
     schemas: [
       {
         label: ' ',
+        field: '',
+        slot: 'tools',
+        componentProps: {
+          id: 'form_item_tools',
+        },
+        colProps: { lg: 22, md: 22 },
+      },
+      {
+        label: ' ',
         field: 'roles',
         slot: 'roles',
         defaultValue: [],
+        componentProps: {
+          id: 'form_item_roles',
+        },
         colProps: { lg: 22, md: 22 },
       },
     ],

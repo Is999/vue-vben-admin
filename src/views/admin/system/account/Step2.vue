@@ -1,19 +1,22 @@
 <template>
   <div class="step2">
     <BasicForm @register="registerForm">
+      <template #tools>
+        <div class="px-4">
+          <AButton @click="expandAll(true)" class="mr-2"> 展开全部 </AButton>
+          <AButton @click="expandAll(false)" class="mr-2"> 折叠全部 </AButton>
+          <AInput
+            type="number"
+            @input="expandOne"
+            class="w-24"
+            step="1"
+            max="10"
+            min="0"
+            placeholder="展开层级"
+          />
+        </div>
+      </template>
       <template #roles="{ model, field }">
-        展开层级
-        <a-input
-          type="number"
-          @input="expandOne"
-          class="mr-2 w-18"
-          step="1"
-          max="10"
-          min="0"
-          placeholder="展开层级"
-        />
-        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
-        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
         <BasicTree
           v-if="treeData.length"
           v-model:value="model[field]"
@@ -188,6 +191,15 @@
   const [registerForm, { validate, setProps }] = useForm({
     labelWidth: 100,
     schemas: [
+      {
+        label: ' ',
+        field: '',
+        slot: 'tools',
+        componentProps: {
+          id: 'form_item_tools',
+        },
+        colProps: { lg: 22, md: 22 },
+      },
       {
         label: ' ',
         field: 'roles',

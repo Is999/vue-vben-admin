@@ -11,21 +11,30 @@
     @ok="handleSubmit"
   >
     <BasicForm @register="registerForm">
+      <template #tools>
+        <p>
+          <span style="color: #e03e2d">* 说明：</span>
+          <span style="color: #7d7d9c">
+            点击勾选框【选择/取消】当前对应的权限，鼠标移动到某一权限上点击【选择/取消】下级关联权限及当前权限。
+          </span>
+        </p>
+        <div class="px-4">
+          <AButton @click="checkAll(true)" class="mr-2"> 全选 </AButton>
+          <AButton @click="checkAll(false)" class="mr-2"> 全不选 </AButton>
+          <AButton @click="expandAll(true)" class="mr-2"> 展开全部 </AButton>
+          <AButton @click="expandAll(false)" class="mr-2"> 折叠全部 </AButton>
+          <AInput
+            type="number"
+            @input="expandOne"
+            class="w-24"
+            step="1"
+            max="10"
+            min="0"
+            placeholder="展开层级"
+          />
+        </div>
+      </template>
       <template #permissions="{ model, field }">
-        展开层级
-        <a-input
-          type="number"
-          @input="expandOne"
-          class="mr-2 w-18"
-          step="1"
-          max="10"
-          min="0"
-          placeholder="展开层级"
-        />
-        <a-button @click="expandAll(true)" class="mr-2"> 展开全部 </a-button>
-        <a-button @click="expandAll(false)" class="mr-2"> 折叠全部 </a-button>
-        <a-button @click="checkAll(true)" class="mr-2"> 全选 </a-button>
-        <a-button @click="checkAll(false)" class="mr-2"> 全不选 </a-button>
         <BasicTree
           v-if="treeData.length"
           v-model:value="model[field]"
@@ -219,11 +228,24 @@
       rules: [{ max: 255, message: '最多输入255个字符' }],
     },
     {
-      label: '',
+      label: ' ',
+      field: '',
+      slot: 'tools',
+      componentProps: {
+        id: 'form_item_tools',
+      },
+      colProps: { lg: 22, md: 22 },
+    },
+    {
+      label: ' ',
       field: 'permissions_id',
       slot: 'permissions',
       defaultValue: [],
-      helpMessage: ['权限分配规则: 超级管理员权限不可编辑, 上级角色有得权限下级角色才能编辑'],
+      // helpMessage: [
+      //   '权限分配规则: ',
+      //   '1. 超级管理员权限不可编辑;',
+      //   '2. 上级角色有的权限下级角色才能编辑;',
+      // ],
       colProps: { lg: 22, md: 22 },
     },
   ];
