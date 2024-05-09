@@ -93,6 +93,7 @@
         showSearch: true,
         treeNodeFilterProp: 'title',
         treeDefaultExpandAll: true,
+        treeLine: true,
         placeholder: '请选择上级权限',
         fieldNames: {
           label: 'title',

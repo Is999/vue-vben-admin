@@ -101,6 +101,7 @@
         showSearch: true,
         treeNodeFilterProp: 'title',
         treeDefaultExpandAll: true,
+        treeLine: true,
         placeholder: '请选择权限标识, 不能和其它菜单重复哦',
         fieldNames: {
           label: 'title',
@@ -140,6 +141,7 @@
         showSearch: true,
         treeNodeFilterProp: 'title',
         treeDefaultExpandAll: true,
+        treeLine: true,
         placeholder: '请选择上级菜单',
         fieldNames: {
           label: 'title',

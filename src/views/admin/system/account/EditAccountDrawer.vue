@@ -19,7 +19,7 @@
             :allowClear="true"
           />
           <Tooltip title="生成新密码并复制" placement="bottom">
-            <Button type="primary" @click="handleCopy(model, field)"> 复制</Button>
+            <AButton type="primary" @click="handleCopy(model, field)"> 复制</AButton>
           </Tooltip>
         </div>
       </template>
@@ -63,9 +63,9 @@
             </a>
           </Tooltip>
           ，请直接使用Ctr+v或Command+v粘贴。 预览地址：
-          <p style="padding: 1em; overflow-wrap: break-word">
+          <span style="padding: 1em; overflow-wrap: break-word">
             <a :href="buildMFAUrl" target="_blank">{{ buildMFAUrl }}</a>
-          </p>
+          </span>
         </span>
       </p>
       <h4>3. MFA校验</h4>
@@ -85,7 +85,7 @@
   import { useMessage } from '@/hooks/web/useMessage';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { Tooltip, Divider, InputPassword, Button } from 'ant-design-vue';
+  import { Tooltip, Divider, InputPassword } from 'ant-design-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
   import { notify } from '@/api/api';
   import { HashingFactory } from '@/utils/cipher';
@@ -335,7 +335,7 @@
     {
       label: '备注',
       field: 'remark',
-      helpMessage: ['最多输入255个字符'],
+      // helpMessage: ['最多输入255个字符'],
       component: 'InputTextArea',
       componentProps: {
         placeholder: '请输入备注信息, 最多输入255个字符',

@@ -13,7 +13,7 @@
     <BasicForm @register="registerForm">
       <template #tools>
         <p>
-          <span style="color: #e03e2d">* 说明：</span>
+          <span><SoundTwoTone twoToneColor="#eb2f96" /> 说明：</span>
           <span style="color: #7d7d9c">
             点击勾选框【选择/取消】当前对应的权限，鼠标移动到某一权限上点击【选择/取消】下级关联权限及当前权限。
           </span>
@@ -80,6 +80,7 @@
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
+  import { SoundTwoTone } from '@ant-design/icons-vue';
 
   const { hasPermission } = usePermission();
 
@@ -201,7 +202,6 @@
       label: '上级角色',
       component: 'TreeSelect',
       required: true,
-      helpMessage: ['新增的权限类型为目录或菜单类型,上级一定要是目录类型哦'],
       componentProps: {
         showSearch: true,
         treeNodeFilterProp: 'title',
@@ -217,7 +217,6 @@
     {
       label: '备注',
       field: 'describe',
-      helpMessage: ['最多输入255个字符'],
       component: 'InputTextArea',
       componentProps: {
         placeholder: '请输入备注信息, 最多输入255个字符',

@@ -13,7 +13,7 @@
               :allowClear="true"
             />
             <Tooltip title="生成密码并复制" placement="bottom">
-              <Button type="primary" @click="handleCopy(model, field)"> 复制 </Button>
+              <AButton type="primary" @click="handleCopy(model, field)"> 复制 </AButton>
             </Tooltip>
           </div>
         </template>
@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
   import { BasicForm, useForm, FormSchema } from '@/components/Form';
-  import { Tooltip, Divider, Button, InputPassword } from 'ant-design-vue';
+  import { Tooltip, Divider, InputPassword } from 'ant-design-vue';
   import { SoundTwoTone } from '@ant-design/icons-vue';
   import { accountAdd } from '@/api/admin/system';
   import { usePermission } from '@/hooks/web/usePermission';
@@ -303,7 +303,7 @@
     {
       label: '备注',
       field: 'remark',
-      helpMessage: ['最多输入255个字符'],
+      // helpMessage: ['最多输入255个字符'],
       component: 'InputTextArea',
       componentProps: {
         placeholder: '请输入备注信息, 最多输入255个字符',
