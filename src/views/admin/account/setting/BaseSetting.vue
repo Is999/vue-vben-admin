@@ -222,9 +222,10 @@
     return avatar || headerImg;
   });
 
-  function updateAvatar(src: string) {
+  function updateAvatar({ src, data }) {
     userinfo.value.avatar = src;
     userStore.setUserInfo(userinfo.value);
+    console.log('data', data);
   }
 
   async function handleSubmit() {

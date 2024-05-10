@@ -44,6 +44,11 @@
           :search="true"
           :showLine="true"
           title="权限分配"
+          :helpMessage="[
+            '权限分配规则: ',
+            '1. 超级管理员权限不可编辑;',
+            '2. 上级角色有的权限下级角色才能编辑;',
+          ]"
           :defaultExpandAll="true"
           :checkStrictly="true"
           :actionList="actionList"
