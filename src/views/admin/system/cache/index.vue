@@ -2,19 +2,19 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button
+        <AButton
           color="success"
           @click="handleInfo"
           v-if="hasPermission(PermissionsEnum.CacheServerInfo, false)"
           >服务器信息
-        </a-button>
-        <Button
+        </AButton>
+        <AButton
           type="primary"
           danger
           @click="handleRenewAll"
           v-if="hasPermission(PermissionsEnum.CacheRenewAll, false)"
           >刷新全部
-        </Button>
+        </AButton>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -48,7 +48,6 @@
   import InfoDrawer from './info.vue';
   import { useMessage } from '@/hooks/web/useMessage';
   import { notify } from '@/api/api';
-  import { Button } from 'ant-design-vue';
 
   const { hasPermission } = usePermission();
   const { createConfirm } = useMessage();

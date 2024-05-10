@@ -25,7 +25,7 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
       cipherParams: ['name', 'password', 'secureCode'],
       signParams: {
         request: ['name', 'password', 'secureCode'],
-        response: ['token'],
+        // response: ['token'],
       },
     },
   );

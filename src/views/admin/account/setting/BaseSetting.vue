@@ -9,9 +9,9 @@
                 >点击此处，去绑定Google安全码</a
               >
               <Tooltip title="复制地址" placement="bottom">
-                <Button type="primary" @click="handleCopyBuildSecretKeyUrl(model[field])">
+                <AButton type="primary" @click="handleCopyBuildSecretKeyUrl(model[field])">
                   复制地址
-                </Button>
+                </AButton>
               </Tooltip>
             </div>
           </template>
@@ -31,14 +31,14 @@
         </div>
       </Col>
     </Row>
-    <Button type="primary" style="margin-top: 20px; margin-left: 150px" @click="handleSubmit">
+    <AButton type="primary" style="margin-top: 20px; margin-left: 150px" @click="handleSubmit">
       更新基本信息
-    </Button>
+    </AButton>
   </CollapseContainer>
 </template>
 
 <script setup lang="ts">
-  import { Button, Tooltip, Col, Row } from 'ant-design-vue';
+  import { Tooltip, Col, Row } from 'ant-design-vue';
   import { computed, onMounted, ref } from 'vue';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { CollapseContainer } from '@/components/Container';

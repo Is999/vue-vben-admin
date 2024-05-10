@@ -6,13 +6,13 @@
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
-        <Button
+        <AButton
           type="primary"
           @click="handleCreate"
           v-if="hasPermission(PermissionsEnum.PermissionAdd, false)"
         >
           新增权限
-        </Button>
+        </AButton>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -57,7 +57,7 @@
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { PermissionListItem } from '@/api/admin/model/systemModel';
-  import { Tag, Button } from 'ant-design-vue';
+  import { Tag } from 'ant-design-vue';
   import { notify } from '@/api/api';
 
   const [registerDrawer, { openDrawer }] = useDrawer();

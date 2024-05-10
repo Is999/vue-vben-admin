@@ -2,12 +2,12 @@
   <div>
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <Button
+        <AButton
           type="primary"
           @click="handleCreate"
           v-if="hasPermission(PermissionsEnum.ConfigAdd, false)"
           >新增配置
-        </Button>
+        </AButton>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -51,7 +51,7 @@
   import { usePermission } from '@/hooks/web/usePermission';
   import { useDrawer } from '@/components/Drawer';
   import ConfigDrawer from './ConfigDrawer.vue';
-  import { Modal, Tag, Button } from 'ant-design-vue';
+  import { Modal, Tag } from 'ant-design-vue';
   import { JsonPreview } from '@/components/CodeEditor';
   import { notify } from '@/api/api';
   import { isArray } from '@/utils/is';

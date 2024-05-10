@@ -6,13 +6,13 @@
       @fetch-success="onFetchSuccess"
     >
       <template #toolbar>
-        <Button
+        <AButton
           type="primary"
           @click="handleCreate"
           v-if="hasPermission(PermissionsEnum.MenuAdd, false)"
         >
           新增菜单
-        </Button>
+        </AButton>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -47,7 +47,7 @@
   import MenuDrawer from './MenuDrawer.vue';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { Switch, Tag, Button } from 'ant-design-vue';
+  import { Switch, Tag } from 'ant-design-vue';
   import Icon from '@/components/Icon/Icon.vue';
   import { notify } from '@/api/api';
 
