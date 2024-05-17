@@ -173,12 +173,13 @@
           loading: record.pendingMfaStatus,
           disabled: !hasPermission(PermissionsEnum.AccountMfaStatus, false),
           onChange: (checked) => {
+            const newStatus = checked ? 1 : 0;
             record.pendingMfaStatus = true;
             // 请求接口
-            setAccountMFAStatus(record.id, (checked as boolean) ? 1 : 0)
+            setAccountMFAStatus(record.id, newStatus)
               .then((res) => {
                 notify(res, true);
-                record.mfa_status = checked ? 1 : 0;
+                record.mfa_status = newStatus;
               })
               .catch((e) => {
                 console.log('@@@ setAccountStatus', e);
@@ -206,11 +207,12 @@
           disabled: !hasPermission(PermissionsEnum.AccountStatus, false),
           onChange: (checked) => {
             record.pendingStatus = true;
+            const newStatus = checked ? 1 : 0;
             // 请求接口
-            setAccountStatus(record.id, checked as boolean)
+            setAccountStatus(record.id, newStatus)
               .then((res) => {
                 notify(res, true);
-                record.status = checked ? 1 : 0;
+                record.status = newStatus;
               })
               .catch((e) => {
                 console.log('@@@ setAccountStatus', e);

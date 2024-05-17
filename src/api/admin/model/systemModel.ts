@@ -31,7 +31,7 @@ export interface AccountModel {
   username: string; // 昵称
   real_name: string; // 昵称
   password?: string; // 密码
-  status?: boolean; // 状态
+  status?: number; // 状态
   role?: string; // 角色
   mfa_secure_key?: string; // 基于时间的动态密码 (TOTP) 多重身份验证 (MFA)秘钥：如Google Authenticator、Microsoft Authenticator
   mfa_status?: boolean; // 启用 TOTP MFA (两步验证 2FA)：0 不启用，1 启用

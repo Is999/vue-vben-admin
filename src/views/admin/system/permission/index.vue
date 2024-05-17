@@ -176,11 +176,12 @@
           disabled: !hasPermission(PermissionsEnum.PermissionStatus, false),
           onChange: (checked) => {
             record.pendingStatus = true;
+            const newStatus = checked ? 1 : 0;
             // 请求接口
-            setPermissionStatus(record.id, checked as boolean)
+            setPermissionStatus(record.id, newStatus)
               .then((res) => {
                 notify(res, true);
-                record.status = checked ? 1 : 0;
+                record.status = newStatus;
               })
               .catch((e) => {
                 console.log('@@@ setAccountStatus', e);

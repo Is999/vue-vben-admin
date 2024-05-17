@@ -94,7 +94,7 @@ export function usePermission() {
       }
       return (intersection(value, allCodeList) as string[]).length > 0;
     }
-    return true;
+    return def;
   }
 
   /**

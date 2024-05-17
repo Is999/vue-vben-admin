@@ -116,7 +116,7 @@ export const accountEditRoles = (id: number, params: AccountRoleModel) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setAccountStatus = (id: number, status: boolean) =>
+export const setAccountStatus = (id: number, status: number) =>
   AdminApi.post(
     { url: Api.AccountStatus + '/' + id, params: { id, status } },
     {
@@ -295,7 +295,7 @@ export const permissionEdit = (id: number, params: PermissionModel) =>
   );
 
 // 权限管理 禁用|启用
-export const setPermissionStatus = (id: number, status: boolean) =>
+export const setPermissionStatus = (id: number, status: number) =>
   AdminApi.post(
     { url: Api.PermissionStatus + '/' + id, params: { id, status } },
     {
