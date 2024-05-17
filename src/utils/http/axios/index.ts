@@ -59,7 +59,7 @@ const transform: AxiosTransform = {
     // 返回数据解密
     const cipher = res.headers['x-cipher'];
     if (undefined !== cipher) {
-      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+      const cipherData = new CipherData(EncryptionFactory.createAesCrypto(cacheCipher));
       res.data = cipherData.responseDecryptData(res.data, cipher);
     }
 
@@ -317,7 +317,7 @@ const transform: AxiosTransform = {
 
     // 数据加密
     if (cipherParams.length > 0) {
-      const cipherData = new CipherData(EncryptionFactory.createAesEncryption(cacheCipher));
+      const cipherData = new CipherData(EncryptionFactory.createAesCrypto(cacheCipher));
       cipherData.requestEncryptData(config, cipherParams);
       // console.log('请求数据数据加密成功!');
     }

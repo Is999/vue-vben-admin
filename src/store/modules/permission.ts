@@ -104,9 +104,8 @@ export const usePermissionStore = defineStore({
       this.lastBuildMenuTime = 0;
     },
     async changePermissionCode() {
-      const userStore = useUserStore();
-      const { permissions } = userStore.getUserRole || {};
-      this.setPermCodeList(permissions || []);
+      const codeList = await getPermCode();
+      this.setPermCodeList(codeList);
     },
 
     // 构建路由

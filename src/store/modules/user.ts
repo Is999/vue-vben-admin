@@ -80,6 +80,12 @@ export const useUserStore = defineStore({
       this.roleList = roleList;
     },
     setUserInfo(info: UserInfo | null) {
+      if (info) {
+        info.userId = info.id;
+        info.username = info.name;
+        info.realName = info.real_name;
+        info.desc = info.remark;
+      }
       this.userInfo = info;
       this.lastUpdateTime = new Date().getTime();
       setAuthCache(USER_INFO_KEY, info);

@@ -10,7 +10,7 @@
  * Array或者Object类型的数据要标记`json:`标签
  */
 
-import { Encryption, EncryptionFactory } from '@/utils/cipher';
+import { Crypto, EncryptionFactory } from '@/utils/cipher';
 import { isEmpty, isObject, isArray, isUndefined, isString } from '@/utils/is';
 import type { AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
@@ -18,9 +18,9 @@ import { RequestEnum } from '@/enums/httpEnum';
 import { Result } from '#/axios';
 
 export class CipherData {
-  private cipher: Encryption;
+  private cipher: Crypto;
 
-  constructor(cipher: Encryption) {
+  constructor(cipher: Crypto) {
     this.cipher = cipher;
   }
 

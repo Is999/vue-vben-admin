@@ -39,8 +39,8 @@ export interface RequestOptions {
 }
 
 export interface signParams {
-  request?: string[];
-  response?: string[];
+  request?: string[]; // 请求参数签名
+  response?: string[]; // 响应验证签名参数
 }
 
 export interface RetryRequest {

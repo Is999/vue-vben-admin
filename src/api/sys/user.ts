@@ -1,6 +1,7 @@
 import { AdminApi } from '@/api/api';
 import { UserInfoModel, LoginParams, LoginResult, RoleInfo } from './model/userModel';
 import { ErrorMessageMode } from '#/axios';
+import { useUserStore } from '@/store/modules/user';
 
 enum Api {
   Login = '/user/login',
@@ -22,10 +23,10 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
     {
       statusCodes: [406, 403, 500],
       errorMessageMode: mode,
-      cipherParams: ['name', 'password', 'secureCode'],
+      cipherParams: ['name', 'password'], // 参数加密
       signParams: {
-        request: ['name', 'password', 'secureCode'],
-        // response: ['token'],
+        request: ['name', 'password'], // 请求参数签名
+        // response: ['token'], // 响应验证签名参数
       },
     },
   );
@@ -100,6 +101,7 @@ export function checkSecure(secure: string) {
     },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
+      cipherParams: ['secure'], // 参数加密
     },
   );
 }
@@ -113,8 +115,16 @@ export function checkMfaSecure(secure: string) {
     },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
+      cipherParams: ['secure'], // 参数加密
     },
   );
+}
+
+// 获取权限码
+export function getPermCode() {
+  const userStore = useUserStore();
+  const { permissions } = userStore.getUserRole || {};
+  return Promise.resolve(permissions || []);
 }
 
 export function testRetry() {
