@@ -4,7 +4,7 @@
   <BasicForm @register="register" class="p-4 enter-x">
     <template #captcha="{ model, field }">
       <InputGroup>
-        <div class="flex justify-center">
+        <div class="flex justify-between">
           <AInput
             class="mr-2"
             type="text"
@@ -30,7 +30,7 @@
     </template>
     <template #secureCode="{ model, field }">
       <InputGroup>
-        <div class="flex justify-center">
+        <div class="flex justify-between">
           <AInput
             class="mr-2"
             type="text"
