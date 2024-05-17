@@ -116,7 +116,7 @@
       label: '类型',
       component: 'RadioButtonGroup',
       defaultValue: 7,
-      colProps: { lg: 24, md: 24 },
+      colProps: { lg: 12, md: 12 },
       helpMessage: ['目录和菜单的权限类型一定要选择对应的类型哦'],
       componentProps: {
         options: [
@@ -131,6 +131,21 @@
           { label: '其它', value: 8 },
         ],
       },
+    },
+    {
+      field: 'status',
+      label: '状态',
+      component: 'RadioButtonGroup',
+      defaultValue: 1,
+      required: true,
+      componentProps: {
+        options: [
+          { label: '启用', value: 1 },
+          { label: '停用', value: 0 },
+        ],
+        id: 'form_item_status_edit',
+      },
+      colProps: { lg: 12, md: 12 },
     },
     {
       label: '备注',

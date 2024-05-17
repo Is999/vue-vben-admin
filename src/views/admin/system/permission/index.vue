@@ -51,13 +51,13 @@
 <script setup lang="ts">
   import { h, nextTick, ref } from 'vue';
   import { BasicTable, useTable, TableAction, BasicColumn, FormSchema } from '@/components/Table';
-  import { permissionDel, getPermissionList } from '@/api/admin/system';
+  import { permissionDel, getPermissionList, setPermissionStatus } from '@/api/admin/system';
   import { useDrawer } from '@/components/Drawer';
   import PermissionDrawer from './PermissionDrawer.vue';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { PermissionListItem } from '@/api/admin/model/systemModel';
-  import { Tag } from 'ant-design-vue';
+  import { Switch, Tag } from 'ant-design-vue';
   import { notify } from '@/api/api';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -161,6 +161,38 @@
       },
     },
     {
+      title: '状态',
+      dataIndex: 'status',
+      width: 120,
+      customRender: ({ record }) => {
+        if (!Reflect.has(record, 'pendingStatus')) {
+          record.pendingStatus = false;
+        }
+        return h(Switch, {
+          checked: record.status == 1,
+          checkedChildren: '已启用',
+          unCheckedChildren: '已禁用',
+          loading: record.pendingStatus,
+          disabled: !hasPermission(PermissionsEnum.PermissionStatus, false),
+          onChange: (checked) => {
+            record.pendingStatus = true;
+            // 请求接口
+            setPermissionStatus(record.id, checked as boolean)
+              .then((res) => {
+                notify(res, true);
+                record.status = checked ? 1 : 0;
+              })
+              .catch((e) => {
+                console.log('@@@ setAccountStatus', e);
+              })
+              .finally(() => {
+                record.pendingStatus = false;
+              });
+          },
+        });
+      },
+    },
+    {
       title: '备注',
       dataIndex: 'describe',
       width: 200,
@@ -187,30 +219,30 @@
     {
       field: 'title',
       label: '名称',
-      labelWidth: 60,
+      labelWidth: 50,
       component: 'Input',
       colProps: { span: 5 },
     },
     {
       field: 'uuid',
       label: '标识',
-      labelWidth: 60,
+      labelWidth: 50,
       component: 'Input',
-      colProps: { span: 5 },
+      colProps: { span: 4 },
     },
     {
       field: 'module',
       label: '模型',
-      labelWidth: 60,
+      labelWidth: 50,
       component: 'Input',
       colProps: { span: 5 },
     },
     {
       field: 'type',
       label: '类型',
-      labelWidth: 60,
+      labelWidth: 50,
       component: 'Select',
-      colProps: { span: 5 },
+      colProps: { span: 3 },
       componentProps: {
         mode: 'multiple',
         options: [
@@ -227,9 +259,22 @@
       },
     },
     {
+      field: 'status',
+      label: '状态',
+      labelWidth: 50,
+      component: 'Select',
+      colProps: { span: 3 },
+      componentProps: {
+        options: [
+          { label: '启用', value: 1 },
+          { label: '禁用', value: 0 },
+        ],
+      },
+    },
+    {
       field: 'cache',
-      label: '',
-      labelWidth: 0,
+      label: ' ',
+      labelWidth: 14,
       component: 'RadioButtonGroup',
       defaultValue: 1,
       componentProps: () => {
@@ -244,7 +289,7 @@
           // },
         };
       },
-      colProps: { span: 4, push: 1 },
+      colProps: { span: 4 },
     },
   ];
 
@@ -278,7 +323,7 @@
     bordered: true,
     showIndexColumn: false,
     actionColumn: {
-      width: 90,
+      width: 100,
       title: '操作',
       dataIndex: 'action',
       fixed: 'right',

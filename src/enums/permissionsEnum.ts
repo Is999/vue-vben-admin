@@ -19,6 +19,7 @@ export enum PermissionsEnum {
   PermissionAddSave = '100013', // 保存	添加权限(新增)	permission.add
   PermissionEdit = '100014', // 编辑	编辑权限(按钮,页面)
   PermissionEditSave = '100015', // 保存	编辑权限(修改)	permission.edit
+  PermissionStatus = '100057', // 启用/禁用 启用/禁用	权限(按钮)	permission.editStatus
   PermissionDel = '100016', // 删除	删除权限(按钮, 删除)	permission.del
 
   // 菜单管理

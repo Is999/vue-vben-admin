@@ -58,6 +58,7 @@ enum Api {
   PermissionList = '/permission/index', // 权限列表
   PermissionAdd = '/permission/add', // 新增权限
   PermissionEdit = '/permission/edit', // 编辑权限
+  PermissionStatus = '/permission/editStatus', // 禁用|启用
   PermissionDel = '/permission/del', // 删除权限
   PermissionTreeList = '/permission/treeList', // 父级权限树形下拉框
   PermissionMaxUuid = '/permission/maxUuid', // 最大uuid
@@ -288,6 +289,15 @@ export const permissionAdd = (params: PermissionModel) =>
 export const permissionEdit = (id: number, params: PermissionModel) =>
   AdminApi.post(
     { url: Api.PermissionEdit + '/' + id, params },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
+// 权限管理 禁用|启用
+export const setPermissionStatus = (id: number, status: boolean) =>
+  AdminApi.post(
+    { url: Api.PermissionStatus + '/' + id, params: { id, status } },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },

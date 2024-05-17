@@ -327,6 +327,7 @@
         if (isNaN(record.module)) {
           content += `API路由：${record.module} <br/>`;
         }
+        content += '状态：' + (parseInt(record.status) === 1 ? '启用' : '禁用') + '<br/>';
         content += `描述：${record.describe}`;
         return h(
           Tooltip,
