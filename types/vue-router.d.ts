@@ -47,7 +47,5 @@ declare module 'vue-router' {
     hidePathForChildren?: boolean;
     // 唯一标识用于权限过滤, 不存在默认拥有权限
     uniqId?: string;
-    // 是否需要转路由
-    isTransformToRoute?: boolean;
   }
 }

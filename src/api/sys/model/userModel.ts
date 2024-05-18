@@ -9,11 +9,6 @@ export interface LoginParams {
   secureCode?: string;
 }
 
-export interface RoleInfo {
-  roleName: string;
-  value: string;
-}
-
 /**
  * @description: 用户角色权限信息
  */

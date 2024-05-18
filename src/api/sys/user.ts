@@ -123,7 +123,7 @@ export function checkMfaSecure(secure: string) {
 // 获取权限码
 export function getPermCode() {
   const userStore = useUserStore();
-  const { permissions } = userStore.getUserRole || {};
+  const { permissions } = userStore.getUserRole;
   return Promise.resolve(permissions || []);
 }
 

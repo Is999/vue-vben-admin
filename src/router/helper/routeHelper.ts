@@ -32,11 +32,11 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
         continue;
       }
     }
-    if (true === item.meta?.isTransformToRoute) {
-      if (!item.component && item.meta?.frameSrc) {
-        item.component = 'IFRAME';
-      }
-      const { component, name } = item;
+    if (!item.component && item.meta?.frameSrc) {
+      item.component = 'IFRAME';
+    }
+    const { component, name } = item;
+    if (isString(component)) {
       if (component) {
         const layoutFound = LayoutMap.get(component.toUpperCase());
         if (layoutFound) {
@@ -52,7 +52,6 @@ function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
     if (children) {
       item.children = asyncImportRoute(children);
     }
-
     newRoutes.push(item);
   }
   return newRoutes;
@@ -99,30 +98,26 @@ export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModul
       }
     }
 
-    if (true === route.meta?.isTransformToRoute) {
-      const component = route.component;
-      if (isString(component)) {
-        if (component.toUpperCase() === 'LAYOUT') {
-          route.component = LayoutMap.get(component.toUpperCase());
-        } else {
-          route.children = [cloneDeep(route)];
-          route.component = LAYOUT;
-
-          //某些情况下如果name如果没有值， 多个一级路由菜单会导致页面404
-          if (!route.name) {
-            warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(route));
-          }
-          route.name = `${route.name}Parent`;
-          // 重定向到当前路由，以防空白页面
-          route.redirect = route.path;
-          route.path = '';
-          const meta = route.meta || {};
-          meta.single = true;
-          meta.affix = false;
-          route.meta = meta;
-        }
+    const component = route.component;
+    if (isString(component)) {
+      if (component.toUpperCase() === 'LAYOUT') {
+        route.component = LayoutMap.get(component.toUpperCase());
       } else {
-        warn('请正确配置路由：' + route?.name + '的component属性');
+        route.children = [cloneDeep(route)];
+        route.component = LAYOUT;
+
+        //某些情况下如果name如果没有值， 多个一级路由菜单会导致页面404
+        if (!route.name) {
+          warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(route));
+        }
+        route.name = `${route.name}Parent`;
+        // 重定向到当前路由，以防空白页面
+        route.redirect = route.path;
+        route.path = '';
+        const meta = route.meta || {};
+        meta.single = true;
+        meta.affix = false;
+        route.meta = meta;
       }
     }
 
@@ -131,7 +126,7 @@ export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModul
     }
     newRoutes.push(route);
   }
-  return routeList as unknown as T[];
+  return newRoutes as unknown as T[];
 }
 
 /**

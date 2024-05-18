@@ -302,6 +302,9 @@
           });
         }
       } catch (error) {
+        if ((error as Error)?.message?.indexOf('100014') !== -1) {
+          handleCaptchaApi();
+        }
         createErrorModal({
           title: t('sys.api.errorTip'),
           content: (error as Error)?.message || t('sys.api.networkExceptionMsg'),

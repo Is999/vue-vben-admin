@@ -93,9 +93,15 @@ export const useUserStore = defineStore({
     setUserRole(role: UserRole | null) {
       this.userRole = role;
       if (role) {
+        // 设置用户角色
         this.setRoleList(role.roles as RoleEnum[]);
+        // 设置用户权限
+        usePermissionStore().setPermCodeList(role.permissions);
       } else {
+        // 设置用户角色
         this.setRoleList([]);
+        // 设置用户权限
+        usePermissionStore().setPermCodeList([]);
       }
       setAuthCache(ROLES_KEY, role);
     },
@@ -104,11 +110,11 @@ export const useUserStore = defineStore({
       this.sessionTimeout = flag;
     },
     resetState() {
-      this.userInfo = null;
-      this.token = '';
-      this.roleList = [];
-      this.userRole = null;
-      this.sessionTimeout = false;
+      this.setUserInfo(null);
+      this.setToken(undefined);
+      this.setRoleList([]);
+      this.setUserRole(null);
+      this.setSessionTimeout(false);
     },
     getUserInfos(): UserInfos {
       return { info: this.getUserInfo, role: this.getUserRole };
@@ -215,10 +221,10 @@ export const useUserStore = defineStore({
      */
     async getUserPermissionsAction(): Promise<RoleInfo | null> {
       if (!this.getToken) return null;
-      // 用户角色权限
+      // 获取用户角色和权限
       const role = await userPermissions();
 
-      // 设置用户权限缓存
+      // 设置用户用户角色和权限缓存
       this.setUserRole(role);
 
       return role;
@@ -238,11 +244,7 @@ export const useUserStore = defineStore({
 
       console.log('注销Token: 清空缓存');
       // 清空缓存
-      this.setToken(undefined);
-      this.setSessionTimeout(false);
-      this.setUserInfo(null);
-      this.setUserRole(null);
-
+      this.resetState();
       console.log('清空缓存完毕 ', goLogin);
       if (goLogin) {
         // 直接回登陆页
