@@ -62,7 +62,12 @@ export function transformRouteToMenu(routeModList: AppRouteModule[], routerMappi
   const list = treeMap(routeList, {
     conversion: (node: AppRouteRecordRaw) => {
       const { meta: { hideMenu = false } = {}, name } = node;
-
+      if (Array.isArray(node.children) && node.children.length > 0) {
+        // 对子级排序
+        node.children.sort((a, b) => {
+          return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
+        });
+      }
       return {
         ...(node.meta || {}),
         meta: node.meta,

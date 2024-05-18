@@ -1,9 +1,9 @@
 export enum PermissionsEnum {
   // Begin 系统管理
-  // SystmeDir = '100001', // 系统管理 (目录)
+  SystmeDir = '100001', // 系统管理 (目录)
 
   // 角色管理
-  // RoleNav = '100002', // 角色管理	角色管理(菜单,页面)	role.index
+  RoleNav = '100002', // 角色管理	角色管理(菜单,页面)	role.index
   RoleAdd = '100003', // 添加	添加角色(按钮,页面)
   RoleAddSave = '100004', // 保存	添加角色(新增)	role.add
   RoleEdit = '100005', // 编辑	编辑角色(按钮,页面)
@@ -14,7 +14,7 @@ export enum PermissionsEnum {
   // RoleEditPermission = '100010', // 保存	编辑角色权限(修改)	role.editPermission
 
   // 权限管理
-  // PermissionNav = '100011', // 权限管理	权限管理(菜单,页面)	permission.index
+  PermissionNav = '100011', // 权限管理	权限管理(菜单,页面)	permission.index
   PermissionAdd = '100012', // 添加	添加权限(按钮,页面)
   PermissionAddSave = '100013', // 保存	添加权限(新增)	permission.add
   PermissionEdit = '100014', // 编辑	编辑权限(按钮,页面)
@@ -23,7 +23,7 @@ export enum PermissionsEnum {
   PermissionDel = '100016', // 删除	删除权限(按钮, 删除)	permission.del
 
   // 菜单管理
-  // MenuNav = '100017', // 菜单管理	菜单管理(菜单,页面)	menu.index
+  MenuNav = '100017', // 菜单管理	菜单管理(菜单,页面)	menu.index
   MenuAdd = '100018', // 添加	添加菜单(按钮,页面)
   MenuAddSave = '100019', // 保存	添加菜单(新增)	menu.add
   MenuEdit = '100020', // 编辑	编辑菜单(按钮,页面)
@@ -31,7 +31,7 @@ export enum PermissionsEnum {
   MenuStatus = '100022', // 显示/隐藏	显示/隐藏 菜单(按钮,修改)	menu.editStatus
 
   // 账号管理
-  // AccountNav = '100023', // 账号管理	账号管理(菜单,页面)	user.index
+  AccountNav = '100023', // 账号管理	账号管理(菜单,页面)	user.index
   AccountAdd = '100024', // 添加	添加管理员(按钮,页面)
   AccountAddSave = '100025', // 保存	添加管理员(新增)	user.add
   AccountEdit = '100026', // 编辑	编辑管理员(按钮,页面)
@@ -47,7 +47,7 @@ export enum PermissionsEnum {
   AccountEditRolesSave = '100035', // 编辑账号角色	编辑账号角色/确认 (按钮, 新增, 删除)	user.editRoles
 
   // 字典管理
-  // ConfigNav = '100036', // 字典管理	字典管理(菜单,页面)	config.index
+  ConfigNav = '100036', // 字典管理	字典管理(菜单,页面)	config.index
   ConfigAdd = '100037', // 添加	添加字典(按钮,页面)
   ConfigAddSave = '100038', // 保存	添加字典(新增)	config.add
   ConfigEdit = '100039', // 编辑	编辑字典(按钮,页面)
@@ -56,7 +56,7 @@ export enum PermissionsEnum {
   ConfigRenew = '100042', // 刷新字典缓存	刷新字典缓存(按钮, 查看)	config.renew
 
   // 缓存管理
-  // CacheNav = '100043', // 缓存管理	缓存管理(菜单,页面)	cache.index
+  CacheNav = '100043', // 缓存管理	缓存管理(菜单,页面)	cache.index
   // CacheKeyInfo = '100044', // 查看缓存值	查看缓存值(按钮, 查看)	cache.keyInfo
   CacheRenew = '100045', // 刷新缓存	刷新缓存(按钮, 修改)	cache.renew
   CacheRenewAll = '100046', // 刷新全部缓存	刷新全部缓存(按钮, 修改)	cache.renewAll
@@ -65,13 +65,13 @@ export enum PermissionsEnum {
   // CacheSearchKey = '100049', // 搜索	搜索(按钮, 查看)	cache.searchKey
   // CacheSearchKeyValue = '100050', // 服务器信息	服务器信息(按钮, 查看)	cache.searchKeyInfo
 
-  // UserlogNav = '100052', //	后台日志 后台日志(菜单，页面) userlog.index
+  UserlogNav = '100052', //	后台日志 后台日志(菜单，页面) userlog.index
   // End 系统管理
 
-  // PersonalDir = '100053', // 个人管理 个人信息管理(目录)
-  // PersonalInfoNav = '100054', // 个人信息 个人信息 (菜单, 页面, 按钮) user.mine
+  PersonalDir = '100053', // 个人管理 个人信息管理(目录)
+  PersonalInfoNav = '100054', // 个人信息 个人信息 (菜单, 页面, 按钮) user.mine
 
-  // DashboardDir = '100055', //	控制台 控制台(目录)
-  // AnalysisNav = '100056', //	分析页 分析页(菜单, 页面)
-  // WorkbenchNav = '100057', //	工作台 操作台(菜单,页面)
+  DashboardDir = '100055', //	控制台 控制台(目录)
+  AnalysisNav = '100056', //	分析页 分析页(菜单, 页面)
+  WorkbenchNav = '100057', //	工作台 操作台(菜单,页面)
 }

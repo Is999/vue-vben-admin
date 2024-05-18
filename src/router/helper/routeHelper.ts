@@ -5,6 +5,8 @@ import { getParentLayout, LAYOUT, EXCEPTION_COMPONENT } from '@/router/constant'
 import { cloneDeep, omit } from 'lodash-es';
 import { warn } from '@/utils/log';
 import { createRouter, createWebHashHistory } from 'vue-router';
+import { usePermission } from '@/hooks/web/usePermission';
+import { isString } from '@/utils/is';
 
 export type LayoutMapKey = 'LAYOUT';
 const IFRAME = () => import('@/views/sys/iframe/FrameBlank.vue');
@@ -20,24 +22,40 @@ let dynamicViewsModules: Record<string, () => Promise<Recordable>>;
 function asyncImportRoute(routes: AppRouteRecordRaw[] | undefined) {
   dynamicViewsModules = dynamicViewsModules || import.meta.glob('../../views/**/*.{vue,tsx}');
   if (!routes) return;
-  routes.forEach((item) => {
-    if (!item.component && item.meta?.frameSrc) {
-      item.component = 'IFRAME';
-    }
-    const { component, name } = item;
-    const { children } = item;
-    if (component) {
-      const layoutFound = LayoutMap.get(component.toUpperCase());
-      if (layoutFound) {
-        item.component = layoutFound;
-      } else {
-        item.component = dynamicImport(dynamicViewsModules, component as string);
+  const newRoutes: AppRouteRecordRaw[] = [];
+  const { hasPermission } = usePermission();
+  for (let i = 0; i < routes.length; i++) {
+    const item = routes[i];
+    // 获取权限
+    if (undefined !== item.meta?.uniqId) {
+      if (!hasPermission(item.meta?.uniqId, false)) {
+        continue;
       }
-    } else if (name) {
-      item.component = getParentLayout();
     }
-    children && asyncImportRoute(children);
-  });
+    if (true === item.meta?.isTransformToRoute) {
+      if (!item.component && item.meta?.frameSrc) {
+        item.component = 'IFRAME';
+      }
+      const { component, name } = item;
+      if (component) {
+        const layoutFound = LayoutMap.get(component.toUpperCase());
+        if (layoutFound) {
+          item.component = layoutFound;
+        } else {
+          item.component = dynamicImport(dynamicViewsModules, component as string);
+        }
+      } else if (name) {
+        item.component = getParentLayout();
+      }
+    }
+    const { children } = item;
+    if (children) {
+      item.children = asyncImportRoute(children);
+    }
+
+    newRoutes.push(item);
+  }
+  return newRoutes;
 }
 
 function dynamicImport(
@@ -70,33 +88,49 @@ function dynamicImport(
 // Turn background objects into routing objects
 // 将背景对象变成路由对象
 export function transformObjToRoute<T = AppRouteModule>(routeList: AppRouteModule[]): T[] {
-  routeList.forEach((route) => {
-    const component = route.component as string;
-    if (component) {
-      if (component.toUpperCase() === 'LAYOUT') {
-        route.component = LayoutMap.get(component.toUpperCase());
-      } else {
-        route.children = [cloneDeep(route)];
-        route.component = LAYOUT;
-
-        //某些情况下如果name如果没有值， 多个一级路由菜单会导致页面404
-        if (!route.name) {
-          warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(route));
-        }
-        route.name = `${route.name}Parent`;
-        // 重定向到当前路由，以防空白页面
-        route.redirect = route.path;
-        route.path = '';
-        const meta = route.meta || {};
-        meta.single = true;
-        meta.affix = false;
-        route.meta = meta;
+  const { hasPermission } = usePermission();
+  const newRoutes: AppRouteRecordRaw[] = [];
+  for (let i = 0; i < routeList.length; i++) {
+    const route = routeList[i];
+    // 获取权限
+    if (undefined !== route.meta?.uniqId) {
+      if (!hasPermission(route.meta?.uniqId, false)) {
+        continue;
       }
-    } else {
-      warn('请正确配置路由：' + route?.name + '的component属性');
     }
-    route.children && asyncImportRoute(route.children);
-  });
+
+    if (true === route.meta?.isTransformToRoute) {
+      const component = route.component;
+      if (isString(component)) {
+        if (component.toUpperCase() === 'LAYOUT') {
+          route.component = LayoutMap.get(component.toUpperCase());
+        } else {
+          route.children = [cloneDeep(route)];
+          route.component = LAYOUT;
+
+          //某些情况下如果name如果没有值， 多个一级路由菜单会导致页面404
+          if (!route.name) {
+            warn('找不到菜单对应的name, 请检查数据!' + JSON.stringify(route));
+          }
+          route.name = `${route.name}Parent`;
+          // 重定向到当前路由，以防空白页面
+          route.redirect = route.path;
+          route.path = '';
+          const meta = route.meta || {};
+          meta.single = true;
+          meta.affix = false;
+          route.meta = meta;
+        }
+      } else {
+        warn('请正确配置路由：' + route?.name + '的component属性');
+      }
+    }
+
+    if (route.children) {
+      route.children = asyncImportRoute(route.children);
+    }
+    newRoutes.push(route);
+  }
   return routeList as unknown as T[];
 }
 

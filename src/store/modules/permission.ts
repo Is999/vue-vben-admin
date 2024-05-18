@@ -228,12 +228,18 @@ export const usePermissionStore = defineStore({
           }
 
           // Dynamically introduce components
-          // 动态引入组件
+          // 动态引入组件，并过滤权限
           routeList = transformObjToRoute(routeList);
 
           //  Background routing to menu structure
           //  后台路由到菜单结构
           const backMenuList = transformRouteToMenu(routeList);
+
+          // 对菜单进行排序
+          backMenuList.sort((a, b) => {
+            return (a.meta?.orderNo || 0) - (b.meta?.orderNo || 0);
+          });
+
           this.setBackMenuList(backMenuList);
 
           // remove meta.ignoreRoute item
