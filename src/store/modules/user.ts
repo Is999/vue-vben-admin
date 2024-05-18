@@ -196,7 +196,7 @@ export const useUserStore = defineStore({
         // 用户信息
         this.getMineAction();
         // 用户角色权限
-        this.getUserPermissionsAction();
+        //this.getUserPermissionsAction();
       };
 
       await getUser();

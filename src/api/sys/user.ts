@@ -121,10 +121,10 @@ export function checkMfaSecure(secure: string) {
 }
 
 // 获取权限码
-export function getPermCode() {
+export async function getPermCode() {
   const userStore = useUserStore();
-  const { permissions } = userStore.getUserRole;
-  return Promise.resolve(permissions || []);
+  const role = await userStore.getUserPermissionsAction();
+  return Promise.resolve(role?.permissions || []);
 }
 
 export function testRetry() {
