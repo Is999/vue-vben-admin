@@ -148,6 +148,7 @@
     arr.forEach((value) => {
       value.disableCheckbox = !value.checked;
       value.selectable = !value.selectable;
+      value.style = !value.status ? { color: 'red' } : { color: 'currentcolor' };
       //value.disabled = value.disabled || !value.checked;
       if (value.children) {
         recursion(value.children);

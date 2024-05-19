@@ -10,7 +10,7 @@ const account: AppRouteModule = {
   meta: {
     icon: 'ant-design:audit-outlined',
     title: 'routes.admin.personal.moduleName',
-    orderNo: 3,
+    orderNo: 0,
   },
   children: [
     {

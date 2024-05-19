@@ -273,6 +273,8 @@
         !isUpdate.value,
       )) as any as TreeItem[];
 
+      recursion(treeData.value);
+
       // pid 上级角色下拉框
       if (unref(parentTreeData).length === 0 || isGetParentTreeData.value) {
         parentTreeData.value = [{ id: 0, title: '超级管理员' }] as TreeSelect[];
@@ -319,6 +321,15 @@
       setDrawerProps({ loading: false });
     }
   });
+
+  function recursion(arr: TreeItem[]) {
+    arr.forEach((value) => {
+      value.style = !value.status ? { color: 'red' } : { color: 'currentcolor' };
+      if (value.children) {
+        recursion(value.children);
+      }
+    });
+  }
 
   const actionList: TreeActionItem[] = [
     {
