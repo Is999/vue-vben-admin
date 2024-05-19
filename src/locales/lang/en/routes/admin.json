@@ -10,7 +10,10 @@
     "permission": "Permission",
     "config": "Config",
     "cache": "Cache",
-    "userlog": "Log"
+    "userlog": "Log",
+    "secret-key": "Secret key",
+    "notice": "Notification",
+    "files": "Files"
   },
   "personal": {
     "moduleName": "Personal",

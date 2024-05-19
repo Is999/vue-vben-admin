@@ -1,60 +1,62 @@
 <template>
-  <!-- 登录title -->
-  <LoginFormTitle v-show="true" class="enter-x" />
-  <BasicForm @register="register" class="p-4 enter-x">
-    <template #captcha="{ model, field }">
-      <InputGroup>
-        <div class="flex justify-between">
-          <AInput
-            class="mr-2"
-            type="text"
-            name="captcha"
-            :maxlength="4"
-            v-model:value="model[field]"
-            :placeholder="t('sys.login.code')"
-          >
-            <template #addonBefore>
-              <SafetyOutlined class="site-form-item-icon" />
-            </template>
-          </AInput>
-          <div style="min-width: 100px">
-            <img
-              :src="formData.img"
-              style="float: right; cursor: pointer; object-fit: cover"
-              @click="handleCaptchaApi()"
-              alt=""
-            />
+  <div style="max-width: 420px">
+    <!-- 登录title -->
+    <LoginFormTitle v-show="true" class="enter-x" />
+    <BasicForm @register="register" class="p-4 enter-x">
+      <template #captcha="{ model, field }">
+        <InputGroup>
+          <div class="flex justify-between">
+            <AInput
+              class="mr-2"
+              type="text"
+              name="captcha"
+              :maxlength="4"
+              v-model:value="model[field]"
+              :placeholder="t('sys.login.code')"
+            >
+              <template #addonBefore>
+                <SafetyOutlined class="site-form-item-icon" />
+              </template>
+            </AInput>
+            <div style="min-width: 100px">
+              <img
+                :src="formData.img"
+                style="float: right; cursor: pointer; object-fit: cover"
+                @click="handleCaptchaApi()"
+                alt=""
+              />
+            </div>
           </div>
-        </div>
-      </InputGroup>
-    </template>
-    <template #secureCode="{ model, field }">
-      <InputGroup>
-        <div class="flex justify-between">
-          <AInput
-            class="mr-2"
-            type="text"
-            name="secureCode"
-            :maxlength="6"
-            v-model:value="model[field]"
-            :placeholder="t('sys.login.secureCode')"
-          >
-            <template #addonBefore>
-              <InsuranceTwoTone class="site-form-item-icon" />
-            </template>
-          </AInput>
-          <div style="min-width: 100px">
-            <a @click="handleBuildMFASecret()" style="line-height: 41px">没有？去绑定！</a>
+        </InputGroup>
+      </template>
+      <template #secureCode="{ model, field }">
+        <InputGroup>
+          <div class="flex justify-between">
+            <AInput
+              class="mr-2"
+              type="text"
+              name="secureCode"
+              :maxlength="6"
+              v-model:value="model[field]"
+              :placeholder="t('sys.login.secureCode')"
+            >
+              <template #addonBefore>
+                <InsuranceTwoTone class="site-form-item-icon" />
+              </template>
+            </AInput>
+            <div style="min-width: 100px">
+              <a @click="handleBuildMFASecret()" style="line-height: 41px">没有？去绑定！</a>
+            </div>
           </div>
-        </div>
-      </InputGroup>
-    </template>
-    <template #submit="{}">
-      <AButton type="primary" block @click="handleLogin" :loading="loading">
-        {{ t('sys.login.loginButton') }}
-      </AButton>
-    </template>
-  </BasicForm>
+        </InputGroup>
+      </template>
+      <template #submit="{}">
+        <AButton type="primary" block @click="handleLogin" :loading="loading">
+          {{ t('sys.login.loginButton') }}
+        </AButton>
+      </template>
+    </BasicForm>
+  </div>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, onMounted, h } from 'vue';
