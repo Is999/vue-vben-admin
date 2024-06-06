@@ -17,7 +17,7 @@ const account: AppRouteModule = {
     {
       path: 'user',
       name: PermissionsEnum.AccountNav,
-      component: '/admin/system/account/index',
+      component: () => import('@/views/admin/system/account/index.vue'),
       meta: {
         title: 'routes.admin.system.user',
         orderNo: 0,
@@ -39,7 +39,7 @@ const account: AppRouteModule = {
     {
       path: 'permission',
       name: PermissionsEnum.PermissionNav,
-      component: '/admin/system/permission/index',
+      component: () => import('@/views/admin/system/permission/index.vue'),
       meta: {
         title: 'routes.admin.system.permission',
         orderNo: 2,
@@ -50,7 +50,7 @@ const account: AppRouteModule = {
     {
       path: 'menu',
       name: PermissionsEnum.MenuNav,
-      component: '/admin/system/menu/index',
+      component: () => import('@/views/admin/system/menu/index.vue'),
       meta: {
         title: 'routes.admin.system.menu',
         orderNo: 3,
@@ -61,7 +61,7 @@ const account: AppRouteModule = {
     {
       path: 'config',
       name: PermissionsEnum.ConfigNav,
-      component: '/admin/system/config/index',
+      component: () => import('@/views/admin/system/config/index.vue'),
       meta: {
         title: 'routes.admin.system.config',
         orderNo: 4,
@@ -72,7 +72,7 @@ const account: AppRouteModule = {
     {
       path: 'cache',
       name: PermissionsEnum.CacheNav,
-      component: '/admin/system/cache/index',
+      component: () => import('@/views/admin/system/cache/index.vue'),
       meta: {
         title: 'routes.admin.system.cache',
         orderNo: 5,
@@ -82,46 +82,46 @@ const account: AppRouteModule = {
     },
     {
       path: 'secret-key',
-      name: PermissionsEnum.UserlogNav,
-      component: 'admin/system/secret-key/index',
+      name: PermissionsEnum.SecretKeyNav,
+      component: () => import('@/views/admin/system/secret-key/indexVxe.vue'),
       meta: {
         title: 'routes.admin.system.secret-key',
         orderNo: 6,
         icon: 'ant-design:safety-outlined',
-        uniqId: PermissionsEnum.UserlogNav,
+        uniqId: PermissionsEnum.SecretKeyNav,
       },
     },
     {
       path: 'notice',
-      name: PermissionsEnum.UserlogNav,
-      component: 'admin/system/notice/index',
+      name: PermissionsEnum.NoticeNav,
+      component: '/admin/system/notice/index',
       meta: {
         title: 'routes.admin.system.notice',
         orderNo: 7,
         icon: 'ant-design:comment-outlined',
-        uniqId: PermissionsEnum.UserlogNav,
+        uniqId: PermissionsEnum.NoticeNav,
       },
     },
     {
       path: 'files',
-      name: PermissionsEnum.UserlogNav,
-      component: 'admin/system/fils/index',
+      name: PermissionsEnum.FilesNav,
+      component: '/admin/system/files/index',
       meta: {
         title: 'routes.admin.system.files',
         orderNo: 7,
         icon: 'ant-design:file-image-outlined',
-        uniqId: PermissionsEnum.UserlogNav,
+        uniqId: PermissionsEnum.FilesNav,
       },
     },
     {
-      path: 'userlog',
-      name: PermissionsEnum.UserlogNav,
-      component: 'admin/system/userlog/index',
+      path: 'user-log',
+      name: PermissionsEnum.UserLogNav,
+      component: () => import('@/views/admin/system/userlog/index.vue'),
       meta: {
         title: 'routes.admin.system.userlog',
         orderNo: 8,
         icon: 'ant-design:code-twotone',
-        uniqId: PermissionsEnum.UserlogNav,
+        uniqId: PermissionsEnum.UserLogNav,
       },
     },
   ],

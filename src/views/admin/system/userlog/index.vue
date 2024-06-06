@@ -1,13 +1,8 @@
 <template>
-  <VxeBasicTable v-bind="gridOptions">
-    <template #action="{ row }">
-      <TableAction :actions="createActions(row)" />
-    </template>
-  </VxeBasicTable>
+  <VxeBasicTable v-bind="gridOptions" />
 </template>
 <script lang="ts" setup>
   import { reactive } from 'vue';
-  import { ActionItem, TableAction } from '@/components/Table';
   import {
     BasicTableProps,
     VxeBasicTable,
@@ -152,43 +147,7 @@
             ...form,
           });
         },
-        queryAll: async ({ form }) => {
-          return await getUserLogList(form);
-        },
       },
     },
-    // sortConfig: {
-    //   remote: true,
-    //   defaultSort: { field: 'created_at', order: 'desc' },
-    //   orders: ['desc', 'asc', null],
-    // },
   });
-
-  // 操作按钮（权限控制）
-  const createActions = (record) => {
-    const actions: ActionItem[] = [
-      {
-        label: '详情',
-        onClick: () => {
-          console.log(record);
-        },
-      },
-      {
-        label: '编辑',
-        onClick: () => {},
-      },
-      {
-        label: '删除',
-        color: 'error',
-        popConfirm: {
-          title: '是否确认删除',
-          confirm: () => {
-            // tableRef.value?.remove(record);
-          },
-        },
-      },
-    ];
-
-    return actions;
-  };
 </script>

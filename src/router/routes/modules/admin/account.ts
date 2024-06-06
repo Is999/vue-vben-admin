@@ -16,7 +16,7 @@ const account: AppRouteModule = {
     {
       path: 'setting',
       name: PermissionsEnum.PersonalInfoNav,
-      component: '/admin/account/setting/index',
+      component: () => import('@/views/admin/account/setting/index.vue'),
       meta: {
         title: 'routes.admin.personal.info',
         icon: 'ant-design:idcard-twotone',

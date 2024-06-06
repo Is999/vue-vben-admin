@@ -64,6 +64,7 @@
   import { useDesign } from '@/hooks/web/useDesign';
   import { cloneDeep } from 'lodash-es';
   import { TableActionType } from '@/components/Table';
+  import { isFunction } from '@/utils/is';
 
   defineOptions({ name: 'BasicForm' });
 
@@ -130,6 +131,9 @@
         component,
         componentProps = {},
         isHandleDateDefaultValue = true,
+        field,
+        isHandleDefaultValue = true,
+        valueFormat,
       } = schema;
       // handle date type
       if (
@@ -160,6 +164,21 @@
           });
           schema.defaultValue = def;
         }
+      }
+
+      // handle schema.valueFormat
+      if (
+        isHandleDefaultValue &&
+        defaultValue &&
+        component &&
+        isFunction(valueFormat)
+      ) {
+        schema.defaultValue = valueFormat({
+          value: defaultValue,
+          schema,
+          model: formModel,
+          field,
+        });
       }
     }
     if (unref(getProps).showAdvancedButton) {
@@ -207,6 +226,7 @@
     removeSchemaByField,
     resetFields,
     scrollToField,
+    resetDefaultField,
   } = useFormEvents({
     emit,
     getProps,
@@ -305,6 +325,7 @@
     validate,
     submit: handleSubmit,
     scrollToField: scrollToField,
+    resetDefaultField,
   };
 
   const getFormActionBindProps = computed(
@@ -337,9 +358,18 @@
       //   margin-bottom: 20px;
       // }
 
-      &.suffix-item {
+      &.suffix-item,
+      &.prefix-item {
         .ant-form-item-children {
           display: flex;
+        }
+
+        .prefix {
+          display: inline-flex;
+          align-items: center;
+          margin-top: 1px;
+          padding-right: 6px;
+          line-height: 1;
         }
 
         .suffix {

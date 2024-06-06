@@ -27,20 +27,29 @@ const iframe: AppRouteModule = {
       },
     },
     {
-      path: 'antv',
-      name: 'Antv',
-      component: IFrame,
-      meta: {
-        frameSrc: 'https://www.antdv.com/docs/vue/introduce-cn/',
-        title: t('routes.demo.iframe.antv'),
-      },
-    },
-    {
       path: 'https://doc.vvbin.cn/',
       name: 'DocExternal',
       component: IFrame,
       meta: {
         title: t('routes.demo.iframe.docExternal'),
+      },
+    },
+    {
+      path: 'https://www.antdv.com/docs/vue/introduce-cn/',
+      name: 'AntDV',
+      component: IFrame,
+      meta: {
+        // frameSrc: 'https://www.antdv.com/docs/vue/introduce-cn/',
+        // title: t('routes.demo.iframe.antv'),
+        title: 'AntDV(外链)',
+      },
+    },
+    {
+      path: 'https://vxetable.cn/#/table/start/install',
+      name: 'VxeTable',
+      component: IFrame,
+      meta: {
+        title: 'VxeTable(外链)',
       },
     },
   ],

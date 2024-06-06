@@ -89,8 +89,12 @@ enum Api {
   // CacheSearchKeyInfo = '/cache/searchKeyInfo', // 缓存key信息
 
   // 操作日志
-  UserLogList = '/userlog/index', // 日志列表
-  UserLogActionList = '/userlog/actionList', // 操作类型
+  UserLogList = '/userLog/index', // 日志列表
+  UserLogActionList = '/userLog/actionList', // 操作类型
+
+  // 秘钥管理
+  SecretKeyList = '/secretKey/index', // 秘钥列表
+  SecretKeyStatus = '/secretKey/editStatus', // 秘钥状态 禁用,启用
 }
 
 // 账号管理 列表,搜索
@@ -502,3 +506,22 @@ export const getUserLogActionList = () => {
     },
   );
 };
+
+// 操作日志 列表,搜索
+export const getSecretKeyList = (params?: Recordable) => {
+  return AdminApi.post<BasicFetchResult<Recordable>>(
+    { url: Api.SecretKeyList, params },
+    {
+      errorMessageMode: 'message', // 错误直接提示后台返回信息
+    },
+  );
+};
+
+// 账号管理 账号 禁用|启用
+export const setSecretKeyStatus = (id: number, status: number) =>
+  AdminApi.post(
+    { url: Api.SecretKeyStatus + '/' + id, params: { id, status } },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
