@@ -9,6 +9,7 @@ import SHA512 from 'crypto-js/sha512';
 import { isEmpty } from '@/utils/is';
 import JSEncrypt from 'jsencrypt';
 import { IJSEncryptOptions } from 'jsencrypt/lib/JSEncrypt';
+import { b64tohex, hex2b64 } from 'jsencrypt/lib/lib/jsbn/base64';
 
 // Define an interface for encryption
 // 定义一个加密器的接口
@@ -139,10 +140,6 @@ class SHA512Hashing implements Hashing {
   }
 }
 
-export interface Crypto extends Encryption {
-  isErr(): boolean;
-}
-
 export interface Signature {
   sign(plainText: string): string | false;
 
@@ -154,13 +151,13 @@ export interface AesOptions extends EncryptionParams {
 }
 
 export interface RsaOptions {
-  key: string;
+  key: string; // 公钥验签和加密, 私钥验签和解密
   digestMethod?: (str: string) => string;
   digestName?: string;
   options?: IJSEncryptOptions;
 }
 
-class AesCrypto implements Crypto {
+class AesCrypto implements Encryption {
   private readonly key;
   private readonly iv;
   private readonly mode;
@@ -190,61 +187,101 @@ class AesCrypto implements Crypto {
   decrypt(cipherText: string) {
     return aesDecrypt(cipherText, this.key, this.getOptions).toString(UTF8);
   }
-
-  isErr(): boolean {
-    return false;
-  }
 }
 
-class RsaEncryption implements Encryption {
-  private readonly key: string;
-  private readonly options: IJSEncryptOptions;
-  private err: boolean = false;
+class AesSignature implements Signature {
+  private readonly key;
+  private readonly iv;
+  private readonly mode;
 
-  constructor({ key, options }: RsaOptions) {
-    this.key = key;
-    this.options = options || ({} as IJSEncryptOptions);
+  constructor({ key, iv, mode }: AesOptions) {
+    this.key = parse(key);
+    this.iv = parse(iv);
+    this.mode = mode;
+  }
+
+  get getOptions() {
+    const opt = {
+      padding: pkcs7,
+      iv: this.iv,
+    } as { [key: string]: any };
+
+    if (this.mode !== undefined && !isEmpty(this.mode)) {
+      opt.mode = this.mode;
+    }
+    return opt;
   }
 
   encrypt(plainText: string) {
-    // 重置err
-    this.err = false;
+    return aesEncrypt(plainText, this.key, this.getOptions).toString();
+  }
 
-    const rsa = new JSEncrypt(this.options);
-    rsa.setKey(this.key);
-    const res = rsa.encrypt(plainText);
-    if (typeof res === 'boolean') {
+  sign(str: string) {
+    return this.encrypt(str);
+  }
+
+  verify(str: string, signature: string) {
+    return this.encrypt(str) == signature;
+  }
+}
+
+class RsaCrypto implements Encryption {
+  private readonly rsa: JSEncrypt;
+
+  constructor({ key, options }: RsaOptions) {
+    const encrypt = options ? new JSEncrypt(options) : new JSEncrypt();
+    encrypt.setKey(key);
+    this.rsa = encrypt;
+  }
+
+  encrypt(plainText: string) {
+    try {
+      const keyObj = this.rsa.getKey();
+      // 获取公钥长度（以位为单位）并计算最大加密长度（以字节为单位）
+      const keyLengthInBits = keyObj['n'].bitLength();
+      const keyLengthInBytes = keyLengthInBits / 8; // 等同于 (keyLengthInBits + 7) >> 3
+      const maxLength = keyLengthInBytes - 11;
+      // console.log('公钥长度', rsa.getPublicKeyB64(), keyLengthInBits, keyLengthInBytes);
+
+      let encrypted = '';
+      for (let i = 0; i < plainText.length; i += maxLength) {
+        const chunk = plainText.slice(i, i + maxLength);
+        encrypted += keyObj.encrypt(chunk);
+      }
+      return hex2b64(encrypted);
+    } catch (ex) {
       return '';
     }
-    return res;
   }
 
   decrypt(cipherText: string) {
-    // 重置err
-    this.err = false;
+    try {
+      const keyObj = this.rsa.getKey();
+      const maxLength = 256;
 
-    const rsa = new JSEncrypt(this.options);
-    rsa.setKey(this.key);
-    const res = rsa.decrypt(cipherText);
-    if (typeof res === 'boolean') {
+      let decrypted = '';
+      const plainText = b64tohex(cipherText);
+      for (let i = 0; i < plainText.length; i += maxLength) {
+        const chunk = plainText.slice(i, i + maxLength);
+        const deChunk = keyObj.decrypt(chunk);
+        decrypted += deChunk;
+      }
+      return decrypted;
+    } catch (ex) {
       return '';
     }
-    return res;
-  }
-
-  isErr(): boolean {
-    return this.err;
   }
 }
 
 class RsaSignature implements Signature {
-  private readonly key: string;
   private readonly digestMethod: (str: string) => string;
   private readonly digestName: string;
-  private readonly options: IJSEncryptOptions;
+  private readonly rsa: JSEncrypt;
 
   constructor({ key, digestMethod, digestName, options }: RsaOptions) {
-    this.key = key;
+    const encrypt = options ? new JSEncrypt(options) : new JSEncrypt();
+    encrypt.setKey(key);
+
     this.digestMethod =
       digestMethod ||
       function (str) {
@@ -252,57 +289,86 @@ class RsaSignature implements Signature {
       };
 
     this.digestName = digestName || 'sha256';
-    this.options = options || ({} as IJSEncryptOptions);
+    this.rsa = encrypt;
   }
 
   sign(str: string) {
-    const rsa = new JSEncrypt(this.options);
-    rsa.setKey(this.key);
-    return rsa.sign(str, this.digestMethod, this.digestName);
+    return this.rsa.sign(str, this.digestMethod, this.digestName);
   }
 
   verify(str: string, signature: string) {
-    const rsa = new JSEncrypt(this.options);
-    rsa.setKey(this.key);
-    return rsa.verify(str, signature, this.digestMethod);
+    return this.rsa.verify(str, signature, this.digestMethod);
   }
 }
 
+class MD5Signature implements Signature {
+  hash(plainText: string) {
+    return MD5(plainText).toString();
+  }
+
+  sign(str: string) {
+    return this.hash(str);
+  }
+
+  verify(str: string, signature: string) {
+    return this.hash(str) == signature;
+  }
+}
+
+// 加密(编码)，解密(解码)
 export class EncryptionFactory {
+  // AES 加密、解密
   public static createAesEncryption(params: EncryptionParams): Encryption {
     return new AesEncryption(params);
   }
 
-  public static createAesCrypto(params: AesOptions): Crypto {
+  // AES 加密、解密
+  public static createAesCrypto(params: AesOptions): Encryption {
     return new AesCrypto(params);
   }
 
-  // 公钥加密，私钥解密
-  public static createRsaEncryption(params: RsaOptions): Crypto {
-    return new RsaEncryption(params);
+  // RSA 公钥加密，私钥解密
+  public static createRsaCrypto(params: RsaOptions): Encryption {
+    return new RsaCrypto(params);
   }
 
+  // Base64 编码，解码
   public static createBase64Encryption(): Encryption {
     return Base64Encryption.getInstance();
   }
 }
 
+// 签名，验签
 export class SignatureFactory {
-  // 私钥签名，公钥验证签名
+  // RSA 私钥签名，公钥验证签名
   public static createRsaSignature(params: RsaOptions): Signature {
     return new RsaSignature(params);
   }
+
+  // AES 签名，验签
+  public static createAesSignature(params: AesOptions): Signature {
+    return new AesSignature(params);
+  }
+
+  // Md5 签名，验签
+  public static createMD5Signature(): Signature {
+    return new MD5Signature();
+  }
 }
 
+// Hash
 export class HashingFactory {
+  // MD5
   public static createMD5Hashing(): Hashing {
     return MD5Hashing.getInstance();
   }
 
+  // SHA256
   public static createSHA256Hashing(): Hashing {
     return SHA256Hashing.getInstance();
   }
 
+  // SHA512
   public static createSHA512Hashing(): Hashing {
     return SHA512Hashing.getInstance();
   }

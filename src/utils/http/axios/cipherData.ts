@@ -10,7 +10,7 @@
  * Array或者Object类型的数据要标记`json:`标签
  */
 
-import { Crypto, EncryptionFactory } from '@/utils/cipher';
+import { Encryption, EncryptionFactory } from '@/utils/cipher';
 import { isEmpty, isObject, isArray, isUndefined, isString } from '@/utils/is';
 import type { AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
@@ -18,9 +18,9 @@ import { RequestEnum } from '@/enums/httpEnum';
 import { Result } from '#/axios';
 
 export class CipherData {
-  private cipher: Crypto;
+  private cipher: Encryption;
 
-  constructor(cipher: Crypto) {
+  constructor(cipher: Encryption) {
     this.cipher = cipher;
   }
 
@@ -70,7 +70,7 @@ export class CipherData {
         const encryptData = this.cipher.encrypt(originalData);
 
         // 验证加密是否有错误
-        if (this.cipher.isErr()) {
+        if (encryptData === '') {
           console.error(param + '参数，数据加密失败！', isJson, originalData);
           // continue;
           throw new Error('【100100】系统异常：' + param + ' 参数，数据加密失败！');
@@ -112,7 +112,7 @@ export class CipherData {
         let decryptedData = this.cipher.decrypt(originalData);
 
         // 验证解密是否有错误
-        if (this.cipher.isErr()) {
+        if (decryptedData === '') {
           console.error(param + '参数，数据解密失败！', isJson, originalData);
           // // 解密失败跳过后面步骤
           // continue;
@@ -170,7 +170,7 @@ export class CipherData {
       const encryptedData = this.cipher.encrypt(JSON.stringify(all));
 
       // 验证加密是否有错误
-      if (this.cipher.isErr()) {
+      if (encryptedData === '') {
         console.error('请求数据加密失败！', all, JSON.stringify(all));
         throw new Error('请求数据加密失败！');
       }
@@ -208,7 +208,7 @@ export class CipherData {
         const decryptData = this.cipher.decrypt(result);
 
         // 验证解密是否有错误
-        if (this.cipher.isErr()) {
+        if (decryptData === '') {
           console.error('响应数据解密失败，result: ', result, ' decryptData: ', decryptData);
           throw new Error('【100100】系统异常：数据解密失败!');
         }
