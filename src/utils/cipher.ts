@@ -240,16 +240,31 @@ class RsaCrypto implements Encryption {
       // 获取公钥长度（以位为单位）并计算最大加密长度（以字节为单位）
       const keyLengthInBits = keyObj['n'].bitLength();
       const keyLengthInBytes = keyLengthInBits / 8; // 等同于 (keyLengthInBits + 7) >> 3
-      const maxLength = keyLengthInBytes - 11;
-      // console.log('公钥长度', rsa.getPublicKeyB64(), keyLengthInBits, keyLengthInBytes);
+      const chunkSize = keyLengthInBytes - 11;
 
       let encrypted = '';
-      for (let i = 0; i < plainText.length; i += maxLength) {
-        const chunk = plainText.slice(i, i + maxLength);
-        encrypted += keyObj.encrypt(chunk);
+      const encoder = new TextEncoder();
+
+      let n = 0;
+      let chunk = '';
+      for (let i = 0; i < plainText.length; i++) {
+        const word = plainText.slice(i, i + 1);
+        const bytes = encoder.encode(word); // 转字节
+
+        // 计算字节长度
+        if (n + bytes.length > chunkSize) {
+          encrypted += keyObj.encrypt(chunk); // 加密
+
+          n = bytes.length; // 重置 n
+          chunk = word; // 重置 chunk
+        } else {
+          n += bytes.length; // 计算总长度
+          chunk += word; // 拼接字符
+        }
       }
       return hex2b64(encrypted);
     } catch (ex) {
+      console.error(ex);
       return '';
     }
   }
@@ -257,17 +272,18 @@ class RsaCrypto implements Encryption {
   decrypt(cipherText: string) {
     try {
       const keyObj = this.rsa.getKey();
-      const maxLength = 256;
+      const chunkSize = 256;
 
       let decrypted = '';
       const plainText = b64tohex(cipherText);
-      for (let i = 0; i < plainText.length; i += maxLength) {
-        const chunk = plainText.slice(i, i + maxLength);
+      for (let i = 0; i < plainText.length; i += chunkSize) {
+        const chunk = plainText.slice(i, i + chunkSize);
         const deChunk = keyObj.decrypt(chunk);
         decrypted += deChunk;
       }
       return decrypted;
     } catch (ex) {
+      console.error(ex);
       return '';
     }
   }
