@@ -47,7 +47,7 @@ export class CipherData {
 
       // 判断数据是否存在该参数
       let originalData = params[param];
-      if (undefined !== originalData) {
+      if (undefined !== originalData && originalData !== '') {
         // 对json数据处理进行编码
         if (isJson) {
           // 判断数据类型，Array或者Object类型的数据才需要json编码
