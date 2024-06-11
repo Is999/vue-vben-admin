@@ -157,7 +157,7 @@ export interface RsaOptions {
   options?: IJSEncryptOptions;
 }
 
-class AesCrypto implements Encryption {
+class Aes implements Encryption, Signature {
   private readonly key;
   private readonly iv;
   private readonly mode;
@@ -187,53 +187,34 @@ class AesCrypto implements Encryption {
   decrypt(cipherText: string) {
     return aesDecrypt(cipherText, this.key, this.getOptions).toString(UTF8);
   }
-}
-
-class AesSignature implements Signature {
-  private readonly key;
-  private readonly iv;
-  private readonly mode;
-
-  constructor({ key, iv, mode }: AesOptions) {
-    this.key = parse(key);
-    this.iv = parse(iv);
-    this.mode = mode;
-  }
-
-  get getOptions() {
-    const opt = {
-      padding: pkcs7,
-      iv: this.iv,
-    } as { [key: string]: any };
-
-    if (this.mode !== undefined && !isEmpty(this.mode)) {
-      opt.mode = this.mode;
-    }
-    return opt;
-  }
-
-  encrypt(plainText: string) {
-    return aesEncrypt(plainText, this.key, this.getOptions).toString();
-  }
 
   sign(str: string) {
-    return this.encrypt(str);
+    return this.encrypt(SHA256(str).toString());
   }
 
   verify(str: string, signature: string) {
-    return this.encrypt(str) == signature;
+    return SHA256(str).toString() == this.decrypt(signature);
   }
 }
 
-class RsaCrypto implements Encryption {
+class Rsa implements Encryption, Signature {
+  private readonly digestMethod: (str: string) => string;
+  private readonly digestName: string;
   private readonly rsa: JSEncrypt;
 
-  constructor({ key, options }: RsaOptions) {
+  constructor({ key, digestMethod, digestName, options }: RsaOptions) {
     const encrypt = options ? new JSEncrypt(options) : new JSEncrypt();
     encrypt.setKey(key);
+
+    this.digestMethod =
+      digestMethod ||
+      function (str) {
+        return SHA256(str).toString();
+      };
+
+    this.digestName = digestName || 'sha256';
     this.rsa = encrypt;
   }
-
   encrypt(plainText: string) {
     try {
       const keyObj = this.rsa.getKey();
@@ -272,7 +253,7 @@ class RsaCrypto implements Encryption {
   decrypt(cipherText: string) {
     try {
       const keyObj = this.rsa.getKey();
-      const chunkSize = 256;
+      const chunkSize = keyObj['n'].bitLength() / 4;
 
       let decrypted = '';
       const plainText = b64tohex(cipherText);
@@ -286,26 +267,6 @@ class RsaCrypto implements Encryption {
       console.error(ex);
       return '';
     }
-  }
-}
-
-class RsaSignature implements Signature {
-  private readonly digestMethod: (str: string) => string;
-  private readonly digestName: string;
-  private readonly rsa: JSEncrypt;
-
-  constructor({ key, digestMethod, digestName, options }: RsaOptions) {
-    const encrypt = options ? new JSEncrypt(options) : new JSEncrypt();
-    encrypt.setKey(key);
-
-    this.digestMethod =
-      digestMethod ||
-      function (str) {
-        return SHA256(str).toString();
-      };
-
-    this.digestName = digestName || 'sha256';
-    this.rsa = encrypt;
   }
 
   sign(str: string) {
@@ -340,12 +301,12 @@ export class EncryptionFactory {
 
   // AES 加密、解密
   public static createAesCrypto(params: AesOptions): Encryption {
-    return new AesCrypto(params);
+    return new Aes(params);
   }
 
   // RSA 公钥加密，私钥解密
   public static createRsaCrypto(params: RsaOptions): Encryption {
-    return new RsaCrypto(params);
+    return new Rsa(params);
   }
 
   // Base64 编码，解码
@@ -358,12 +319,12 @@ export class EncryptionFactory {
 export class SignatureFactory {
   // RSA 私钥签名，公钥验证签名
   public static createRsaSignature(params: RsaOptions): Signature {
-    return new RsaSignature(params);
+    return new Rsa(params);
   }
 
   // AES 签名，验签
   public static createAesSignature(params: AesOptions): Signature {
-    return new AesSignature(params);
+    return new Aes(params);
   }
 
   // Md5 签名，验签
