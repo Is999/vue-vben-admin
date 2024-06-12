@@ -51,7 +51,7 @@
   import { copyText } from '@/utils/copyTextToClipboard';
   import { useGlobSetting } from '@/hooks/setting';
   import { HashingFactory } from '@/utils/cipher';
-  import { updateMine } from '@/api/admin/system';
+  import { updateMine, updateAvatar as updateAvatarApi } from '@/api/admin/system';
   import { notify } from '@/api/api';
   import { UserInfo } from '#/store';
   import { AccountModel } from '@/api/admin/model/systemModel';
@@ -222,10 +222,16 @@
     return avatar || headerImg;
   });
 
-  function updateAvatar({ src, data }) {
-    userinfo.value.avatar = src;
-    userStore.setUserInfo(userinfo.value);
-    console.log('data', data);
+  function updateAvatar(e) {
+    // console.log('data', e);
+    if (e.data) {
+      // 发起请求
+      updateAvatarApi(e.data).then((res) => {
+        notify(res, true);
+        userinfo.value.avatar = e.data;
+        userStore.setUserInfo(userinfo.value);
+      });
+    }
   }
 
   async function handleSubmit() {

@@ -45,6 +45,7 @@ enum Api {
   UpdateMFASecureKey = '/user/updateMfaSecureKey', // 安全设置 身份验证器(TOTP MFA 应用程序)
   UpdateMFAStatus = '/user/updateMfaStatus', // 安全设置 身份验证器(TOTP MFA 应用程序)
   UpdateMine = '/user/updateMine', // 基本设置 更新基本信息
+  UpdateAvatar = '/user/updateAvatar', // 基本设置 更新基本信息
 
   // 菜单管理
   MenuList = '/menu/index', // 菜单列表
@@ -195,6 +196,18 @@ export const updateMFASecureKey = (params: Recordable) =>
 export const updateMine = (params: AccountModel) =>
   AdminApi.post(
     { url: Api.UpdateMine, params },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
+// 个人信息 基本设置 更换头像
+export const updateAvatar = (avatar: string) =>
+  AdminApi.post(
+    {
+      url: Api.UpdateAvatar,
+      params: { avatar },
+    },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
