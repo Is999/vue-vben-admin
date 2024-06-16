@@ -24,14 +24,14 @@ import { useErrorLogStoreWithOut } from '@/store/modules/errorLog';
 import { useI18n } from '@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '@/store/modules/user';
-import { AxiosRetry } from '@/utils/http/axios/axiosRetry';
-import { CipherData } from '@/utils/http/axios/cipherData';
+import { AxiosRetry } from './axiosRetry';
+import { CipherData } from './cipherData';
 import { buildUUID } from '@/utils/uuid';
 import { useLocaleStoreWithOut } from '@/store/modules/locale';
-import { trimParam } from '@/utils/helper/trimParam';
+import { trimParam } from './trimParam';
 import { EncryptionFactory, SignatureFactory } from '@/utils/cipher';
 import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
-import { SignData } from '@/utils/http/axios/signData';
+import { SignData } from './signData';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
