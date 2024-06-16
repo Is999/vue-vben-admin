@@ -23,10 +23,12 @@ export function login(params: LoginParams, mode: ErrorMessageMode = 'none') {
     {
       statusCodes: [406, 403, 500],
       errorMessageMode: mode,
+      cryptoType: 'A', // 加密方式 A: AES加密、解密；R: RSA加密、解密
       cipherParams: ['name', 'password'], // 参数加密
+      signatureType: 'R', // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
       signParams: {
         request: ['name', 'password'], // 请求参数签名
-        // response: ['token'], // 响应验证签名参数
+        response: ['token'], // 响应验证签名参数
       },
     },
   );

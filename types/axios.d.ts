@@ -1,5 +1,7 @@
 export type ErrorMessageMode = 'none' | 'modal' | 'message' | undefined;
 export type SuccessMessageMode = ErrorMessageMode;
+export type CryptoTypeMode = 'A' | 'R';
+export type SignatureTypeMode = 'M' | 'A' | 'R';
 
 export interface RequestOptions {
   // Splicing request parameters to url
@@ -32,8 +34,12 @@ export interface RequestOptions {
   trimEmpty?: boolean;
   // 特殊响应状态码处理
   statusCodes?: number[];
+  // 加密方式 A: AES加密、解密；R: RSA加密、解密
+  cryptoType?: CryptoTypeMode;
   // 加密参数
   cipherParams?: string[] | string;
+  // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
+  signatureType?: SignatureTypeMode;
   // 签名参数
   signParams?: signParams;
 }

@@ -25,13 +25,12 @@ import { useI18n } from '@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
 import { useUserStoreWithOut } from '@/store/modules/user';
 import { AxiosRetry } from './axiosRetry';
-import { CipherData } from './cipherData';
+import { CipherData, getCrypto } from './cipherData';
 import { buildUUID } from '@/utils/uuid';
 import { useLocaleStoreWithOut } from '@/store/modules/locale';
 import { trimParam } from './trimParam';
-import { EncryptionFactory, SignatureFactory } from '@/utils/cipher';
-import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
-import { SignData } from './signData';
+import { EncryptionFactory } from '@/utils/cipher';
+import { getSignature, SignData } from './signData';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -53,13 +52,14 @@ const transform: AxiosTransform = {
       return res;
     }
 
-    const { signParams } = options;
+    const { signParams, cryptoType, signatureType } = options;
 
     // 响应的数据先解密再验证签名
     // 返回数据解密
     const cipher = res.headers['x-cipher'];
     if (undefined !== cipher) {
-      const cipherData = new CipherData(EncryptionFactory.createAesCrypto(cacheCipher));
+      const xCryptoType = res.headers['x-crypto'] || cryptoType;
+      const cipherData = new CipherData(getCrypto(xCryptoType, false));
       res.data = cipherData.responseDecryptData(res.data, cipher);
     }
 
@@ -78,14 +78,8 @@ const transform: AxiosTransform = {
       if (success) {
         const { sign } = result;
         if (undefined !== sign) {
-          const signData = new SignData(
-            SignatureFactory.createRsaSignature({
-              key: rsaCipher.publicKeyServer, // 公钥验证签名
-              options: {
-                log: true,
-              },
-            }),
-          );
+          const xSignatureType = res.headers['x-signature'] || signatureType;
+          const signData = new SignData(getSignature(xSignatureType, true));
 
           let requestId = res.headers['X-Request-Id'];
           if (undefined === requestId) {
@@ -198,7 +192,9 @@ const transform: AxiosTransform = {
       formatDate,
       joinTime = true,
       trimEmpty = true,
+      cryptoType = 'A',
       cipherParams = '',
+      signatureType = 'R',
       signParams,
     } = options;
 
@@ -221,6 +217,8 @@ const transform: AxiosTransform = {
     const requestId = buildUUID();
     headers.set('X-Request-Id', requestId);
 
+    // 加密方式
+    headers.set('X-Crypto', cryptoType);
     // 加密字段写入header
     if (cipherParams?.length > 0) {
       headers.set(
@@ -228,6 +226,8 @@ const transform: AxiosTransform = {
         isString(cipherParams) ? 'cipher' : base64.encrypt(JSON.stringify(cipherParams)),
       );
     }
+    // 签名方式
+    headers.set('X-Signature', signatureType);
     // 语言
     const lang = useLocaleStoreWithOut().getLocale;
     headers.set('X-Language', lang == 'en' ? lang : 'zh');
@@ -279,14 +279,7 @@ const transform: AxiosTransform = {
     // 请求的数据先签名再加密
     // 数据签名
     if (undefined !== signParams && undefined !== signParams.request) {
-      const signData = new SignData(
-        SignatureFactory.createRsaSignature({
-          key: rsaCipher.privateKey, // 私钥签名
-          options: {
-            log: true,
-          },
-        }),
-      );
+      const signData = new SignData(getSignature(signatureType, false));
 
       // 将所有参数合并
       let all = Object.assign({}, config.params);
@@ -317,7 +310,7 @@ const transform: AxiosTransform = {
 
     // 数据加密
     if (cipherParams.length > 0) {
-      const cipherData = new CipherData(EncryptionFactory.createAesCrypto(cacheCipher));
+      const cipherData = new CipherData(getCrypto(cryptoType, true));
       cipherData.requestEncryptData(config, cipherParams);
       // console.log('请求数据数据加密成功!');
     }

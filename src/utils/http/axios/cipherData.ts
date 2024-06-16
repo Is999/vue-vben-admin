@@ -15,7 +15,8 @@ import { isEmpty, isObject, isArray, isUndefined, isString } from '@/utils/is';
 import type { AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
 import { RequestEnum } from '@/enums/httpEnum';
-import { Result } from '#/axios';
+import { CryptoTypeMode, Result } from '#/axios';
+import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
 
 export class CipherData {
   private cipher: Encryption;
@@ -238,5 +239,27 @@ export class CipherData {
     }
 
     return result;
+  }
+}
+
+/**
+ * 获取加密、解密方式
+ * @param cryptoType A: AES加密、解密；R: RSA加密、解密
+ * @param isEncrypt true 加密， false 解密
+ */
+export function getCrypto(cryptoType: CryptoTypeMode, isEncrypt: boolean) {
+  if (cryptoType === 'R') {
+    return EncryptionFactory.createRsaCrypto({
+      key: isEncrypt ? rsaCipher.publicKeyServer : rsaCipher.privateKey, // 公钥加密，私钥解密
+      options: {
+        // log: true,
+      },
+    });
+  } else if (cryptoType === 'A') {
+    return EncryptionFactory.createAesCrypto(cacheCipher);
+  } else {
+    console.error('系统异常：不支持的加密方式！', cryptoType);
+    // continue;
+    throw new Error('系统异常：不支持的加密方式！');
   }
 }

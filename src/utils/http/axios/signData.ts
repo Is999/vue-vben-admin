@@ -10,7 +10,9 @@
  * Array或者Object类型的数据要标记`json:`标签
  */
 
-import { HashingFactory, Signature } from '@/utils/cipher';
+import { HashingFactory, Signature, SignatureFactory } from '@/utils/cipher';
+import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
+import { SignatureTypeMode } from '#/axios';
 
 export class SignData {
   private signature: Signature;
@@ -50,5 +52,29 @@ export class SignData {
    */
   verify(str: string, sign: string) {
     return this.signature.verify(str, sign);
+  }
+}
+
+/**
+ * 获取签名、验签方式
+ * @param signatureType M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
+ * @param isVerify true 验证签名， false 签名
+ */
+export function getSignature(signatureType: SignatureTypeMode, isVerify: boolean) {
+  if (signatureType === 'M') {
+    return SignatureFactory.createMD5Signature();
+  } else if (signatureType === 'A') {
+    return SignatureFactory.createAesSignature(cacheCipher);
+  } else if (signatureType === 'R') {
+    return SignatureFactory.createRsaSignature({
+      key: isVerify ? rsaCipher.publicKeyServer : rsaCipher.privateKey, // 公钥验签，私钥签名
+      options: {
+        // log: true,
+      },
+    });
+  } else {
+    console.error('系统异常：不支持的签名方式！', signatureType);
+    // continue;
+    throw new Error('系统异常：不支持的签名方式！');
   }
 }

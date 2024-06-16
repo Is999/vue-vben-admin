@@ -242,6 +242,11 @@ class Rsa implements Encryption, Signature {
           n += bytes.length; // 计算总长度
           chunk += word; // 拼接字符
         }
+
+        // 最后一次加密
+        if (plainText.length - 1 === i && chunk.length > 0) {
+          encrypted += keyObj.encrypt(chunk); // 加密
+        }
       }
       return hex2b64(encrypted);
     } catch (ex) {
