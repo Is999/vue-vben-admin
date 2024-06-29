@@ -18,11 +18,11 @@ export default defineApplicationConfig({
       proxy: {
         // 上传文件
         '/upload/': {
-          target: 'http://www.admin.cc/upload/',
+          target: 'http://www.admin.cc',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/upload/`), ''),
         },
+        // 根站
         '/admin/': {
           target: 'http://www.admin.cc/',
           changeOrigin: true,
@@ -36,19 +36,17 @@ export default defineApplicationConfig({
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/admin-api/`), ''),
         },
-        // images 资源
-        '/images/': {
-          target: 'http://www.admin.cc/images/',
+        // 静态资源
+        '/static/': {
+          target: 'http://www.admin.cc',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/images/`), ''),
         },
         // 上传的文件资源
         '/uploads/': {
-          target: 'http://www.admin.cc/uploads/',
+          target: 'http://www.admin.cc',
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/uploads/`), ''),
         },
       },
       open: true, // 项目启动后，自动打开

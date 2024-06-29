@@ -17,10 +17,9 @@ Vue vben admin 请阅读中文文档
 
       ```
       '/upload/': {
-        target: 'http://www.admin.cc/upload/',
+        target: 'http://www.admin.cc',
         changeOrigin: true,
         ws: true,
-        rewrite: (path) => path.replace(new RegExp(`^/upload/`), ''),
       }
       ```
 
@@ -35,14 +34,13 @@ Vue vben admin 请阅读中文文档
       }
       ```
 
-   3. Images 资源
+   3. 静态资源
 
       ```
-      '/images/': {
-        target: 'http://www.admin.cc/images/',
+      '/static/': {
+        target: 'http://www.admin.cc',
         changeOrigin: true,
         ws: true,
-        rewrite: (path) => path.replace(new RegExp(`^/images/`), ''),
       }
       ```
 
@@ -50,10 +48,9 @@ Vue vben admin 请阅读中文文档
 
       ```
       '/uploads/': {
-        target: 'http://www.admin.cc/uploads/',
+        target: 'http://www.admin.cc',
         changeOrigin: true,
         ws: true,
-        rewrite: (path) => path.replace(new RegExp(`^/uploads/`), ''),
       }
       ```
 
@@ -69,3 +66,37 @@ Vue vben admin 请阅读中文文档
       ```
 
 2. .env 配置(这里.env.development为例)
+
+   ```
+   # public path
+   VITE_PUBLIC_PATH = /
+
+   # Basic interface address SPA
+   VITE_GLOB_API_URL = /admin
+
+   # File upload address， optional
+   VITE_GLOB_UPLOAD_URL= /upload
+
+   # Interface prefix
+   VITE_GLOB_API_URL_PREFIX=
+
+   # AppId
+   VITE_APP_ID=
+
+   # AES KEY
+   VITE_AES_KEY=
+
+   # AES IV
+   VITE_AES_IV=
+
+   # RSA Private Key
+   VITE_RSA_PRIVATE_KEY=''
+
+   # RSA Public Key
+   VITE_RSA_PUBLIC_KEY=''
+
+   # RSA Server Public Key
+   VITE_RSA_PUBLIC_KEY_SERVER=''
+   ```
+
+3.
