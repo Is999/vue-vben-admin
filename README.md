@@ -99,4 +99,37 @@ Vue vben admin 请阅读中文文档
    VITE_RSA_PUBLIC_KEY_SERVER=''
    ```
 
-3.
+3. 接口支持数据签名、响应数据验签、数据加密、响应数据解密（可参考登录接口）
+
+   1. 加密方式
+
+      ```
+      cryptoType: 'A', // 加密方式 A: AES加密、解密；R: RSA加密、解密
+      ```
+
+   2. 加密数据，支持全部数据加密，和部分参数加密
+
+      ```
+      cipherParams: 'cipher', // 全部参数加密
+
+      cipherParams: ['name', 'password'], // 部分参数加密
+      ```
+
+   3. 签名方式
+
+      ```
+      signatureType: 'R', // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
+      ```
+
+   4. 签名参数和验证签名参数
+
+      ```
+      signParams: {
+        request: ['name', 'password'], // 请求参数签名
+        response: ['token'], // 响应验证签名参数
+      },
+      ```
+
+4. 菜单支持后台菜单（需打开菜单接口src/api/sys/menu.ts），（当前使用及推荐模式）也支持前端菜单src/router/routes/modules下配置菜单
+
+5. 权限使用后台权限加角色模式，按钮控制权限配置（src/enums/permissionsEnum.ts）
