@@ -72,10 +72,10 @@ export enum PermissionsEnum {
   SecretKeyStatus = '100060', //	秘钥管理 秘钥管理列表（菜单，页面） secretKey.index
 
   // 消息管理
-  NoticeNav = '100060', //	后台日志 后台日志(菜单，页面) userlog.index
+  NoticeNav = '100061', //	后台日志 后台日志(菜单，页面) userlog.index
 
   // 文件管理
-  FilesNav = '100061', //	后台日志 后台日志(菜单，页面) userlog.index
+  FilesNav = '100062', //	后台日志 后台日志(菜单，页面) userlog.index
   // End 系统管理
 
   PersonalDir = '100053', // 个人管理 个人信息管理(目录)
