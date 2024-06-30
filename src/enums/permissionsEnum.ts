@@ -10,7 +10,7 @@ export enum PermissionsEnum {
   RoleEditSave = '100006', // 保存	编辑角色(修改)	role.edit
   RoleDel = '100007', // 删除	删除角色(按钮, 删除)	role.del
   RoleStatus = '100008', // 启用/禁用	启用/禁用 角色(按钮,修改)	role.editStatus
-  // RolePermission = '100009', // 权限	编辑角色权限(按钮,页面)	role.permission
+  // RolePermission = '100009', // 权限	编辑角色权限(按钮,页面,查看)	role.permission
   // RoleEditPermission = '100010', // 保存	编辑角色权限(修改)	role.editPermission
 
   // 权限管理
@@ -19,7 +19,7 @@ export enum PermissionsEnum {
   PermissionAddSave = '100013', // 保存	添加权限(新增)	permission.add
   PermissionEdit = '100014', // 编辑	编辑权限(按钮,页面)
   PermissionEditSave = '100015', // 保存	编辑权限(修改)	permission.edit
-  PermissionStatus = '100058', // 启用/禁用 启用/禁用	权限(按钮)	permission.editStatus
+  PermissionStatus = '100058', // 启用/禁用 启用/禁用	权限(按钮,修改)	permission.editStatus
   PermissionDel = '100016', // 删除	删除权限(按钮, 删除)	permission.del
 
   // 菜单管理
@@ -69,13 +69,21 @@ export enum PermissionsEnum {
 
   // 秘钥管理
   SecretKeyNav = '100059', //	秘钥管理 秘钥管理列表（菜单，页面） secretKey.index
-  SecretKeyStatus = '100060', //	秘钥管理 秘钥管理列表（菜单，页面） secretKey.index
-
-  // 消息管理
-  NoticeNav = '100061', //	后台日志 后台日志(菜单，页面) userlog.index
+  SecretKeyAdd = '100060', // 添加	添加秘钥(按钮,页面)
+  SecretKeyAddSave = '100061', // 保存	添加秘钥(新增)	secretKey.add
+  SecretKeyEdit = '100062', // 编辑	编辑秘钥(按钮,页面)
+  SecretKeyEditSave = '100063', // 保存	编辑秘钥(修改)	secretKey.edit
+  SecretKeyStatus = '100064', // 启用/禁用	启用/禁用秘钥(按钮,修改） secretKey.editStatus
 
   // 文件管理
-  FilesNav = '100062', //	后台日志 后台日志(菜单，页面) userlog.index
+  FilesNav = '100065', //	文件管理 文件管理列表(菜单，页面) files.index
+  FilesStatus = '100066', //	设置文件状态 设置文件状态(按钮,修改） files.editStatus
+  FilesExpire = '100067', //	设置文件过期 设置文件过期(按钮,修改) files.editExpire
+  FilesDel = '100068', //	删除 删除文件(按钮，删除) files.del
+
+  // 消息管理
+  NoticeNav = '100069', //	消息管理 消息列表(菜单，页面) notice.index
+
   // End 系统管理
 
   PersonalDir = '100053', // 个人管理 个人信息管理(目录)
