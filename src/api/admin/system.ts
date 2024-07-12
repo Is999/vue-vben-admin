@@ -33,10 +33,10 @@ enum Api {
   AccountStatus = '/user/editStatus', // 账号 禁用|启用
   AccountMFAStatus = '/user/editMfaStatus', // MFA（身份验证）设备 禁用|启用
   AccountRoleTreeList = '/user/roleTreeList', // 新增账号|编辑账号 角色下拉框
-  AccountEditRoles = '/user/editRoles', // 新增账号|编辑账号 角色下拉框
+  AccountEditRole = '/user/editRole', // 新增账号|编辑账号 角色下拉框
   AccountEdit = '/user/edit', // 编辑账号
   AccountBuildMFASecretKeyUrl = '/user/buildMfaSecretKeyUrl', // 获取绑定安全秘钥的地址
-  AccountRoles = '/user/roles', // 账号角色
+  AccountRole = '/user/role', // 账号角色
 
   DeptList = '/system/getDeptList', // 账号部门
 
@@ -95,6 +95,8 @@ enum Api {
 
   // 秘钥管理
   SecretKeyList = '/secretKey/index', // 秘钥列表
+  SecretKeyAdd = '/secretKey/add', // 新增秘钥
+  SecretKeyEdit = '/secretKey/edit', // 编辑秘钥
   SecretKeyStatus = '/secretKey/editStatus', // 秘钥状态 禁用,启用
 }
 
@@ -114,7 +116,7 @@ export const accountAdd = (params: AccountModel) =>
 // 账号管理 新增账号 绑定角色
 export const accountEditRoles = (id: number, params: AccountRoleModel) =>
   AdminApi.post(
-    { url: Api.AccountEditRoles + '/' + id, params },
+    { url: Api.AccountEditRole + '/' + id, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
@@ -168,7 +170,7 @@ export const accountBuildMFASecretKeyUrl = (id: number) =>
 // 账号管理 新增账号 绑定角色
 export const accountRoles = (id: number) =>
   AdminApi.get(
-    { url: Api.AccountRoles + '/' + id },
+    { url: Api.AccountRole + '/' + id },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
     },
@@ -529,6 +531,24 @@ export const getSecretKeyList = (params?: Recordable) => {
     },
   );
 };
+
+// 权限管理 新增权限
+export const secretKeyAdd = (params: Recordable) =>
+  AdminApi.post(
+    { url: Api.SecretKeyAdd, params },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
+
+// 权限管理 编辑权限
+export const secretKeyEdit = (id: number, params: Recordable) =>
+  AdminApi.post(
+    { url: Api.SecretKeyEdit + '/' + id, params },
+    {
+      isTransformResponse: false, // 无须处理直接返回完整后台消息
+    },
+  );
 
 // 账号管理 账号 禁用|启用
 export const setSecretKeyStatus = (id: number, status: number) =>
