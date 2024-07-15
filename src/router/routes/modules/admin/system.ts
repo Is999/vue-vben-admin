@@ -85,7 +85,7 @@ const account: AppRouteModule = {
       name: PermissionsEnum.SecretKeyNav,
       component: () => import('@/views/admin/system/secret-key/indexVxe.vue'),
       meta: {
-        title: 'routes.admin.system.secret-key',
+        title: 'routes.admin.system.secretKey',
         orderNo: 6,
         icon: 'ant-design:safety-outlined',
         uniqId: PermissionsEnum.SecretKeyNav,
@@ -103,14 +103,14 @@ const account: AppRouteModule = {
       },
     },
     {
-      path: 'files',
-      name: PermissionsEnum.FilesNav,
-      component: '/admin/system/files/index',
+      path: 'file',
+      name: PermissionsEnum.FileNav,
+      component: '/admin/system/file/index',
       meta: {
-        title: 'routes.admin.system.files',
+        title: 'routes.admin.system.file',
         orderNo: 7,
         icon: 'ant-design:file-image-outlined',
-        uniqId: PermissionsEnum.FilesNav,
+        uniqId: PermissionsEnum.FileNav,
       },
     },
     {
@@ -118,7 +118,7 @@ const account: AppRouteModule = {
       name: PermissionsEnum.UserLogNav,
       component: () => import('@/views/admin/system/userlog/index.vue'),
       meta: {
-        title: 'routes.admin.system.userlog',
+        title: 'routes.admin.system.userLog',
         orderNo: 8,
         icon: 'ant-design:code-twotone',
         uniqId: PermissionsEnum.UserLogNav,

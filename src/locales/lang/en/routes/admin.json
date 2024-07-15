@@ -2,7 +2,7 @@
   "system": {
     "moduleName": "System",
     "user": "Account ",
-    "user_detail": "Account Details",
+    "userDetail": "Account Details",
     "password": "Change Password",
     "dept": "Department",
     "menu": "Menu",
@@ -10,10 +10,10 @@
     "permission": "Permission",
     "config": "Config",
     "cache": "Cache",
-    "userlog": "Log",
-    "secret-key": "Secret key",
+    "userLog": "User Log",
+    "secretKey": "Secret key",
     "notice": "Notification",
-    "files": "Files"
+    "file": "File"
   },
   "personal": {
     "moduleName": "Personal",

@@ -76,10 +76,10 @@ export enum PermissionsEnum {
   SecretKeyStatus = '100064', // 启用/禁用	启用/禁用秘钥(按钮,修改） secretKey.editStatus
 
   // 文件管理
-  FilesNav = '100065', //	文件管理 文件管理列表(菜单，页面) files.index
-  FilesStatus = '100066', //	设置文件状态 设置文件状态(按钮,修改） files.editStatus
-  FilesExpire = '100067', //	设置文件过期 设置文件过期(按钮,修改) files.editExpire
-  FilesDel = '100068', //	删除 删除文件(按钮，删除) files.del
+  FileNav = '100065', //	文件管理 文件管理列表(菜单，页面) file.index
+  Filetatus = '100066', //	设置文件状态 设置文件状态(按钮,修改） file.editStatus
+  FileExpire = '100067', //	设置文件过期 设置文件过期(按钮,修改) file.editExpire
+  FileDel = '100068', //	删除 删除文件(按钮，删除) file.del
 
   // 消息管理
   NoticeNav = '100069', //	消息管理 消息列表(菜单，页面) notice.index
