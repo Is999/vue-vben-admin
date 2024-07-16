@@ -4,6 +4,7 @@
       <TableAction outside :actions="createActions(row)" />
     </template>
   </VxeBasicTable>
+  <SecretKeyDrawer @register="registerDrawer" @success="handleSuccess" />
 </template>
 <script lang="ts" setup>
   import { h, reactive, ref } from 'vue';
@@ -20,6 +21,22 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { notify } from '@/api/api';
   import { usePermission } from '@/hooks/web/usePermission';
+  import SecretKeyDrawer from '@/views/admin/system/secret-key/SecretKeyDrawer.vue';
+  import { useDrawer } from '@/components/Drawer';
+
+  const [registerDrawer, { openDrawer }] = useDrawer();
+  // 编辑|新增成功后重新reload
+  function handleSuccess() {
+    console.log('刷新页面');
+    tableRef.value?.reloadData([]);
+  }
+
+  // 新增
+  function handleCreate() {
+    openDrawer(true, {
+      isUpdate: false,
+    });
+  }
 
   const tableRef = ref<VxeGridInstance>();
   const { hasPermission } = usePermission();
@@ -129,7 +146,7 @@
     },
     {
       title: '创建时间',
-      minWidth: 160,
+      minWidth: 170,
       field: 'created_at',
       showOverflow: 'tooltip',
       align: 'center',
@@ -138,7 +155,7 @@
     },
     {
       title: '修改时间',
-      minWidth: 160,
+      minWidth: 170,
       field: 'updated_at',
       showOverflow: 'tooltip',
       align: 'center',
@@ -228,6 +245,7 @@
       buttons: [
         {
           content: '新增秘钥',
+          visible: hasPermission(PermissionsEnum.SecretKeyAdd, false),
           buttonRender: {
             name: 'AButton',
             props: {
@@ -235,9 +253,7 @@
               preIcon: 'mdi:page-next-outline',
             },
             events: {
-              click: () => {
-                tableRef.value?.insert({ name: '新增的' });
-              },
+              click: handleCreate,
             },
           },
         },

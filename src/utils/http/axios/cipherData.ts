@@ -16,7 +16,7 @@ import type { AxiosRequestConfig } from 'axios';
 import { toLower } from 'lodash-es';
 import { RequestEnum } from '@/enums/httpEnum';
 import { CryptoTypeMode, Result } from '#/axios';
-import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
+import { aesCipher, rsaCipher } from '@/settings/encryptionSetting';
 
 export class CipherData {
   private cipher: Encryption;
@@ -256,7 +256,7 @@ export function getCrypto(cryptoType: CryptoTypeMode, isEncrypt: boolean) {
       },
     });
   } else if (cryptoType === 'A') {
-    return EncryptionFactory.createAesCrypto(cacheCipher);
+    return EncryptionFactory.createAesCrypto(aesCipher);
   } else {
     console.error('系统异常：不支持的加密方式！', cryptoType);
     // continue;

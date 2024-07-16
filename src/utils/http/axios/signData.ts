@@ -11,7 +11,7 @@
  */
 
 import { HashingFactory, Signature, SignatureFactory } from '@/utils/cipher';
-import { cacheCipher, rsaCipher } from '@/settings/encryptionSetting';
+import { aesCipher, rsaCipher } from '@/settings/encryptionSetting';
 import { SignatureTypeMode } from '#/axios';
 
 export class SignData {
@@ -64,7 +64,7 @@ export function getSignature(signatureType: SignatureTypeMode, isVerify: boolean
   if (signatureType === 'M') {
     return SignatureFactory.createMD5Signature();
   } else if (signatureType === 'A') {
-    return SignatureFactory.createAesSignature(cacheCipher);
+    return SignatureFactory.createAesSignature(aesCipher);
   } else if (signatureType === 'R') {
     return SignatureFactory.createRsaSignature({
       key: isVerify ? rsaCipher.publicKeyServer : rsaCipher.privateKey, // 公钥验签，私钥签名
