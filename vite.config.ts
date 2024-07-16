@@ -1,5 +1,7 @@
 import { defineApplicationConfig } from '@vben/vite-config';
 
+const APP_URL = 'http://www.admin.cc';
+
 export default defineApplicationConfig({
   overrides: {
     optimizeDeps: {
@@ -18,33 +20,33 @@ export default defineApplicationConfig({
       proxy: {
         // 上传文件
         '/upload/': {
-          target: 'http://www.admin.cc',
+          target: APP_URL,
           changeOrigin: true,
           ws: true,
         },
         // 根站
         '/admin/': {
-          target: 'http://www.admin.cc/',
+          target: APP_URL,
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/admin/`), ''),
         },
         // api 接口
         '/admin-api/': {
-          target: 'http://www.admin.cc/admin/api/',
+          target: APP_URL + '/admin/api/',
           changeOrigin: true,
           ws: true,
           rewrite: (path) => path.replace(new RegExp(`^/admin-api/`), ''),
         },
         // 静态资源
         '/static/': {
-          target: 'http://www.admin.cc',
+          target: APP_URL,
           changeOrigin: true,
           ws: true,
         },
         // 上传的文件资源
         '/uploads/': {
-          target: 'http://www.admin.cc',
+          target: APP_URL,
           changeOrigin: true,
           ws: true,
         },
