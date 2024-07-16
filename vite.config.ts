@@ -24,19 +24,12 @@ export default defineApplicationConfig({
           changeOrigin: true,
           ws: true,
         },
-        // 根站
-        '/admin/': {
+        // 接口
+        '/basic-api/': {
           target: APP_URL,
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/admin/`), ''),
-        },
-        // api 接口
-        '/admin-api/': {
-          target: APP_URL + '/admin/api/',
-          changeOrigin: true,
-          ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/admin-api/`), ''),
+          rewrite: (path) => path.replace(new RegExp(`^/basic-api/`), '/'),
         },
         // 静态资源
         '/static/': {

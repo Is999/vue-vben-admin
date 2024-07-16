@@ -91,7 +91,7 @@
     name: '',
     password: '',
     key: '',
-    img: '---',
+    img: '',
     captcha: '',
     secureCode: '',
   });

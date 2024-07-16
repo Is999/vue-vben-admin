@@ -17,7 +17,7 @@ Vue vben admin 请阅读中文文档
 
       ```
       '/upload/': {
-        target: 'http://www.admin.cc',
+        target: APP_URL,
         changeOrigin: true,
         ws: true,
       }
@@ -26,11 +26,11 @@ Vue vben admin 请阅读中文文档
    2. API 接口
 
       ```
-      '/admin-api/': {
-        target: 'http://www.admin.cc/admin/api/',
+      '/basic-api/': {
+        target: APP_URL,
         changeOrigin: true,
         ws: true,
-        rewrite: (path) => path.replace(new RegExp(`^/admin-api/`), ''),
+        rewrite: (path) => path.replace(new RegExp(`^/basic-api/`), ''),
       }
       ```
 
@@ -38,7 +38,7 @@ Vue vben admin 请阅读中文文档
 
       ```
       '/static/': {
-        target: 'http://www.admin.cc',
+        target: APP_URL,
         changeOrigin: true,
         ws: true,
       }
@@ -48,20 +48,9 @@ Vue vben admin 请阅读中文文档
 
       ```
       '/uploads/': {
-        target: 'http://www.admin.cc',
+        target: APP_URL,
         changeOrigin: true,
         ws: true,
-      }
-      ```
-
-   5. 根站
-
-      ```
-      '/admin/': {
-        target: 'http://www.admin.cc/',
-        changeOrigin: true,
-        ws: true,
-        rewrite: (path) => path.replace(new RegExp(`^/admin/`), ''),
       }
       ```
 
@@ -72,7 +61,7 @@ Vue vben admin 请阅读中文文档
    VITE_PUBLIC_PATH = /
 
    # Basic interface address SPA
-   VITE_GLOB_API_URL = /admin
+   VITE_GLOB_API_URL = /basic-api
 
    # File upload address， optional
    VITE_GLOB_UPLOAD_URL= /upload

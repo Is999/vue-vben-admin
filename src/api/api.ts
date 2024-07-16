@@ -20,8 +20,7 @@ export function captchaApi() {
 export const AdminApi = Http({
   timeout: 30 * 1000,
   requestOptions: {
-    apiUrl: '/admin-api',
-    urlPrefix: '',
+    urlPrefix: '/admin/api',
     statusCodes: [406],
   },
   authenticationScheme: 'Bearer',

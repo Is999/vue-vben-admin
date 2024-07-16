@@ -6,7 +6,7 @@
   </VxeBasicTable>
 </template>
 <script lang="ts" setup>
-  import { h, reactive, ref } from 'vue';
+  import { reactive, ref } from 'vue';
   import { ActionItem, TableAction } from '@/components/Table';
   import {
     BasicTableProps,
@@ -15,14 +15,11 @@
     VxeGridInstance,
     VxeGridPropTypes,
   } from '@/components/VxeTable';
-  import { getSecretKeyList, setSecretKeyStatus } from '@/api/admin/system';
-  import { Switch } from 'ant-design-vue';
-  import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { notify } from '@/api/api';
-  import { usePermission } from '@/hooks/web/usePermission';
+  import { getSecretKeyList } from '@/api/admin/system';
+  // import { usePermission } from '@/hooks/web/usePermission';
 
   const tableRef = ref<VxeGridInstance>();
-  const { hasPermission } = usePermission();
+  // const { hasPermission } = usePermission();
 
   const columns: VxeGridPropTypes.Columns = [
     {
@@ -187,7 +184,9 @@
       {
         tooltip: '删除文件',
         icon: 'ant-design:delete-outlined',
-        onClick: () => {},
+        onClick: () => {
+          console.log(record);
+        },
       },
       {
         tooltip: '恢复文件',
