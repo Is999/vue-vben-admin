@@ -29,7 +29,7 @@ export default defineApplicationConfig({
           target: APP_URL,
           changeOrigin: true,
           ws: true,
-          rewrite: (path) => path.replace(new RegExp(`^/basic-api/`), '/'),
+          //rewrite: (path) => path.replace(new RegExp(`^/basic-api/`), '/'),
         },
         // 静态资源
         '/static/': {
