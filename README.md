@@ -3,11 +3,11 @@
 [![license](https://img.shields.io/github/license/anncwb/vue-vben-admin.svg)](LICENSE)
 
 <h1>Vue vben admin</h1>
-</div>
-
 **English** | [中文](./README.zh-CN.md)
 
 Vue vben admin 请阅读中文文档
+
+后端接口服务使用 https://github.com/Is999/laravel-admin，相关配置请阅读README.md
 
 该项目添加或变更配置说明:
 
