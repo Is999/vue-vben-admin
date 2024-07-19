@@ -9,7 +9,7 @@
 
 Vue vben admin 请阅读中文文档
 
-后端接口服务使用 https://github.com/Is999/laravel-admin，相关配置请阅读README.md
+后端接口服务使用 https://github.com/Is999/laravel-admin 相关配置请阅读README.md
 
 该项目添加或变更配置说明:
 
