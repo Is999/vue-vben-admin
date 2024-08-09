@@ -83,7 +83,7 @@ const account: AppRouteModule = {
     {
       path: 'secret-key',
       name: PermissionsEnum.SecretKeyNav,
-      component: () => import('@/views/admin/system/secret-key/indexVxe.vue'),
+      component: () => import('@/views/admin/system/secret-key/index.vue'),
       meta: {
         title: 'routes.admin.system.secretKey',
         orderNo: 6,
