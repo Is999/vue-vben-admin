@@ -109,11 +109,11 @@ export function checkSecure(secure: string) {
 }
 
 // 验证MFA动态密码
-export function checkMfaSecure(secure: string) {
+export function checkMfaSecure(secure: string, scenarios: number) {
   return AdminApi.post<any>(
     {
       url: Api.CheckMfaSecure,
-      params: { secure },
+      params: { secure, scenarios },
     },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息

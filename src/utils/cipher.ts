@@ -215,6 +215,7 @@ class Rsa implements Encryption, Signature {
     this.digestName = digestName || 'sha256';
     this.rsa = encrypt;
   }
+
   encrypt(plainText: string) {
     try {
       const keyObj = this.rsa.getKey();

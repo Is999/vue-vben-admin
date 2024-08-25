@@ -43,6 +43,8 @@
   import { notify } from '@/api/api';
   import Icon from '@/components/Icon/Icon.vue';
   import { reactive, ref } from 'vue';
+  import { useMfaStore } from '@/store/modules/mfa';
+  import { MfaInfo } from '#/store';
 
   const userStore = useUserStore();
   const user = userStore.getUserInfo;
@@ -129,6 +131,18 @@
       mfa_status = true;
     }
     const newStatus = mfa_status ? 0 : 1; // 取反状态
+
+    // 关闭前验证MFA设备
+    if (newStatus == 0) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+      mfaInfo.scenarios = 2;
+      mfaInfo.isTwoStepVerification = true;
+      mfaInfo.isOff = true;
+      useMfaStore().setMfaInfo(mfaInfo);
+    }
+
+    console.log('@@@@ getMfaInfo', useMfaStore().getMfaInfo);
+
     // 请求接口
     setUpdateMFAStatus(newStatus)
       .then((res) => {

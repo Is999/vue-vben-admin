@@ -1,9 +1,9 @@
-import { MfaInfo } from '/#/store';
+import { MfaInfo } from '#/store';
 
 import { defineStore } from 'pinia';
 
-import { MFA_INFO_KEY } from '/@/enums/cacheEnum';
-import { Persistent } from '/@/utils/cache/persistent';
+import { MFA_INFO_KEY } from '@/enums/cacheEnum';
+import { Persistent } from '@/utils/cache/persistent';
 import { useUserStore } from './user';
 
 interface MfaStore {
@@ -33,33 +33,30 @@ export const useMfaStore = defineStore({
     // 两步验证
     async checkMFA(password?: string) {
       const userStore = useUserStore();
-      const tryLogin = async () => {
+      const tryCheck = async () => {
         try {
           const res = await userStore.checkMfaPassword(password);
           // console.log('checkMfaPassword', res);
           if (res.isOk) {
             const mfaInfo: MfaInfo = {
+              build_mfa_url: res.build_mfa_url,
               exist_mfa: res.exist_mfa,
-              mfa_status: res.mfa_status,
+              mfa_check: res.mfa_check,
+              scenarios: res.scenarios,
               isTwoStepVerification: false,
-              twoStepKey: res.twoStep?.key,
+              twoStepKey: res.twoStep?.scenarios,
               twoStepExpire: res.twoStep?.expire,
               twoStepValue: res.twoStep?.value,
             };
             this.setMfaInfo(mfaInfo);
             return res.isOk;
           }
-          const mfaInfo: MfaInfo = {
-            exist_mfa: res.exist_mfa,
-            mfa_status: res.mfa_status,
-          };
-          this.setMfaInfo(mfaInfo);
           return res.isOk;
         } catch (error) {
           return false;
         }
       };
-      return await tryLogin();
+      return await tryCheck();
     },
   },
 });

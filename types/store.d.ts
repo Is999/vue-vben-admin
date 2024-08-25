@@ -63,8 +63,8 @@ export interface TableSetting {
 export interface MfaInfo {
   // MFA设备绑定地址
   build_mfa_url?: string;
-  // 状态 1 启用， 0 未启用
-  mfa_status?: number;
+  // 校验 1 启用， 0 未启用
+  mfa_check?: number;
   // 是否存在MFA设备
   exist_mfa?: boolean;
   // 两步验证：true 强制验证
@@ -75,6 +75,8 @@ export interface MfaInfo {
   twoStepExpire?: number;
   // 两步验证value
   twoStepValue?: string;
+  // 验证场景
+  scenarios?: number;
   // 关闭验证
   isOff?: boolean;
 }

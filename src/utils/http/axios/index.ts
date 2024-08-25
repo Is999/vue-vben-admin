@@ -31,6 +31,8 @@ import { useLocaleStoreWithOut } from '@/store/modules/locale';
 import { trimParam } from './trimParam';
 import { EncryptionFactory } from '@/utils/cipher';
 import { getSignature, SignData } from './signData';
+import { MfaInfo } from '#/store';
+import { useMfaStore } from '@/store/modules/mfa';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -163,6 +165,13 @@ const transform: AxiosTransform = {
         userStore.setToken(undefined);
         // 被动登出，带redirect地址
         userStore.logout(false).then();
+        break;
+      case ResultEnum.CHECK_MFA_CODE: // 校验MFA设备验证码
+        const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+        mfaInfo.scenarios = 0;
+        mfaInfo.isTwoStepVerification = true;
+        mfaInfo.isOff = false;
+        useMfaStore().setMfaInfo(mfaInfo);
         break;
       default:
         if (message) {

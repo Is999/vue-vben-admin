@@ -138,12 +138,13 @@ export const useUserStore = defineStore({
         // 设置用户信息缓存
         this.setUserInfo(user);
         // 登录两步验证校验MFA动态密码
-        if (!user.exist_mfa || parseInt(user.mfa_status) !== 0) {
+        if (!user.exist_mfa || parseInt(user.mfa_check) !== 0) {
           const mfaInfo: MfaInfo = {
             build_mfa_url: user.build_mfa_url,
-            mfa_status: user.mfa_status,
+            mfa_check: user.mfa_check,
             exist_mfa: user.exist_mfa,
             isTwoStepVerification: true,
+            scenarios: 0, // 0 登录校验
             isOff: false,
           };
           useMfaStore().setMfaInfo(mfaInfo);
@@ -295,10 +296,10 @@ export const useUserStore = defineStore({
     /**
      * @description: MFA动态密码
      */
-    async checkMfaPassword(password = ''): Promise<any> {
+    async checkMfaPassword(password = '', scenarios = 0): Promise<any> {
       if (this.getToken && password) {
         try {
-          return await checkMfaSecure(password);
+          return await checkMfaSecure(password, scenarios);
         } catch {
           return false;
         }

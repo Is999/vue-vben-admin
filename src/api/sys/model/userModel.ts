@@ -56,7 +56,7 @@ export interface UserInfoModel extends GetUserInfoModel {
   phone: string;
   // 状态
   status: number;
-  // TOTP MFA (身份验证)
+  // MFA (身份验证)
   mfa_status: number;
   // 分组
   group_id: number;
@@ -78,4 +78,6 @@ export interface UserInfoModel extends GetUserInfoModel {
   created_at: string;
   // 更新时间
   updated_at: string;
+  // 校验MFA设备验证码
+  mfa_check: number;
 }
