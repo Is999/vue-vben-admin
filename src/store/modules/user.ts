@@ -137,20 +137,24 @@ export const useUserStore = defineStore({
         this.setToken(token);
         // 设置用户信息缓存
         this.setUserInfo(user);
+
+        // 跳到 home
+        this.afterLoginAction(goHome);
+
         // 登录两步验证校验MFA动态密码
         if (!user.exist_mfa || parseInt(user.mfa_check) !== 0) {
           const mfaInfo: MfaInfo = {
+            title: '登录-MFA身份验证',
             build_mfa_url: user.build_mfa_url,
             mfa_check: user.mfa_check,
             exist_mfa: user.exist_mfa,
-            isTwoStepVerification: true,
+            isTwoStepVerification: true, // 打开身份验证页面
             scenarios: 0, // 0 登录校验
-            isOff: false,
+            isOff: false, // 登录验证不显示返回按钮，其它可视使用场景设置
           };
           useMfaStore().setMfaInfo(mfaInfo);
         }
-        // return this.afterLoginAction(goHome);
-        this.afterLoginAction(goHome);
+
         return user;
       } catch (error) {
         return Promise.reject(error);
@@ -161,11 +165,11 @@ export const useUserStore = defineStore({
      */
     async afterLoginAction(goHome?: boolean): Promise<UserInfo | null> {
       if (!this.getToken) return null;
-      // get user info
-      const roles = await this.getUserPermissionsAction();
-      if (!roles) {
-        return null;
-      }
+      // get user info 路由使用的 BACK 可注释掉下面内容
+      // const roles = await this.getUserPermissionsAction();
+      // if (!roles) {
+      //   return null;
+      // }
 
       const sessionTimeout = this.sessionTimeout;
       if (sessionTimeout) {
@@ -296,7 +300,7 @@ export const useUserStore = defineStore({
     /**
      * @description: MFA动态密码
      */
-    async checkMfaPassword(password = '', scenarios = 0): Promise<any> {
+    async checkMfaPassword(password: string = '', scenarios: number = 0): Promise<any> {
       if (this.getToken && password) {
         try {
           return await checkMfaSecure(password, scenarios);

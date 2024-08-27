@@ -28,6 +28,18 @@
     <transition name="fade-slide">
       <div :class="`${prefixCls}-entry`" v-show="!showDate">
         <div :class="`${prefixCls}-entry-content`">
+          <div
+            class="enter-x"
+            style="
+              color: white;
+              text-align: center;
+              margin-top: -1rem;
+              margin-bottom: 1rem;
+              font-weight: bolder;
+            "
+          >
+            {{ title }}
+          </div>
           <div :class="`${prefixCls}-entry__header enter-x`">
             <img :src="userinfo.avatar || headerImg" :class="`${prefixCls}-entry__header-img`" />
             <p :class="`${prefixCls}-entry__header-name`">
@@ -81,12 +93,12 @@
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
   import { Input } from 'ant-design-vue';
-  import { useUserStore } from '/@/store/modules/user';
-  import { useMfaStore } from '/@/store/modules/mfa';
-  import { useI18n } from '/@/hooks/web/useI18n';
+  import { useUserStore } from '@/store/modules/user';
+  import { useMfaStore } from '@/store/modules/mfa';
+  import { useI18n } from '@/hooks/web/useI18n';
   import { useNow } from './useNow';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import headerImg from '/@/assets/images/header.jpg';
+  import { useDesign } from '@/hooks/web/useDesign';
+  import headerImg from '@/assets/images/header.jpg';
   import { useGlobSetting } from '@/hooks/setting';
 
   const InputPassword = Input.Password;
@@ -100,6 +112,7 @@
   const mfaStore = useMfaStore();
   const userStore = useUserStore();
   const mfaInfo = mfaStore.getMfaInfo;
+  const title = ref(mfaStore.mfaInfo.title);
 
   const { second, hour, month, minute, meridiem, year, day, week } = useNow(true);
 
@@ -225,7 +238,7 @@
       justify-content: center;
       width: 100%;
       height: 100%;
-      background-color: rgb(0 0 0 / 50%);
+      background-color: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(8px);
 
       &-content {

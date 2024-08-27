@@ -131,29 +131,8 @@
       mfa_status = true;
     }
     const newStatus = mfa_status ? 0 : 1; // 取反状态
-
-    // 关闭前验证MFA设备
-    if (newStatus == 0) {
-      console.log('@@@', 1);
-      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
-      mfaInfo.scenarios = 2;
-      mfaInfo.isTwoStepVerification = 2;
-      useMfaStore().func = () => {
-        setUpdateMFAStatus(newStatus)
-          .then((res) => {
-            notify(res, true);
-            user.mfa_status = newStatus;
-            title3.value = `校验 MFA(${parseInt(user.mfa_status) === 1 ? '<span style="color: green">已启用</span>' : '<span style="color: red">未启用</span>'})`;
-            extra3.value = parseInt(user.mfa_status) === 1 ? '关闭' : '启用';
-          })
-          .catch((e) => {
-            console.log('@@@ setAccountStatus', e);
-          });
-      };
-      useMfaStore().setMfaInfo(mfaInfo);
-    } else {
-      console.log('@@@', 2);
-      setUpdateMFAStatus(newStatus)
+    const afterAction = (res) => {
+      setUpdateMFAStatus(newStatus, res?.twoStepKey, res?.twoStepValue)
         .then((res) => {
           notify(res, true);
           user.mfa_status = newStatus;
@@ -163,6 +142,18 @@
         .catch((e) => {
           console.log('@@@ setAccountStatus', e);
         });
+    };
+    // 关闭前验证MFA设备
+    if (newStatus == 0) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+      mfaInfo.title = 'MFA设备校验关闭，请先验证身份';
+      mfaInfo.scenarios = 2; // 2 修改MFA状态（关闭）
+      mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
+      mfaInfo.isOff = true; // 打开身份验证页面
+      useMfaStore().afterSuccessVerify = afterAction;
+      useMfaStore().setMfaInfo(mfaInfo);
+    } else {
+      afterAction(null);
     }
   }
 </script>

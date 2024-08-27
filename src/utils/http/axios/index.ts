@@ -168,9 +168,10 @@ const transform: AxiosTransform = {
         break;
       case ResultEnum.CHECK_MFA_CODE: // 校验MFA设备验证码
         const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
-        mfaInfo.scenarios = 0;
-        mfaInfo.isTwoStepVerification = true;
-        mfaInfo.isOff = false;
+        mfaInfo.title = 'MFA信息已失效，请重新验证身份';
+        mfaInfo.scenarios = 0; // 0 登录校验
+        mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
+        mfaInfo.isOff = false; // 登录验证不显示返回按钮，其它根据使用场景设置是否显示
         useMfaStore().setMfaInfo(mfaInfo);
         break;
       default:

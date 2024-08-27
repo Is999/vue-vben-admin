@@ -61,13 +61,15 @@ export interface TableSetting {
 }
 
 export interface MfaInfo {
+  // 验证页面标题提示
+  title: string;
   // MFA设备绑定地址
   build_mfa_url?: string;
   // 校验 1 启用， 0 未启用
   mfa_check?: number;
-  // 是否存在MFA设备
+  // 是否存在MFA设备，不存在则显示MFA设备绑定地址
   exist_mfa?: boolean;
-  // 两步验证：true 强制验证
+  // 两步验证：true 弹出身份验证遮罩层进行强制验证
   isTwoStepVerification?: boolean;
   // 两步验证key
   twoStepKey?: string;
@@ -77,6 +79,6 @@ export interface MfaInfo {
   twoStepValue?: string;
   // 验证场景
   scenarios?: number;
-  // 关闭验证
+  // 返回按钮(关闭验证页面)：// 登录验证不显示返回按钮，其它根据使用场景设置是否显示
   isOff?: boolean;
 }

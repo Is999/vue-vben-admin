@@ -8,14 +8,14 @@ import { useUserStore } from './user';
 
 interface MfaStore {
   mfaInfo: Nullable<MfaInfo>;
-  func: Function;
+  afterSuccessVerify: Fn;
 }
 
 export const useMfaStore = defineStore({
   id: 'app-two-step-verification',
   state: (): MfaStore => ({
     mfaInfo: Persistent.getLocal(MFA_INFO_KEY),
-    func: () => {},
+    afterSuccessVerify: () => {},
   }),
   getters: {
     getMfaInfo(state): Nullable<MfaInfo> {
@@ -37,7 +37,7 @@ export const useMfaStore = defineStore({
       const userStore = useUserStore();
       const tryCheck = async () => {
         try {
-          const res = await userStore.checkMfaPassword(password);
+          const res = await userStore.checkMfaPassword(password, this.getMfaInfo.scenarios);
           // console.log('checkMfaPassword', res);
           if (res.isOk) {
             const mfaInfo: MfaInfo = {
@@ -45,13 +45,13 @@ export const useMfaStore = defineStore({
               exist_mfa: res.exist_mfa,
               mfa_check: res.mfa_check,
               scenarios: res.scenarios,
-              isTwoStepVerification: false,
-              twoStepKey: res.twoStep?.scenarios,
+              isTwoStepVerification: false, // 验证成功关闭页面
+              twoStepKey: res.twoStep?.key,
               twoStepExpire: res.twoStep?.expire,
               twoStepValue: res.twoStep?.value,
             };
-            this.func();
             this.setMfaInfo(mfaInfo);
+            this.afterSuccessVerify(mfaInfo);
             return res.isOk;
           }
           return res.isOk;

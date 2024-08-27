@@ -141,9 +141,13 @@ export const setAccountMFAStatus = (id: number, mfa_status: number) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setUpdateMFAStatus = (mfa_status: number) =>
+export const setUpdateMFAStatus = (
+  mfa_status: number,
+  twoStepKey?: number,
+  twoStepValue?: number | string,
+) =>
   AdminApi.post(
-    { url: Api.UpdateMFAStatus, params: { mfa_status } },
+    { url: Api.UpdateMFAStatus, params: { mfa_status, twoStepKey, twoStepValue } },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
