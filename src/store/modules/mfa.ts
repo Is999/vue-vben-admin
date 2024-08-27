@@ -8,12 +8,14 @@ import { useUserStore } from './user';
 
 interface MfaStore {
   mfaInfo: Nullable<MfaInfo>;
+  func: Function;
 }
 
 export const useMfaStore = defineStore({
   id: 'app-two-step-verification',
   state: (): MfaStore => ({
     mfaInfo: Persistent.getLocal(MFA_INFO_KEY),
+    func: () => {},
   }),
   getters: {
     getMfaInfo(state): Nullable<MfaInfo> {
@@ -48,11 +50,13 @@ export const useMfaStore = defineStore({
               twoStepExpire: res.twoStep?.expire,
               twoStepValue: res.twoStep?.value,
             };
+            this.func();
             this.setMfaInfo(mfaInfo);
             return res.isOk;
           }
           return res.isOk;
         } catch (error) {
+          console.log(error);
           return false;
         }
       };
