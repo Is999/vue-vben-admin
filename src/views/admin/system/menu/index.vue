@@ -9,7 +9,7 @@
         <AButton
           type="primary"
           @click="handleCreate"
-          v-if="hasPermission(PermissionsEnum.MenuAdd, false)"
+          v-if="isDevMode() && hasPermission(PermissionsEnum.MenuAdd, false)"
         >
           新增菜单
         </AButton>
@@ -50,6 +50,7 @@
   import { Switch, Tag } from 'ant-design-vue';
   import Icon from '@/components/Icon/Icon.vue';
   import { notify } from '@/api/api';
+  import { isDevMode } from '@/utils/env';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const { hasPermission } = usePermission();

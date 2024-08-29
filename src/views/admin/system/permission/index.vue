@@ -9,7 +9,7 @@
         <AButton
           type="primary"
           @click="handleCreate"
-          v-if="hasPermission(PermissionsEnum.PermissionAdd, false)"
+          v-if="isDevMode() && hasPermission(PermissionsEnum.PermissionAdd, false)"
         >
           新增权限
         </AButton>
@@ -59,6 +59,7 @@
   import { PermissionListItem } from '@/api/admin/model/systemModel';
   import { Switch, Tag } from 'ant-design-vue';
   import { notify } from '@/api/api';
+  import { isDevMode } from '@/utils/env';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
   const { hasPermission } = usePermission();

@@ -5,7 +5,7 @@
         <AButton
           type="primary"
           @click="handleCreate"
-          v-if="hasPermission(PermissionsEnum.ConfigAdd, false)"
+          v-if="isDevMode() && hasPermission(PermissionsEnum.ConfigAdd, false)"
           >新增配置
         </AButton>
       </template>
@@ -16,7 +16,7 @@
               {
                 icon: 'clarity:note-edit-line',
                 tooltip: '编辑配置',
-                ifShow: hasPermission(PermissionsEnum.ConfigEdit, false),
+                ifShow: record.editable == 1 && hasPermission(PermissionsEnum.ConfigEdit, false),
                 onClick: handleEdit.bind(null, record),
               },
               {
@@ -55,6 +55,7 @@
   import { JsonPreview } from '@/components/CodeEditor';
   import { notify } from '@/api/api';
   import { isArray } from '@/utils/is';
+  import { isDevMode } from '@/utils/env';
 
   const { hasPermission } = usePermission();
 

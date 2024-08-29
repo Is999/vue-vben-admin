@@ -253,12 +253,13 @@
     },
   ];
 
-  const [registerForm, { resetFields, setFieldsValue, validate, getFieldsValue }] = useForm({
-    labelWidth: 100,
-    schemas: formSchema,
-    showActionButtonGroup: false,
-    baseColProps: { lg: 12, md: 24 },
-  });
+  const [registerForm, { resetFields, setFieldsValue, updateSchema, validate, getFieldsValue }] =
+    useForm({
+      labelWidth: 100,
+      schemas: formSchema,
+      showActionButtonGroup: false,
+      baseColProps: { lg: 12, md: 24 },
+    });
 
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     try {
@@ -266,6 +267,22 @@
       await resetFields(); // 重置值
 
       isUpdate.value = data?.isUpdate; // 编辑
+
+      updateSchema([
+        {
+          field: 'title',
+          dynamicDisabled: isUpdate.value,
+        },
+        {
+          field: 'uuid',
+          dynamicDisabled: isUpdate.value,
+        },
+        {
+          field: 'type',
+          dynamicDisabled: isUpdate.value,
+        },
+      ]);
+
       // console.log('@@@@ update', isUpdate.value, data?.isUpdate, data.record);
       // value.value = data.record?.value || '';
       // example.value = data.record?.example || '';
@@ -282,6 +299,7 @@
         await setFieldsValue({
           ...data.record,
         });
+
         // console.log('@@@@ update 结束 重新设置值');
       }
     } catch (e) {
