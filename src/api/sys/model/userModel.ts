@@ -80,4 +80,6 @@ export interface UserInfoModel extends GetUserInfoModel {
   updated_at: string;
   // 校验MFA设备验证码
   mfa_check: number;
+  // 校验频率 0 每次都校验
+  frequency: number;
 }

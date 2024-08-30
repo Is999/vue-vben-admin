@@ -154,12 +154,12 @@ export class CipherData {
 
     // cipher is array 部分参数加密, 否则所有参数都加密
     if (isArray(cipher)) {
-      // params 参加加密
+      // params 参数加密
       if (undefined !== config.params) {
         config.params = this.encryptData(config.params, cipher);
       }
 
-      // data 参加加密
+      // data 参数加密
       if (undefined !== config.data) {
         config.data = this.encryptData(config.data, cipher);
       }

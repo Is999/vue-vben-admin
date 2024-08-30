@@ -14,7 +14,7 @@
               </div>
             </template>
             <template #description>
-              <div class="description"> {{ item.description }} </div>
+              <div class="description"> {{ item.description }}</div>
               <div class="info" v-if="item.author">
                 <div><span>Owner</span>{{ item.author }}</div>
                 <div><span>开始时间</span>{{ item.datetime }}</div>
@@ -131,8 +131,13 @@
       mfa_status = true;
     }
     const newStatus = mfa_status ? 0 : 1; // 取反状态
-    const afterAction = (res) => {
-      setUpdateMFAStatus(newStatus, res?.twoStepKey, res?.twoStepValue)
+    const afterAction = (param) => {
+      const values = {
+        mfa_status: newStatus,
+      };
+      values.twoStepKey = param?.twoStepKey;
+      values.twoStepValue = param?.twoStepValue;
+      setUpdateMFAStatus(values)
         .then((res) => {
           notify(res, true);
           user.mfa_status = newStatus;
@@ -146,12 +151,13 @@
     // 关闭前验证MFA设备
     if (newStatus == 0) {
       const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+      // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
       mfaInfo.title = 'MFA设备校验关闭，请先验证身份';
       mfaInfo.scenarios = 2; // 2 修改MFA状态（关闭）
-      mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
       mfaInfo.isOff = true; // 打开身份验证页面
-      useMfaStore().afterSuccessVerify = afterAction;
-      useMfaStore().setMfaInfo(mfaInfo);
+      useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+      useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+      useMfaStore().openVerify(); // 打开验证
     } else {
       afterAction(null);
     }

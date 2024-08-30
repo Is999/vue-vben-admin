@@ -73,6 +73,8 @@ export interface MfaInfo {
   isTwoStepVerification?: boolean;
   // 两步验证key
   twoStepKey?: string;
+  // 两步验码生成时间
+  twoStepTime?: number;
   // 两步验证过期时间
   twoStepExpire?: number;
   // 两步验证value
@@ -81,4 +83,6 @@ export interface MfaInfo {
   scenarios?: number;
   // 返回按钮(关闭验证页面)：// 登录验证不显示返回按钮，其它根据使用场景设置是否显示
   isOff?: boolean;
+  // 校验频率 0 每次都校验
+  frequency: number;
 }

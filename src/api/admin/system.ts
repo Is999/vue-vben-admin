@@ -141,13 +141,9 @@ export const setAccountMFAStatus = (id: number, mfa_status: number) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setUpdateMFAStatus = (
-  mfa_status: number,
-  twoStepKey?: number,
-  twoStepValue?: number | string,
-) =>
+export const setUpdateMFAStatus = (params: Recordable) =>
   AdminApi.post(
-    { url: Api.UpdateMFAStatus, params: { mfa_status, twoStepKey, twoStepValue } },
+    { url: Api.UpdateMFAStatus, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
@@ -186,6 +182,12 @@ export const updaetePassword = (params: updatePasswordParams) =>
     { url: Api.UpdatePassword, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
+      cryptoType: 'A', // 加密方式 A: AES加密、解密；R: RSA加密、解密
+      cipherParams: ['passwordOld', 'passwordNew', 'confirmPassword'], // 参数加密
+      signatureType: 'R', // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
+      signParams: {
+        request: ['passwordOld', 'passwordNew'], // 请求参数签名
+      },
     },
   );
 
@@ -195,6 +197,12 @@ export const updateMFASecureKey = (params: Recordable) =>
     { url: Api.UpdateMFASecureKey, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
+      cryptoType: 'A', // 加密方式 A: AES加密、解密；R: RSA加密、解密
+      cipherParams: ['mfa_secure_key'], // 参数加密
+      signatureType: 'R', // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
+      signParams: {
+        request: ['mfa_secure_key'], // 请求参数签名
+      },
     },
   );
 

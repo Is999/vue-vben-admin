@@ -36,7 +36,7 @@ export interface RequestOptions {
   statusCodes?: number[];
   // 加密方式 A: AES加密、解密；R: RSA加密、解密
   cryptoType?: CryptoTypeMode;
-  // 加密参数
+  // 加密参数: 整体加密值为string类型，值为 cipher，
   cipherParams?: string[] | string;
   // 签名方式 M: MD5签名、验签；A: AES签名、验签；R: RSA签名、验签
   signatureType?: SignatureTypeMode;

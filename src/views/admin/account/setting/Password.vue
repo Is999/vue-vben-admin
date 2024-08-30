@@ -34,6 +34,8 @@
   import { HashingFactory } from '@/utils/cipher';
   import { checkChars, containSpecialChars } from '@/utils/passport';
   import { updatePasswordParams } from '@/api/admin/model/systemModel';
+  import { MfaInfo } from '#/store';
+  import { useMfaStore } from '@/store/modules/mfa';
 
   const formSchema: FormSchema[] = [
     {
@@ -164,8 +166,12 @@
   // 提交
   async function handleSubmit() {
     const values = await validate();
-    try {
+    const afterAction = (param) => {
       setDrawerProps({ loading: true });
+      // 赋值
+      values.twoStepKey = param?.twoStepKey;
+      values.twoStepValue = param?.twoStepValue;
+
       const md5 = HashingFactory.createMD5Hashing();
       values.passwordOld = md5.hash(values.passwordOld);
       values.passwordNew = md5.hash(values.passwordNew);
@@ -174,19 +180,38 @@
       // console.log('@@@ password', passwordOld, passwordNew);
 
       // 修改密码
-      await updaetePassword(values as updatePasswordParams).then((res) => {
-        notify(res, true);
-        closeDrawer();
-        setTimeout(() => {
-          const userStore = useUserStore();
-          userStore.logout(true);
-        }, 1500);
-      });
-    } catch (e) {
-      // 错误信息
-      console.log('@@@ handleSubmit', e);
-    } finally {
-      setDrawerProps({ loading: false });
+      updaetePassword(values as updatePasswordParams)
+        .then((res) => {
+          notify(res, true);
+          closeDrawer();
+          setTimeout(() => {
+            const userStore = useUserStore();
+            userStore.logout(true);
+          }, 1500);
+        })
+        .catch((e) => {
+          // 错误信息
+          console.log('@@@ handleSubmit', e);
+        })
+        .finally(() => {
+          // 关闭加载
+          setDrawerProps({ loading: false });
+        });
+    };
+
+    const userStore = useUserStore();
+    if (userStore.getUserInfo?.mfa_status !== 0) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+
+      // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+      mfaInfo.title = '修改密码，请先验证身份';
+      mfaInfo.scenarios = 1; // 1 修改密码
+      mfaInfo.isOff = true; // 打开身份验证页面
+      useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+      useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+      useMfaStore().openVerify(); // 打开验证
+    } else {
+      afterAction(null);
     }
   }
 </script>

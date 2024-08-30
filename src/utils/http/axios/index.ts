@@ -158,6 +158,7 @@ const transform: AxiosTransform = {
     // 在此处根据自己项目的实际情况对不同的code执行不同的操作
     // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
     let timeoutMsg = '';
+    let mfaInfo: MfaInfo = {};
     switch (code) {
       case ResultEnum.TIMEOUT: // 超时处理
         timeoutMsg = t('sys.api.timeoutMessage');
@@ -167,11 +168,18 @@ const transform: AxiosTransform = {
         userStore.logout(false).then();
         break;
       case ResultEnum.CHECK_MFA_CODE: // 校验MFA设备验证码
-        const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+        mfaInfo = useMfaStore().getMfaInfo;
         mfaInfo.title = 'MFA信息已失效，请重新验证身份';
         mfaInfo.scenarios = 0; // 0 登录校验
         mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
+        mfaInfo.twoStepTime = 0; // 重重时间
         mfaInfo.isOff = false; // 登录验证不显示返回按钮，其它根据使用场景设置是否显示
+        useMfaStore().setMfaInfo(mfaInfo);
+        break;
+      case ResultEnum.CHECK_MFA_CODE_EXPIRED: // 重新校验
+        mfaInfo = useMfaStore().getMfaInfo;
+        mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
+        mfaInfo.twoStepTime = 0; // 重重时间
         useMfaStore().setMfaInfo(mfaInfo);
         break;
       default:
@@ -297,6 +305,7 @@ const transform: AxiosTransform = {
         all = Object.assign(all, config.data);
       }
       const signStr = signData.getSignStr(all, signParams.request, requestId, appId);
+      // console.log('@@@ signStr', signStr, signParams.request);
       const sign = signData.sign(signStr);
       if (false === sign) {
         console.error(

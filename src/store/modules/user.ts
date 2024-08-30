@@ -219,6 +219,17 @@ export const useUserStore = defineStore({
 
       // 设置用户信息缓存
       this.setUserInfo(userInfo);
+      // console.log('@@@ userInfo', userInfo);
+
+      // 更新 MFA 状态
+      const mfaInfo: MfaInfo = {
+        build_mfa_url: userInfo.build_mfa_url,
+        exist_mfa: userInfo.exist_mfa,
+        mfa_check: userInfo.mfa_check,
+        frequency: userInfo.frequency,
+      };
+      useMfaStore().setMfaInfo(mfaInfo);
+
       return userInfo;
     },
     /**

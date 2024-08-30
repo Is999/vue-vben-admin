@@ -44,6 +44,8 @@ export function buildSecretVerifyAccount(params: LoginParams, mode: ErrorMessage
     {
       statusCodes: [406],
       errorMessageMode: mode,
+      cryptoType: 'A', // 加密方式 A: AES加密、解密；R: RSA加密、解密
+      cipherParams: ['name', 'password'], // 参数加密
     },
   );
 }

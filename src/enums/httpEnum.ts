@@ -6,7 +6,7 @@ export enum ResultEnum {
   ERROR = -1,
   TIMEOUT = 401,
   CHECK_MFA_CODE = 6,
-  TYPE = 'success',
+  CHECK_MFA_CODE_EXPIRED = 10006,
 }
 
 /**

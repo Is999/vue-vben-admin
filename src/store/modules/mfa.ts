@@ -14,22 +14,41 @@ interface MfaStore {
 export const useMfaStore = defineStore({
   id: 'app-two-step-verification',
   state: (): MfaStore => ({
-    mfaInfo: Persistent.getLocal(MFA_INFO_KEY),
+    mfaInfo: null,
     afterSuccessVerify: () => {},
   }),
   getters: {
-    getMfaInfo(state): Nullable<MfaInfo> {
-      return state.mfaInfo;
+    getMfaInfo(): Nullable<MfaInfo> {
+      return this.mfaInfo || Persistent.getLocal(MFA_INFO_KEY) || {};
     },
   },
   actions: {
     setMfaInfo(info: MfaInfo) {
-      this.mfaInfo = Object.assign({}, this.mfaInfo, info);
+      this.mfaInfo = Object.assign({}, this.getMfaInfo, info);
+      // console.log('@@@ mfaInfo ', this.mfaInfo);
       Persistent.setLocal(MFA_INFO_KEY, this.mfaInfo, true);
     },
     resetMfaInfo() {
       Persistent.removeLocal(MFA_INFO_KEY, true);
       this.mfaInfo = null;
+    },
+    openVerify() {
+      // 判断频率
+      const expire = Math.ceil(new Date().getTime() / 1000) + 30;
+      const mfaInfo = this.getMfaInfo;
+      if (
+        mfaInfo &&
+        mfaInfo.frequency > 0 &&
+        mfaInfo?.twoStepTime !== undefined &&
+        mfaInfo?.twoStepExpire !== undefined &&
+        expire <= mfaInfo.twoStepTime + mfaInfo.frequency &&
+        expire <= mfaInfo.twoStepTime + mfaInfo.twoStepExpire
+      ) {
+        this.afterSuccessVerify(mfaInfo);
+      } else {
+        mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
+        this.setMfaInfo(mfaInfo);
+      }
     },
 
     // 两步验证
@@ -47,8 +66,10 @@ export const useMfaStore = defineStore({
               scenarios: res.scenarios,
               isTwoStepVerification: false, // 验证成功关闭页面
               twoStepKey: res.twoStep?.key,
+              twoStepTime: res.twoStep?.time,
               twoStepExpire: res.twoStep?.expire,
               twoStepValue: res.twoStep?.value,
+              frequency: res.frequency,
             };
             this.setMfaInfo(mfaInfo);
             this.afterSuccessVerify(mfaInfo);
