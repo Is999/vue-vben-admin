@@ -143,5 +143,13 @@ export function usePermission() {
     return (intersection(value, userStore.getRoleList) as RoleEnum[]).length > 0;
   }
 
-  return { changeRole, hasPermission, togglePermissionMode, refreshMenu, hasRole };
+  /**
+   * 判断指定场景是否需要验证MFA设备（两步验证）
+   * @param $scenarios
+   */
+  function isCheckMfa($scenarios): boolean {
+    return !userStore.getUserRole.check_mfa_scenarios_disable?.includes($scenarios);
+  }
+
+  return { changeRole, hasPermission, togglePermissionMode, refreshMenu, hasRole, isCheckMfa };
 }

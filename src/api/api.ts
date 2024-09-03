@@ -1,12 +1,9 @@
 import Http, { defHttp } from '@/utils/http/axios';
-// import { useGlobSetting } from '/@/hooks/setting/index';
 import { captchaApiResultModel } from '@/api/sys/model/captcha';
 import type { Result } from '#/axios';
 import { useMessage } from '@/hooks/web/useMessage';
 import { ResultEnum } from '@/enums/httpEnum';
 import { useMfaStore } from '@/store/modules/mfa';
-
-// const globSetting = useGlobSetting();
 
 // 验证码
 export function captchaApi() {
@@ -28,7 +25,8 @@ export const AdminApi = Http({
   authenticationScheme: 'Bearer',
 });
 
-export function notify(res: Result, errer = false) {
+// 响应提示通知消息
+export function responseNotify(res: Result, isThrowError = false) {
   // 返回特定状态码打开验证MFA设备遮罩层
   if (res.code === ResultEnum.CHECK_MFA_CODE_EXPIRED) {
     const mfaInfo = useMfaStore().getMfaInfo;
@@ -44,7 +42,7 @@ export function notify(res: Result, errer = false) {
   }
   const message = '【' + res.code + '】' + res.message;
   createMessage.error(message);
-  if (errer) {
+  if (isThrowError) {
     throw new Error(message);
   }
 }

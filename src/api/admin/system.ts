@@ -7,7 +7,6 @@ import {
   ConfigListItem,
   ConfigModel,
   ConfigParams,
-  DeptListItem,
   MenuListItem,
   MenuModel,
   MenuParams,
@@ -19,7 +18,6 @@ import {
   RoleModel,
   RoleParams,
   TreeSelect,
-  updatePasswordParams,
 } from './model/systemModel';
 import { AdminApi } from '@/api/api';
 import { SelectItem } from './model/public';
@@ -37,8 +35,6 @@ enum Api {
   AccountEdit = '/user/edit', // 编辑账号
   AccountBuildMFASecretKeyUrl = '/user/buildMfaSecretKeyUrl', // 获取绑定安全秘钥的地址
   AccountRole = '/user/role', // 账号角色
-
-  DeptList = '/system/getDeptList', // 账号部门
 
   // 个人信息
   UpdatePassword = '/user/updatePassword', // 安全设置 账号密码
@@ -110,6 +106,10 @@ export const accountAdd = (params: AccountModel) =>
     { url: Api.AccountAdd, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
+      cipherParams: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 参数加密
+      signParams: {
+        request: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 请求参数签名
+      },
     },
   );
 
@@ -123,18 +123,18 @@ export const accountEditRoles = (id: number, params: AccountRoleModel) =>
   );
 
 // 账号管理 账号 禁用|启用
-export const setAccountStatus = (id: number, status: number) =>
+export const setAccountStatus = (id: number, params: Recordable) =>
   AdminApi.post(
-    { url: Api.AccountStatus + '/' + id, params: { id, status } },
+    { url: Api.AccountStatus + '/' + id, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
   );
 
 // 账号管理 账号 禁用|启用
-export const setAccountMFAStatus = (id: number, mfa_status: number) =>
+export const setAccountMFAStatus = (id: number, params: Recordable) =>
   AdminApi.post(
-    { url: Api.AccountMFAStatus + '/' + id, params: { id, mfa_status } },
+    { url: Api.AccountMFAStatus + '/' + id, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
@@ -155,6 +155,10 @@ export const accountEdit = (id: number, params: AccountModel) =>
     { url: Api.AccountEdit + '/' + id, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
+      cipherParams: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 参数加密
+      signParams: {
+        request: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 请求参数签名
+      },
     },
   );
 
@@ -177,7 +181,7 @@ export const accountRoles = (id: number) =>
   );
 
 // 个人信息 安全设置 账号密码
-export const updaetePassword = (params: updatePasswordParams) =>
+export const updatePassword = (params: Recordable) =>
   AdminApi.post(
     { url: Api.UpdatePassword, params },
     {
@@ -212,6 +216,10 @@ export const updateMine = (params: AccountModel) =>
     { url: Api.UpdateMine, params },
     {
       isTransformResponse: false, // 无须处理直接返回完整后台消息
+      cipherParams: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 参数加密
+      signParams: {
+        request: ['name', 'email', 'phone', 'password', 'mfa_secure_key'], // 请求参数签名
+      },
     },
   );
 
@@ -226,9 +234,6 @@ export const updateAvatar = (avatar: string) =>
       isTransformResponse: false, // 无须处理直接返回完整后台消息
     },
   );
-
-export const getDeptList = (params?: DeptListItem) =>
-  AdminApi.get<BasicFetchResult<Recordable>>({ url: Api.DeptList, params });
 
 // 账号管理 新增账号|编辑账号 角色下拉框
 export const getAccountRoleTreeList = () => {
@@ -544,7 +549,7 @@ export const getSecretKeyList = (params?: Recordable) => {
   );
 };
 
-// 权限管理 新增权限
+// 秘钥管理 新增秘钥
 export const secretKeyAdd = (params: Recordable) =>
   AdminApi.post(
     { url: Api.SecretKeyAdd, params },
@@ -553,7 +558,7 @@ export const secretKeyAdd = (params: Recordable) =>
     },
   );
 
-// 权限管理 编辑权限
+// 秘钥管理 编辑秘钥
 export const secretKeyEdit = (id: number, params: Recordable) =>
   AdminApi.post(
     { url: Api.SecretKeyEdit + '/' + id, params },
@@ -562,7 +567,7 @@ export const secretKeyEdit = (id: number, params: Recordable) =>
     },
   );
 
-// 账号管理 账号 禁用|启用
+// 秘钥管理 状态 禁用|启用
 export const setSecretKeyStatus = (id: number, status: number) =>
   AdminApi.post(
     { url: Api.SecretKeyStatus + '/' + id, params: { id, status } },

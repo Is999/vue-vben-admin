@@ -58,7 +58,7 @@
   import { PermissionListItem } from '@/api/admin/model/systemModel';
   import { Modal, Switch } from 'ant-design-vue';
   import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { RoleEnum } from '@/enums/roleEnum';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -106,7 +106,7 @@
               const newStatus = checked ? 1 : 0;
               setRoleStatus(record.id, newStatus)
                 .then((res) => {
-                  notify(res, true);
+                  responseNotify(res, true);
                   // 修改状态
                   record.status = newStatus;
                   // 修改下级状态
@@ -313,7 +313,7 @@
     setLoading(true);
     roleDel(record.id)
       .then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
         // deleteTableDataRecord 方法删除指定key children数据视图重新渲染有bug
         // 这里只有第一层数据删除时使用 deleteTableDataRecord
         if (record.pid === 0) {

@@ -2,12 +2,6 @@ import { BasicPageParams } from '@/api/model/baseModel';
 import { TreeItem } from '@/components/Tree';
 
 // 部门
-export type DeptParams = {
-  deptName?: string;
-  status?: string;
-};
-
-// 部门
 export interface DeptListItem {
   id: string;
   orderNo: string;
@@ -62,12 +56,6 @@ export interface AccountListItem {
   last_login_ipaddr: string; // IP属地
   created_at: string; // 创建时间
   updated_at: string; // 更新时间
-}
-
-// 修改密码
-export interface updatePasswordParams {
-  passwordOld: string; // 旧密码
-  passwordNew: string; // 新密码
 }
 
 // 树下拉框

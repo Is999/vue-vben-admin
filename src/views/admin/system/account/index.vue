@@ -51,9 +51,12 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { usePermission } from '@/hooks/web/usePermission';
   import { useDrawer } from '@/components/Drawer';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
+  import { MfaInfo } from '#/store';
+  import { useMfaStore } from '@/store/modules/mfa';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
 
-  const { hasPermission } = usePermission();
+  const { hasPermission, isCheckMfa } = usePermission();
 
   // 搜索框
   const searchFormSchema: FormSchema[] = [
@@ -174,19 +177,43 @@
           disabled: !hasPermission(PermissionsEnum.AccountMfaStatus, false),
           onChange: (checked) => {
             const newStatus = checked ? 1 : 0;
-            record.pendingMfaStatus = true;
+
             // 请求接口
-            setAccountMFAStatus(record.id, newStatus)
-              .then((res) => {
-                notify(res, true);
-                record.mfa_status = newStatus;
-              })
-              .catch((e) => {
-                console.log('@@@ setAccountStatus', e);
-              })
-              .finally(() => {
-                record.pendingMfaStatus = false;
-              });
+            const afterAction = (param) => {
+              record.pendingMfaStatus = true;
+              const values = {
+                mfa_status: newStatus,
+              };
+
+              // 赋值两步验证参数
+              values.twoStepKey = param?.twoStepKey;
+              values.twoStepValue = param?.twoStepValue;
+              setAccountMFAStatus(record.id, values)
+                .then((res) => {
+                  responseNotify(res, true);
+                  record.mfa_status = newStatus;
+                })
+                .catch((e) => {
+                  console.log('@@@ setAccountStatus', e);
+                })
+                .finally(() => {
+                  record.pendingMfaStatus = false;
+                });
+            };
+
+            // 关闭前验证MFA设备
+            if (newStatus == 0 && isCheckMfa(CheckMfaScenariosEnum.MFA_STATUS)) {
+              const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+              // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+              mfaInfo.title = '禁用MFA校验，请先验证身份';
+              mfaInfo.scenarios = CheckMfaScenariosEnum.MFA_STATUS; // 2 修改MFA状态（关闭）
+              mfaInfo.isOff = true; // 打开身份验证页面
+              useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+              useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+              useMfaStore().openVerify(); // 打开验证
+            } else {
+              afterAction(null);
+            }
           },
         });
       },
@@ -206,20 +233,39 @@
           loading: record.pendingStatus,
           disabled: !hasPermission(PermissionsEnum.AccountStatus, false),
           onChange: (checked) => {
-            record.pendingStatus = true;
             const newStatus = checked ? 1 : 0;
+
             // 请求接口
-            setAccountStatus(record.id, newStatus)
-              .then((res) => {
-                notify(res, true);
-                record.status = newStatus;
-              })
-              .catch((e) => {
-                console.log('@@@ setAccountStatus', e);
-              })
-              .finally(() => {
-                record.pendingStatus = false;
-              });
+            const afterAction = (param) => {
+              record.pendingStatus = true;
+              const values = {
+                status: newStatus,
+              };
+
+              // 赋值两步验证参数
+              values.twoStepKey = param?.twoStepKey;
+              values.twoStepValue = param?.twoStepValue;
+              setAccountStatus(record.id, values)
+                .then((res) => {
+                  responseNotify(res, true);
+                  record.status = newStatus;
+                })
+                .catch((e) => {
+                  console.log('@@@ setAccountStatus', e);
+                })
+                .finally(() => {
+                  record.pendingStatus = false;
+                });
+            };
+
+            const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+            // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+            mfaInfo.title = '修改用户状态，请先验证身份';
+            mfaInfo.scenarios = CheckMfaScenariosEnum.USER_STATUS; // 4 修改用户状态
+            mfaInfo.isOff = true; // 打开身份验证页面
+            useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+            useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+            useMfaStore().openVerify(); // 打开验证
           },
         });
       },

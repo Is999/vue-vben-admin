@@ -33,6 +33,7 @@ import { EncryptionFactory } from '@/utils/cipher';
 import { getSignature, SignData } from './signData';
 import { MfaInfo } from '#/store';
 import { useMfaStore } from '@/store/modules/mfa';
+import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
 
 const globSetting = useGlobSetting();
 const urlPrefix = globSetting.urlPrefix;
@@ -170,7 +171,7 @@ const transform: AxiosTransform = {
       case ResultEnum.CHECK_MFA_CODE: // 校验MFA设备验证码
         mfaInfo = useMfaStore().getMfaInfo;
         mfaInfo.title = 'MFA信息已失效，请重新验证身份';
-        mfaInfo.scenarios = 0; // 0 登录校验
+        mfaInfo.scenarios = CheckMfaScenariosEnum.LOGIN; // 0 登录校验
         mfaInfo.isTwoStepVerification = true; // 打开身份验证页面
         mfaInfo.twoStepTime = 0; // 重重时间
         mfaInfo.isOff = false; // 登录验证不显示返回按钮，其它根据使用场景设置是否显示

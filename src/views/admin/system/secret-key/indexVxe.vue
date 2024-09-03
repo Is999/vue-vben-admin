@@ -19,7 +19,7 @@
   import { getSecretKeyList, setSecretKeyStatus } from '@/api/admin/system';
   import { Switch } from 'ant-design-vue';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { usePermission } from '@/hooks/web/usePermission';
   import SecretKeyDrawer from '@/views/admin/system/secret-key/SecretKeyDrawer.vue';
   import { useDrawer } from '@/components/Drawer';
@@ -122,7 +122,7 @@
               // 请求接口
               setSecretKeyStatus(row.id, newStatus)
                 .then((res) => {
-                  notify(res, true);
+                  responseNotify(res, true);
                   row.status = newStatus;
                 })
                 .catch((e) => {

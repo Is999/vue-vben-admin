@@ -40,12 +40,15 @@
   import { useDrawer } from '@/components/Drawer';
   import { useUserStore } from '@/store/modules/user';
   import { setUpdateMFAStatus } from '@/api/admin/system';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import Icon from '@/components/Icon/Icon.vue';
   import { reactive, ref } from 'vue';
   import { useMfaStore } from '@/store/modules/mfa';
   import { MfaInfo } from '#/store';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
 
+  const { isCheckMfa } = usePermission();
   const userStore = useUserStore();
   const user = userStore.getUserInfo;
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -135,11 +138,15 @@
       const values = {
         mfa_status: newStatus,
       };
+
+      // 赋值两步验证参数
       values.twoStepKey = param?.twoStepKey;
       values.twoStepValue = param?.twoStepValue;
+
+      // 设置MFA设备状态
       setUpdateMFAStatus(values)
         .then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
           user.mfa_status = newStatus;
           title3.value = `校验 MFA(${parseInt(user.mfa_status) === 1 ? '<span style="color: green">已启用</span>' : '<span style="color: red">未启用</span>'})`;
           extra3.value = parseInt(user.mfa_status) === 1 ? '关闭' : '启用';
@@ -148,12 +155,13 @@
           console.log('@@@ setAccountStatus', e);
         });
     };
+
     // 关闭前验证MFA设备
-    if (newStatus == 0) {
+    if (newStatus == 0 && isCheckMfa(CheckMfaScenariosEnum.MFA_STATUS)) {
       const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
       // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
       mfaInfo.title = 'MFA设备校验关闭，请先验证身份';
-      mfaInfo.scenarios = 2; // 2 修改MFA状态（关闭）
+      mfaInfo.scenarios = CheckMfaScenariosEnum.MFA_STATUS; // 2 修改MFA状态（关闭）
       mfaInfo.isOff = true; // 打开身份验证页面
       useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
       useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作

@@ -59,7 +59,7 @@
   } from '@/components/Tree';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
   import { isArray } from '@/utils/is';
@@ -290,7 +290,7 @@
       values.id = rowId.value;
       // 发起请求
       await accountEditRoles(rowId.value, values as AccountRoleModel).then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
       });
 
       // 关闭

@@ -34,7 +34,7 @@
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
                 tooltip: '删除权限',
-                ifShow: hasPermission(PermissionsEnum.PermissionDel, false),
+                ifShow: isDevMode() && hasPermission(PermissionsEnum.PermissionDel, false),
                 popConfirm: {
                   title: '是否确认删除',
                   confirm: handleDelete.bind(null, record),
@@ -58,7 +58,7 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { PermissionListItem } from '@/api/admin/model/systemModel';
   import { Switch, Tag } from 'ant-design-vue';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { isDevMode } from '@/utils/env';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -181,7 +181,7 @@
             // 请求接口
             setPermissionStatus(record.id, newStatus)
               .then((res) => {
-                notify(res, true);
+                responseNotify(res, true);
                 record.status = newStatus;
               })
               .catch((e) => {
@@ -355,7 +355,7 @@
     setLoading(true);
     permissionDel(record.id)
       .then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
         // deleteTableDataRecord 方法删除指定key children数据视图重新渲染有bug
         // 这里只有第一层数据删除时使用 deleteTableDataRecord
         if (record.pid === 0) {

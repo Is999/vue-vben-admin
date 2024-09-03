@@ -42,7 +42,7 @@
   import { PermissionModel, TreeSelect } from '@/api/admin/model/systemModel';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { Divider } from 'ant-design-vue';
   import { useMessage } from '@/hooks/web/useMessage';
 
@@ -242,7 +242,7 @@
       if (unref(isUpdate)) {
         // 编辑
         await permissionEdit(rowId.value, values as PermissionModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       } else {
         // 新增
@@ -278,7 +278,7 @@
             //throw new Error(res.message);
             return Promise.reject(res.message);
           } else {
-            notify(res, true);
+            responseNotify(res, true);
           }
         });
       }

@@ -46,13 +46,16 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
   import { updateMFASecureKey } from '@/api/admin/system';
   import { useUserStore } from '@/store/modules/user';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { useGlobSetting } from '@/hooks/setting';
   import { ref } from 'vue';
   import { copyText } from '@/utils/copyTextToClipboard';
   import { MfaInfo } from '#/store';
   import { useMfaStore } from '@/store/modules/mfa';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
 
+  const { isCheckMfa } = usePermission();
   const userStore = useUserStore();
   const globSetting = useGlobSetting();
   const title = ref('修改MFA设备秘钥');
@@ -119,7 +122,7 @@
       // 设置加载
       setDrawerProps({ loading: true });
 
-      // 赋值
+      // 赋值两步验证参数
       values.twoStepKey = param?.twoStepKey;
       values.twoStepValue = param?.twoStepValue;
 
@@ -127,7 +130,7 @@
       updateMFASecureKey(values)
         .then((res) => {
           // 提示信息
-          notify(res, true);
+          responseNotify(res, true);
           // 关闭抽屉
           closeDrawer();
         })
@@ -141,12 +144,15 @@
         });
     };
 
-    if (userStore.getUserInfo?.mfa_status !== 0) {
+    if (
+      userStore.getUserInfo?.mfa_status !== 0 &&
+      isCheckMfa(CheckMfaScenariosEnum.MFA_SECURE_KEY)
+    ) {
       const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
 
       // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
       mfaInfo.title = '修改MFA设备秘钥，请先验证身份';
-      mfaInfo.scenarios = 3; // 3 修改MFA秘钥
+      mfaInfo.scenarios = CheckMfaScenariosEnum.MFA_SECURE_KEY; // 3 修改MFA秘钥
       mfaInfo.isOff = true; // 打开身份验证页面
       useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
       useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作

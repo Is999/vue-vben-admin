@@ -43,8 +43,6 @@
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { CollapseContainer } from '@/components/Container';
   import { CropperAvatar } from '@/components/Cropper';
-  import { useMessage } from '@/hooks/web/useMessage';
-
   import headerImg from '@/assets/images/header.jpg';
   import { useUserStore } from '@/store/modules/user';
   import { uploadApi } from '@/api/sys/upload';
@@ -52,9 +50,14 @@
   import { useGlobSetting } from '@/hooks/setting';
   import { HashingFactory } from '@/utils/cipher';
   import { updateMine, updateAvatar as updateAvatarApi } from '@/api/admin/system';
-  import { notify } from '@/api/api';
-  import { UserInfo } from '#/store';
+  import { responseNotify } from '@/api/api';
+  import { MfaInfo, UserInfo } from '#/store';
   import { AccountModel } from '@/api/admin/model/systemModel';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
+  import { useMfaStore } from '@/store/modules/mfa';
+  import { usePermission } from '@/hooks/web/usePermission';
+
+  const { isCheckMfa } = usePermission();
 
   // 基础设置 form
   const form: FormSchema[] = [
@@ -200,7 +203,6 @@
     },
   ];
 
-  const { createMessage } = useMessage();
   const userStore = useUserStore();
   const userinfo = ref<UserInfo>(userStore.getUserInfo);
 
@@ -227,7 +229,7 @@
     if (e.data) {
       // 发起请求
       updateAvatarApi(e.data).then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
         userinfo.value.avatar = e.data;
         userStore.setUserInfo(userinfo.value);
       });
@@ -236,21 +238,38 @@
 
   async function handleSubmit() {
     const values = await validate();
-    try {
-      if (values.password) {
-        values.password = HashingFactory.createMD5Hashing().hash(values.password);
-      }
+    if (values.password) {
+      values.password = HashingFactory.createMD5Hashing().hash(values.password);
+    }
+    const afterAction = (param) => {
+      // 赋值两步验证参数
+      values.twoStepKey = param?.twoStepKey;
+      values.twoStepValue = param?.twoStepValue;
 
       // 发起请求
-      await updateMine(values as AccountModel).then((res) => {
-        notify(res, true);
-      });
+      updateMine(values as AccountModel)
+        .then((res) => {
+          responseNotify(res, true);
+          userStore.getMineAction();
+        })
+        .catch((e) => {
+          // 错误信息
+          console.log('@@@ handleSubmit', e);
+        });
+    };
 
-      // 更新信息
-      await userStore.getMineAction();
-    } catch (e) {
-      createMessage.success('更新失败！');
-      console.log('@@@ handleSubmit', e);
+    if (isCheckMfa(CheckMfaScenariosEnum.EDIT_USER)) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+
+      // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+      mfaInfo.title = '修改账号信息，请先验证身份';
+      mfaInfo.scenarios = CheckMfaScenariosEnum.EDIT_USER; // 5 添加用户
+      mfaInfo.isOff = true; // 打开身份验证页面
+      useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+      useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+      useMfaStore().openVerify(); // 打开验证
+    } else {
+      afterAction(null);
     }
   }
 

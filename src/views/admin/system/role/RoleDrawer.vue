@@ -81,7 +81,7 @@
     TreeItem,
   } from '@/components/Tree';
   import { Tooltip } from 'ant-design-vue';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
@@ -369,12 +369,12 @@
       if (unref(isUpdate)) {
         // 编辑
         await roleEdit(rowId.value, values as RoleModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       } else {
         // 新增
         await roleAdd(values as RoleModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       }
 

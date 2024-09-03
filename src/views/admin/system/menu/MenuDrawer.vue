@@ -60,7 +60,7 @@
   import { useGo } from '@/hooks/web/usePage';
   import { Tooltip, Divider, InputNumber } from 'ant-design-vue';
   import { FormSchema } from '@/components/Table';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
 
   const go = useGo();
   const { hasPermission } = usePermission();
@@ -333,12 +333,12 @@
       if (unref(isUpdate)) {
         // 编辑
         await menuEdit(rowId.value, values as MenuModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       } else {
         // 新增
         await menuAdd(values as MenuModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       }
 

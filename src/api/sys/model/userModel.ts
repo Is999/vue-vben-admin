@@ -16,6 +16,7 @@ export interface RoleInfo {
   superUserRole: number; // 是否是超级管理员
   roles: Array<string>; // 角色
   permissions: Array<string>; // 权限
+  check_mfa_scenarios_disable: Array<string>; // 权限
 }
 
 /**

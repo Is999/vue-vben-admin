@@ -49,7 +49,7 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { Switch, Tag } from 'ant-design-vue';
   import Icon from '@/components/Icon/Icon.vue';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { isDevMode } from '@/utils/env';
 
   const [registerDrawer, { openDrawer }] = useDrawer();
@@ -211,7 +211,7 @@
             // 请求接口
             setMenuStatus(record.id, newStatus)
               .then((res) => {
-                notify(res, true);
+                responseNotify(res, true);
                 record.status = newStatus;
               })
               .catch((e) => {

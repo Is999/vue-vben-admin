@@ -28,15 +28,17 @@
   import { SoundTwoTone } from '@ant-design/icons-vue';
   import { BasicDrawer, useDrawerInner } from '@/components/Drawer';
   import { BasicForm, FormSchema, useForm } from '@/components/Form';
-  import { updaetePassword } from '@/api/admin/system';
+  import { updatePassword } from '@/api/admin/system';
   import { useUserStore } from '@/store/modules/user';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { HashingFactory } from '@/utils/cipher';
   import { checkChars, containSpecialChars } from '@/utils/passport';
-  import { updatePasswordParams } from '@/api/admin/model/systemModel';
   import { MfaInfo } from '#/store';
   import { useMfaStore } from '@/store/modules/mfa';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
+  import { usePermission } from '@/hooks/web/usePermission';
 
+  const { isCheckMfa } = usePermission();
   const formSchema: FormSchema[] = [
     {
       field: 'passwordOld',
@@ -166,23 +168,23 @@
   // 提交
   async function handleSubmit() {
     const values = await validate();
+    const md5 = HashingFactory.createMD5Hashing();
+    values.passwordOld = md5.hash(values.passwordOld);
+    values.passwordNew = md5.hash(values.passwordNew);
+    values.confirmPassword = md5.hash(values.confirmPassword);
+    // const { passwordOld, passwordNew } = values;
+    // console.log('@@@ password', passwordOld, passwordNew);
+
     const afterAction = (param) => {
       setDrawerProps({ loading: true });
-      // 赋值
+      // 赋值两步验证参数
       values.twoStepKey = param?.twoStepKey;
       values.twoStepValue = param?.twoStepValue;
 
-      const md5 = HashingFactory.createMD5Hashing();
-      values.passwordOld = md5.hash(values.passwordOld);
-      values.passwordNew = md5.hash(values.passwordNew);
-      values.confirmPassword = md5.hash(values.confirmPassword);
-      // const { passwordOld, passwordNew } = values;
-      // console.log('@@@ password', passwordOld, passwordNew);
-
       // 修改密码
-      updaetePassword(values as updatePasswordParams)
+      updatePassword(values)
         .then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
           closeDrawer();
           setTimeout(() => {
             const userStore = useUserStore();
@@ -200,12 +202,15 @@
     };
 
     const userStore = useUserStore();
-    if (userStore.getUserInfo?.mfa_status !== 0) {
+    if (
+      userStore.getUserInfo?.mfa_status !== 0 &&
+      isCheckMfa(CheckMfaScenariosEnum.CHANGE_PASSWORD)
+    ) {
       const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
 
       // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
       mfaInfo.title = '修改密码，请先验证身份';
-      mfaInfo.scenarios = 1; // 1 修改密码
+      mfaInfo.scenarios = CheckMfaScenariosEnum.CHANGE_PASSWORD; // 1 修改密码
       mfaInfo.isOff = true; // 打开身份验证页面
       useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
       useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作

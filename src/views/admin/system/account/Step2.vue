@@ -51,7 +51,7 @@
   import { accountEditRoles, getAccountRoleTreeList } from '@/api/admin/system';
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import type { Nullable } from '@vben/types';
   import { isArray } from '@/utils/is';
   import type { TreeDataItem } from 'ant-design-vue/es/tree/Tree';
@@ -243,7 +243,7 @@
 
       accountEditRoles(values.id, values as AccountRoleModel)
         .then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
           emit('redo');
         })
         .finally(() => {

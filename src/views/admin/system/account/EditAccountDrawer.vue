@@ -87,15 +87,18 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { Tooltip, Divider, InputPassword } from 'ant-design-vue';
   import { copyText } from '@/utils/copyTextToClipboard';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { HashingFactory } from '@/utils/cipher';
   import { useGlobSetting } from '@/hooks/setting';
   import { checkChars, containSpecialChars, generate } from '@/utils/passport';
   import { AccountModel } from '@/api/admin/model/systemModel';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
+  import { MfaInfo } from '#/store';
+  import { useMfaStore } from '@/store/modules/mfa';
 
   const emit = defineEmits(['success', 'register']);
 
-  const { hasPermission } = usePermission();
+  const { hasPermission, isCheckMfa } = usePermission();
   const { createMessage } = useMessage();
 
   const rowId = ref(0); // 编辑记录的id
@@ -375,28 +378,50 @@
 
   // 提交数据
   async function handleSubmit() {
-    try {
-      const values = await validate();
-      if (values.password) {
-        values.password = HashingFactory.createMD5Hashing().hash(values.password);
-      }
+    const values = await validate();
+    if (values.password) {
+      values.password = HashingFactory.createMD5Hashing().hash(values.password);
+    }
+    // console.log('@@@提交数据', values);
 
+    const afterAction = (param) => {
       setDrawerProps({ confirmLoading: true });
-      // console.log('@@@提交数据', values);
+
+      // 赋值两步验证参数
+      values.twoStepKey = param?.twoStepKey;
+      values.twoStepValue = param?.twoStepValue;
 
       // 发起请求
-      await accountEdit(rowId.value, values as AccountModel).then((res) => {
-        notify(res, true);
-      });
+      accountEdit(rowId.value, values as AccountModel)
+        .then((res) => {
+          responseNotify(res, true);
+          closeDrawer();
+          emit('success');
 
-      closeDrawer();
-      emit('success');
+          isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
+        })
+        .catch((e) => {
+          // 错误信息
+          console.log('@@@ handleSubmit', e);
+        })
+        .finally(() => {
+          // 关闭加载
+          setDrawerProps({ confirmLoading: false });
+        });
+    };
 
-      isGetParentTreeData.value = true; // 数据变动, 下次重新请求接口
-    } catch (e) {
-      console.log('@@@ handleSubmit', e);
-    } finally {
-      setDrawerProps({ confirmLoading: false });
+    if (isCheckMfa(CheckMfaScenariosEnum.EDIT_USER)) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+
+      // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+      mfaInfo.title = '修改账号信息，请先验证身份';
+      mfaInfo.scenarios = CheckMfaScenariosEnum.EDIT_USER; // 5 添加用户
+      mfaInfo.isOff = true; // 打开身份验证页面
+      useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+      useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+      useMfaStore().openVerify(); // 打开验证
+    } else {
+      afterAction(null);
     }
   }
 

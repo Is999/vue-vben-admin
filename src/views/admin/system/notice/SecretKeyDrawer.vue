@@ -49,7 +49,7 @@
   import { usePermission } from '@/hooks/web/usePermission';
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { CodeEditor, MODE } from '@/components/CodeEditor';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { Divider } from 'ant-design-vue';
   import { ConfigModel } from '@/api/admin/model/systemModel';
 
@@ -322,12 +322,12 @@
       if (unref(isUpdate)) {
         // 编辑
         await configEdit(rowId.value, values as ConfigModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       } else {
         // 新增
         await configAdd(values as ConfigModel).then((res) => {
-          notify(res, true);
+          responseNotify(res, true);
         });
       }
 

@@ -53,7 +53,7 @@
   import ConfigDrawer from './ConfigDrawer.vue';
   import { Modal, Tag } from 'ant-design-vue';
   import { JsonPreview } from '@/components/CodeEditor';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { isArray } from '@/utils/is';
   import { isDevMode } from '@/utils/env';
 
@@ -291,7 +291,7 @@
     // 刷新缓存
     configRenew(record.uuid)
       .then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
       })
       .catch((e) => {
         console.log('@@@ configRenew', e);

@@ -47,7 +47,7 @@
   import { useDrawer } from '@/components/Drawer';
   import InfoDrawer from './info.vue';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
 
   const { hasPermission } = usePermission();
   const { createConfirm } = useMessage();
@@ -167,7 +167,7 @@
         // 刷新缓存
         cacheRenewAll()
           .then((res) => {
-            notify(res, true);
+            responseNotify(res, true);
           })
           .catch((e) => {
             console.log('@@@ cacheRenewAll', e);
@@ -191,7 +191,7 @@
     // 刷新缓存
     cacheRenew({ key: record.key, type: record.type })
       .then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
       })
       .catch((e) => {
         console.log('@@@ cacheRenew', e);

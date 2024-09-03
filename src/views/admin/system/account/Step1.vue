@@ -61,10 +61,14 @@
   import { PermissionsEnum } from '@/enums/permissionsEnum';
   import { copyText } from '@/utils/copyTextToClipboard';
   import { checkChars, containSpecialChars, generate } from '@/utils/passport';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { HashingFactory } from '@/utils/cipher';
   import { AccountModel } from '@/api/admin/model/systemModel';
+  import { MfaInfo } from '#/store';
+  import { useMfaStore } from '@/store/modules/mfa';
+  import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
 
+  const { isCheckMfa } = usePermission();
   const emit = defineEmits(['next']);
 
   const { hasPermission } = usePermission();
@@ -331,17 +335,39 @@
 
   // 提交
   async function customSubmitFunc() {
-    try {
-      // emit('next', { id: 85 });
-      const values = await validate();
-      values.password = HashingFactory.createMD5Hashing().hash(values.password);
+    // emit('next', { id: 85 });
+    const values = await validate();
+    values.password = HashingFactory.createMD5Hashing().hash(values.password);
+
+    const afterAction = (param) => {
+      // 赋值两步验证参数
+      values.twoStepKey = param?.twoStepKey;
+      values.twoStepValue = param?.twoStepValue;
+
       // 新增
-      await accountAdd(values as AccountModel).then((res) => {
-        notify(res, true);
-        emit('next', res.data);
-      });
-    } catch (error) {
-      console.log('@@@ account/Step1 customSubmitFunc', error);
+      accountAdd(values as AccountModel)
+        .then((res) => {
+          responseNotify(res, true);
+          emit('next', res.data);
+        })
+        .catch((e) => {
+          // 错误信息
+          console.log('@@@ account/Step1 customSubmitFunc', e);
+        });
+    };
+
+    if (isCheckMfa(CheckMfaScenariosEnum.ADD_USER)) {
+      const mfaInfo: MfaInfo = useMfaStore().getMfaInfo;
+
+      // 先设置标题， 和执行方法，当返回10006的时候可以直接弹框校验
+      mfaInfo.title = '新增账号，请先验证身份';
+      mfaInfo.scenarios = CheckMfaScenariosEnum.ADD_USER; // 5 添加用户
+      mfaInfo.isOff = true; // 打开身份验证页面
+      useMfaStore().setMfaInfo(mfaInfo); // 修改MfaInfo
+      useMfaStore().afterSuccessVerify = afterAction; // 设置验证完后的操作
+      useMfaStore().openVerify(); // 打开验证
+    } else {
+      afterAction(null);
     }
   }
 

@@ -23,6 +23,7 @@ import {
   userPermissions,
 } from '@/api/sys/user';
 import { useMfaStore } from '@/store/modules/mfa';
+import { CheckMfaScenariosEnum } from '@/enums/checkMfaScenariosEnum';
 
 interface UserState {
   userInfo: Nullable<UserInfo>;
@@ -105,7 +106,9 @@ export const useUserStore = defineStore({
       }
       setAuthCache(ROLES_KEY, role);
     },
-
+    isCheckMfa() {
+      this.getUserRole.check_mfa_scenarios_disable;
+    },
     setSessionTimeout(flag: boolean) {
       this.sessionTimeout = flag;
     },
@@ -149,7 +152,7 @@ export const useUserStore = defineStore({
             mfa_check: user.mfa_check,
             exist_mfa: user.exist_mfa,
             isTwoStepVerification: true, // 打开身份验证页面
-            scenarios: 0, // 0 登录校验
+            scenarios: CheckMfaScenariosEnum.LOGIN, // 0 登录校验
             isOff: false, // 登录验证不显示返回按钮，其它可视使用场景设置
           };
           useMfaStore().setMfaInfo(mfaInfo);

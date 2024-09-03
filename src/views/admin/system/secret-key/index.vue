@@ -53,7 +53,7 @@
   import SecretKeyDrawer from './SecretKeyDrawer.vue';
   import { Modal, Switch } from 'ant-design-vue';
   import { JsonPreview } from '@/components/CodeEditor';
-  import { notify } from '@/api/api';
+  import { responseNotify } from '@/api/api';
   import { isArray } from '@/utils/is';
 
   const { hasPermission } = usePermission();
@@ -176,7 +176,7 @@
             // 请求接口
             setMenuStatus(record.id, newStatus)
               .then((res) => {
-                notify(res, true);
+                responseNotify(res, true);
                 record.status = newStatus;
               })
               .catch((e) => {
@@ -320,7 +320,7 @@
     // 刷新缓存
     configRenew(record.uuid)
       .then((res) => {
-        notify(res, true);
+        responseNotify(res, true);
       })
       .catch((e) => {
         console.log('@@@ configRenew', e);
