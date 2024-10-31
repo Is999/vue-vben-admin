@@ -75,6 +75,7 @@ enum Api {
   ConfigEdit = '/config/edit', // 编辑字典
   ConfigGetCache = '/config/getCache', // 查看字典缓存
   ConfigRenew = '/config/renew', // 刷新字典缓存
+  CheckMfaScenariosList = '/config/checkMfaScenariosList', // MFA身份验证场景列表
 
   // 缓存管理
   CacheList = '/cache/index', // 缓存列表
@@ -513,6 +514,16 @@ export const cacheRenewAll = () =>
 export const cacheInfo = () => {
   return AdminApi.get<RedisInfoModel>(
     { url: Api.CacheServerInfo },
+    {
+      errorMessageMode: 'message', // 错误直接提示后台返回信息
+    },
+  );
+};
+
+// 操作日志 操作类型列表
+export const getCheckMfaScenariosList = () => {
+  return AdminApi.get<SelectItem[]>(
+    { url: Api.CheckMfaScenariosList },
     {
       errorMessageMode: 'message', // 错误直接提示后台返回信息
     },

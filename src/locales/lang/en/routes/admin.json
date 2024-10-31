@@ -9,6 +9,7 @@
     "role": "Role",
     "permission": "Permission",
     "config": "Config",
+    "mfaCheck": "MFA校验管理",
     "cache": "Cache",
     "userLog": "User Log",
     "secretKey": "Secret key",

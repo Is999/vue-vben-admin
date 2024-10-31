@@ -119,14 +119,11 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入真实姓名');
             }
             if (value.length < 2 || value.length > 20) {
-              /* eslint-disable-next-line */
               return Promise.reject('真实姓名为2-20个字母');
             }
             return Promise.resolve();
@@ -148,10 +145,8 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入邮箱');
             }
             if (
@@ -159,7 +154,6 @@
                 value,
               )
             ) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入正确的邮箱格式');
             }
             return Promise.resolve();
@@ -182,14 +176,11 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入手机号');
             }
             if (!/^1[3-9]\d{9}$/.test(value)) {
-              /* eslint-disable-next-line */
               return Promise.reject('请输入正确的手机号格式');
             }
             return Promise.resolve();
@@ -211,13 +202,11 @@
       rules: [
         {
           required: true,
-          // @ts-ignore
           validator: async (rule, value) => {
             if (!value) {
               return Promise.reject('请输入密码');
             }
             // if (!/^[A-Za-z0-9@]{6,20}$/.test(value)) {
-            //   /* eslint-disable-next-line */
             //   return Promise.reject('密码为6-20个字母加数字组成');
             // }
 
@@ -265,7 +254,6 @@
               return Promise.resolve();
             }
             if (!/^[A-Za-z0-9]{16}$/.test(value)) {
-              /* eslint-disable-next-line */
               return Promise.reject('安全码秘钥为16位字符串');
             }
             return Promise.resolve();

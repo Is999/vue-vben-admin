@@ -70,6 +70,17 @@ const account: AppRouteModule = {
       },
     },
     {
+      path: 'mfaCheck',
+      name: PermissionsEnum.ConfigEdit + '-mfaCheck',
+      component: () => import('@/views/admin/system/config/mfaCheck.vue'),
+      meta: {
+        title: 'routes.admin.system.mfaCheck',
+        orderNo: 4,
+        icon: 'ant-design:insurance-twotone',
+        uniqId: PermissionsEnum.ConfigEdit,
+      },
+    },
+    {
       path: 'cache',
       name: PermissionsEnum.CacheNav,
       component: () => import('@/views/admin/system/cache/index.vue'),
